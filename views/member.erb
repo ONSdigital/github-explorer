@@ -80,7 +80,7 @@
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
-        <li><img src="/svg/respository.svg" alt="Respository"> <%= h repo.name %></li>
+        <li><img src="/svg/respository.svg" alt="Respository"> <%= h repo.name %> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>

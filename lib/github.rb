@@ -151,6 +151,7 @@ class GitHub
                 topRepositories(first: 10, orderBy: { field: NAME, direction: ASC }) {
                   nodes {
                     name
+                    isPrivate
                   }
                 }
               }

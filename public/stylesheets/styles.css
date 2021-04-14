@@ -250,6 +250,10 @@ td {
   margin-left: -38px;
 }
 
+#teams li, #repositories li {
+  margin-bottom: 5px;
+}
+
 .avatar-medium {
   border-radius: 6px;
   height: 32px;
@@ -286,9 +290,10 @@ td {
 
 .note {
   background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 8px;
-  color: #000;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 80%;
   padding: 1px 6px;
 }
 
