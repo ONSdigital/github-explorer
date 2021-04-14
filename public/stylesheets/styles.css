@@ -235,6 +235,16 @@ td {
   padding: 2px 2px 2px 25px;
 }
 
+#teams a:link, #teams a:visited, #teams a:active {
+  color: #000;
+  text-decoration: none;
+}
+
+#teams a:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
 #teams ul, #repositories ul {
   list-style-type: none;
   margin-left: -38px;
