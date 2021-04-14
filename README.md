@@ -13,7 +13,7 @@ The environment variables below are required:
 ```
 GITHUB_ENTERPRISE_NAME   # Name of the GitHub Enterprise
 GITHUB_ORGANISATION_NAME # Name of the GitHub Organisation
-GITHUB_TOKEN           # GitHub personal access token
+GITHUB_TOKEN             # GitHub personal access token
 ```
 
 ### Token Scopes
