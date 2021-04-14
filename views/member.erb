@@ -68,7 +68,7 @@
     <% if teams && teams.any? %>
       <ul>
       <% teams.each do |team| %>
-        <li><img src="/svg/team.svg" alt="Team"> <%= h team.name %> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
+        <li><img src="/svg/team.svg" alt="Team"> <a href=""><%= h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
       <% end %>
       </ul>
     <% else %>
