@@ -1,0 +1,23 @@
+<nav>
+  <ul>
+    <li id="active">Home</li>
+    <li><a href="/members?f=40">Members</a></li>
+    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li><a href="/teams?f=40">Teams</a></li>
+    <li><a href="/repositories">Repositories</a></li>
+  </ul>
+</nav>
+<h2>Enterprise</h2>
+<p>Name: <%= h data.enterprise.name %></p>
+<p>URL: <%= h data.enterprise.url %></p>
+<p>Website: <%= h data.enterprise.website_url %></p>
+<p>Created: <%= d data.enterprise.created_at %></p>
+<p>Members: <%= h data.enterprise.members.total_count %></p>
+<p>Outside Collaborators: <%= h data.enterprise.owner_info.outside_collaborators.total_count %></p>
+<h2>Organisation</h2>
+<p>Name: <%= h data.organization.name %></p>
+<p>URL: <%= h data.organization.url %></p>
+<p>Website: <%= h data.organization.website_url %></p>
+<p>Created: <%= d data.organization.created_at %></p>
+<p>Repositories: <%= h data.organization.repositories.total_count %> (public: <%= h data.organization.public_repositories.total_count %>, private/internal: <%= h data.organization.private_repositories.total_count %>)</p>
+<p>Teams: <%= h data.organization.teams.total_count %> (visible: <%= h data.organization.visible_teams.total_count %>, secret: <%= h data.organization.secret_teams.total_count %>)</p>

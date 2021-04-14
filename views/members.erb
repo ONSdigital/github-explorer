@@ -1,0 +1,46 @@
+<nav>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li id="active">Members</li>
+    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li><a href="/teams?f=40">Teams</a></li>
+    <li><a href="/repositories">Repositories</a></li>
+  </ul>
+</nav>
+<p><input type="text" id="search" autocomplete="off" placeholder="Filter members..."></p>
+<table id="data">
+  <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% data.enterprise.members.nodes.each_with_index do |member, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><!-- <img src="<%= member.avatar_url %>">--> <a href="/members/<%= h member.login %>"><%= h member.login %></a></td>
+      <td><% if member.name.nil? || member.name.empty? %>-<% else %><%= h member.name %><% end %></td>
+      <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%= h member.user.email %><% end %></td>
+      <td><%= d member.created_at %></td>
+      <td><%= d member.user.updated_at %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<nav class="paginator">
+  <ul>
+  <% if data.enterprise.members.page_info.has_previous_page %>
+    <li><a href="/members?l=40&amp;b=<%= data.enterprise.members.page_info.start_cursor %>">&lt; Previous</a></li>
+  <% else %>
+    <li class="disabled">&lt; Previous</li>
+  <% end %>
+  <% if data.enterprise.members.page_info.has_next_page %>
+    <li><a href="/members?f=40&amp;a=<%= data.enterprise.members.page_info.end_cursor %>">Next &gt;</a></li>
+  <% else %>
+    <li class="disabled">Next &gt;</li>
+  <% end %>
+  </ul>
+</nav>

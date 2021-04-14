@@ -1,0 +1,59 @@
+<nav>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/members?f=40">Members</a></li>
+    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li id="active">Teams</li>
+    <li><a href="/repositories">Repositories</a></li>
+  </ul>
+</nav>
+<p><input type="text" id="search" autocomplete="off" placeholder="Filter teams..."></p>
+<table id="data">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Members</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% data.organization.teams.nodes.each_with_index do |team, i| %>
+  <% if team.parent_team.nil? %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><%= h team.name %> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+      <td><% if team.description.nil? || team.description.empty? %>-<% else %><%= h team.description %><% end %></td>
+      <td>
+      <a href=""><%= pluralise(team.members.total_count, 'member') %></a></td>
+      <td><%= d team.created_at %></td>
+      <td><%= d team.updated_at %></td>
+    </tr>
+  <% else %>
+  <% team.child_teams.nodes.each do |child_team| %>
+    <tr class="child <%= i.even? ? 'even' : 'odd' %>">
+      <td><%= h child_team.name %> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+      <td><% if child_team.description.nil? || child_team.description.empty? %>-<% else %><%= h child_team.description %><% end %></td>
+      <td><a href=""><%= pluralise(child_team.members.total_count, 'member') %></a></td>
+      <td><%= d child_team.created_at %></td>
+      <td><%= d child_team.updated_at %></td>
+    </tr>
+  <% end %> <%# team.child_teams.nodes.each do |child_team| %>
+  <% end %> <%# if team.parent_team.nil? %>
+  <% end %> <%# data.organization.teams.nodes.each_with_index do |team, i| %>
+  </tbody>
+</table>
+<nav class="paginator">
+  <ul>
+  <% if data.organization.teams.page_info.has_previous_page %>
+    <li><a href="/teams?l=40&amp;b=<%= data.organization.teams.page_info.start_cursor %>">&lt; Previous</a></li>
+  <% else %>
+    <li class="disabled">&lt; Previous</li>
+  <% end %>
+  <% if data.organization.teams.page_info.has_next_page %>
+    <li><a href="/teams?f=40&amp;a=<%= data.organization.teams.page_info.end_cursor %>">Next &gt;</a></li>
+  <% else %>
+    <li class="disabled">Next &gt;</li>
+  <% end %>
+  </ul>
+</nav>

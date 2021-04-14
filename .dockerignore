@@ -1,0 +1,7 @@
+.git
+.gitignore
+.rubocop.yml
+deployment.yml
+secret.yml
+Dockerfile
+README.md
