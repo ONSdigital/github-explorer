@@ -62,7 +62,7 @@ get '/members/?' do
   first  = params[:f]
   last   = params[:l]
   before = params[:b]
-  after  = params[:a]  
+  after  = params[:a]
   data = GITHUB.all_members(settings.github_enterprise, first, last, before, after).data
   erb :members, locals: { title: 'Members - GitHub Explorer', data: data }
 end

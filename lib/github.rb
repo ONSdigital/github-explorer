@@ -9,6 +9,7 @@ require_relative 'context_transport'
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
   attr_reader :members_teams
+
   # HTTP = GraphQL::Client::HTTP.new('https://api.github.com/graphql') do
   #   def headers(context)
   #     puts context
@@ -68,7 +69,7 @@ class GitHub
       }
     }
   GRAPHQL
-  
+
   ALL_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $first: Int, $last: Int, $before: String, $after: String) {
       organization(login: $login) {
@@ -105,7 +106,6 @@ class GitHub
             members(first: 1) {
               totalCount
             }
-            
           }
         }
       }
@@ -207,36 +207,41 @@ class GitHub
   def initialize(base_uri, token)
     @base_uri = URI.parse(base_uri)
     @token    = token
-    @members_teams = Hash.new
+    @members_teams = {}
   end
 
   def all_members(enterprise, first = nil, last = nil, before = nil, after = nil)
     first_count = first.to_i if first
     last_count  = last.to_i if last
-    CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: first_count, last: last_count, before: before, after: after },
+    CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: first_count, last: last_count,
+                                                 before: before, after: after },
                                     context: { base_uri: @base_uri, token: @token })
   end
 
   def all_teams(organisation, first = nil, last = nil, before = nil, after = nil)
     first_count = first.to_i if first
     last_count  = last.to_i if last
-    CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: first_count, last: last_count, before: before, after: after },
+    CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: first_count, last: last_count,
+                                               before: before, after: after },
                                   context: { base_uri: @base_uri, token: @token })
   end
 
   def member(enterprise, login)
-    CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login }, context: { base_uri: @base_uri, token: @token })
+    CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login },
+                               context: { base_uri: @base_uri, token: @token })
   end
 
   def perform_team_membership_lookup(organisation)
-    teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: organisation }, context: { base_uri: @base_uri, token: @token })
+    teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: organisation },
+                                                      context: { base_uri: @base_uri, token: @token })
+
     teams.data.organization.teams.nodes.each do |team|
       team_tuple = OpenStruct.new
       team_tuple.name    = team.name
       team_tuple.privacy = team.privacy
 
       team.members.nodes.each do |member|
-        if @members_teams.has_key?(member.login)
+        if @members_teams.key?(member.login)
           @members_teams[member.login] << team_tuple
         else
           @members_teams[member.login] = Set[team_tuple]
@@ -244,7 +249,7 @@ class GitHub
       end
     end
   end
-  
+
   def summary(enterprise, organisation)
     CLIENT.query(SUMMARY_QUERY, variables: { login: organisation, slug: enterprise },
                                 context: { base_uri: @base_uri, token: @token })
