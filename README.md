@@ -16,6 +16,8 @@ GITHUB_ORGANISATION_NAME # Name of the GitHub Organisation
 GITHUB_TOKEN             # GitHub personal access token
 ```
 
+Run the application locally using the [Puma web server](https://puma.io/) with the command `bundle exec puma config.ru -C puma.rb` and access it using http://localhost:3000
+
 ### Token Scopes
 The GitHub personal access token for using this application requires the following scopes:
 
