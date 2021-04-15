@@ -171,6 +171,17 @@ td {
   font-size: 100%;
 }
 
+#filter {
+  background-image: url('/svg/search.svg');
+  /* background-position: 10px 12px; */
+  background-repeat: no-repeat;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  font-size: 100%;
+  line-height: 20px;
+  padding: 2px 2px 2px 25px;
+}
+
 #login, #login-only {
   color: #aaa;
   font-size: 120%;
@@ -222,17 +233,6 @@ td {
 
 #profile-stats img {
   vertical-align: middle;
-}
-
-#search {
-  background-image: url('/svg/search.svg');
-  /* background-position: 10px 12px; */
-  background-repeat: no-repeat;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  font-size: 100%;
-  line-height: 20px;
-  padding: 2px 2px 2px 25px;
 }
 
 #teams a:link, #teams a:visited, #teams a:active {
