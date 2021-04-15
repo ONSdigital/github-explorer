@@ -157,10 +157,14 @@ td {
   background-color: #fff;
 }
 
-#avatar-large {
-  border-radius: 250px;
-  height: 250px;
-  width: 250px;
+#administrators a:link, #administrators a:visited, #administrators a:active {
+  color: #000;
+  text-decoration: none;
+}
+
+#administrators a:hover {
+  color: blue;
+  text-decoration: underline;
 }
 
 #back-link {
@@ -180,6 +184,10 @@ td {
   font-size: 100%;
   line-height: 20px;
   padding: 2px 2px 2px 25px;
+}
+
+#licensing p {
+  font-size: 100%;
 }
 
 #login, #login-only {
@@ -203,25 +211,16 @@ td {
   font-size: 100%;
 }
 
-#organisations, #profile-dates, #profile-detail, #teams {
+#licensing, #organisations, .profile-dates, .profile-detail, #teams {
   border-bottom: 1px solid #ddd;
 }
 
-#profile-dates span {
-  display: inline-block;
-  width: 5em;
-}
-
-#profile-detail p {
-  font-size: 100%;
-}
-
-#profile-detail a:link, #profile-detail a:visited, #profile-detail a:active {
+#owners a:link, #owners a:visited, #owners a:active {
   color: #000;
   text-decoration: none;
 }
 
-#profile-detail a:hover {
+#owners a:hover {
   color: blue;
   text-decoration: underline;
 }
@@ -245,13 +244,19 @@ td {
   text-decoration: underline;
 }
 
-#teams ul, #repositories ul {
+#administrators ul, #owners ul, #teams ul, #repositories ul {
   list-style-type: none;
   margin-left: -38px;
 }
 
-#teams li, #repositories li {
+#administrators li, #owners li, #teams li, #repositories li {
   margin-bottom: 5px;
+}
+
+.avatar-large {
+  border-radius: 250px;
+  height: 250px;
+  width: 250px;
 }
 
 .avatar-medium {
@@ -273,11 +278,13 @@ td {
 }
 
 .left {
+  padding-right: 25px;
   margin-left: 50px;
 }
 
 .right {
   margin-right: 50px;
+  padding-left: 25px;
 }
 
 .row {
@@ -286,6 +293,14 @@ td {
 
 .disabled {
   color: #aaa;
+}
+
+.even td {
+  background-color: #fff;
+}
+
+.odd td {
+  background-color: #ddd;
 }
 
 .note {
@@ -297,10 +312,21 @@ td {
   padding: 1px 6px;
 }
 
-.even td {
-  background-color: #fff;
+.profile-dates span {
+  display: inline-block;
+  width: 5em;
 }
 
-.odd td {
-  background-color: #ddd;
+.profile-detail p {
+  font-size: 100%;
+}
+
+.profile-detail a:link, .profile-detail a:visited, .profile-detail a:active {
+  color: #000;
+  text-decoration: none;
+}
+
+.profile-detail a:hover {
+  color: blue;
+  text-decoration: underline;
 }

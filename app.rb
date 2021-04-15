@@ -25,8 +25,13 @@ helpers do
     Rack::Utils.escape_html(text)
   end
 
-  def pluralise(count, singular_noun)
-    count == 1 ? "#{count} #{singular_noun}" : "#{count} #{singular_noun}s"
+  def n(count)
+    count_groups = count.to_s.chars.to_a.reverse.each_slice(3)
+    count_groups.map(&:join).join(',').reverse
+  end
+
+  def pluralise(count, singular_noun, plural_noun = nil)
+    count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
   end
 
   def website_link(url)
@@ -45,8 +50,10 @@ end
 
 get '/?' do
   GITHUB.perform_team_membership_lookup(settings.github_organisation)
+  GITHUB.perform_member_role_lookup(settings.github_organisation)
   data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
-  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer", data: data }
+  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer", data: data,
+                        owners: GITHUB.owners.sort_by(&:login) }
 end
 
 get '/health?' do
@@ -55,7 +62,8 @@ end
 
 get '/members/:login' do |login|
   data = GITHUB.member(settings.github_enterprise, login).data
-  erb :member, locals: { title: "#{login} - GitHub Explorer", data: data, teams: GITHUB.members_teams[login] }
+  erb :member, locals: { title: "#{login} - GitHub Explorer", data: data,
+                         owner: GITHUB.owner?(login), teams: GITHUB.members_teams[login] }
 end
 
 get '/members/?' do

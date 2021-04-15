@@ -8,7 +8,7 @@ require_relative 'context_transport'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  attr_reader :members_teams
+  attr_reader :members_teams, :owners
 
   # HTTP = GraphQL::Client::HTTP.new('https://api.github.com/graphql') do
   #   def headers(context)
@@ -23,6 +23,22 @@ class GitHub
   # GraphQL::Client.dump_schema(HTTP, File.join(__dir__, 'graphql', 'schema.json'))
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
+
+  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query($login: String!, $first: Int) {
+      organization(login: $login) {
+        membersWithRole(first: $first) {
+          edges {
+            node {
+              login
+              name
+            }
+            role
+          }
+        }
+      }
+    }
+  GRAPHQL
 
   ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($slug: String!, $first: Int, $last: Int, $before: String, $after: String) {
@@ -165,22 +181,39 @@ class GitHub
   SUMMARY_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $slug: String!) {
       enterprise(slug: $slug) {
+        avatarUrl
         createdAt
+        description
+        location
         name
         url
         websiteUrl
+        billingInfo {
+          totalAvailableLicenses
+          totalLicenses
+        }
         members(first: 1) {
           totalCount
         }
         ownerInfo {
+          admins(first: 1) {
+            nodes {
+              login
+              name
+            }
+          }
           outsideCollaborators(first: 1) {
             totalCount
           }
         }
       }
       organization(login: $login) {
+        avatarUrl
         createdAt
+        description
+        location
         name
+        updatedAt
         url
         websiteUrl
         repositories(first: 1) {
@@ -209,6 +242,7 @@ class GitHub
     @base_uri = URI.parse(base_uri)
     @token    = token
     @members_teams = {}
+    @owners        = Set[]
   end
 
   def all_members(enterprise, first = nil, last = nil, before = nil, after = nil)
@@ -227,9 +261,27 @@ class GitHub
                                   context: { base_uri: @base_uri, token: @token })
   end
 
+  def owner?(login)
+    @owners.each { |owner| return true if owner.login.eql?(login) }
+    false
+  end
+
   def member(enterprise, login)
     CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login },
                                context: { base_uri: @base_uri, token: @token })
+  end
+
+  def perform_member_role_lookup(organisation)
+    members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: organisation, first: 100 },
+                                                         context: { base_uri: @base_uri, token: @token })
+
+    members.data.organization.members_with_role.edges.each do |member|
+      user_tuple = OpenStruct.new
+      user_tuple.login = member.node.login
+      user_tuple.name  = member.node.name
+
+      @owners << user_tuple if member.role.eql?('ADMIN')
+    end
   end
 
   def perform_team_membership_lookup(organisation)

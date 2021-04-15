@@ -7,17 +7,79 @@
     <li><a href="/repositories">Repositories</a></li>
   </ul>
 </nav>
-<h2>Enterprise</h2>
-<p>Name: <%= h data.enterprise.name %></p>
-<p>URL: <%= h data.enterprise.url %></p>
-<p>Website: <%= h data.enterprise.website_url %></p>
-<p>Created: <%= d data.enterprise.created_at %></p>
-<p>Members: <%= h data.enterprise.members.total_count %></p>
-<p>Outside Collaborators: <%= h data.enterprise.owner_info.outside_collaborators.total_count %></p>
-<h2>Organisation</h2>
-<p>Name: <%= h data.organization.name %></p>
-<p>URL: <%= h data.organization.url %></p>
-<p>Website: <%= h data.organization.website_url %></p>
-<p>Created: <%= d data.organization.created_at %></p>
-<p>Repositories: <%= h data.organization.repositories.total_count %> (public: <%= h data.organization.public_repositories.total_count %>, private/internal: <%= h data.organization.private_repositories.total_count %>)</p>
-<p>Teams: <%= h data.organization.teams.total_count %> (visible: <%= h data.organization.visible_teams.total_count %>, secret: <%= h data.organization.secret_teams.total_count %>)</p>
+<section class="row">
+  <section class="column left">
+    <h2><%= h data.organization.name %> GitHub Organisation</h2>
+    <p><img class="avatar-medium" src="<%= h data.organization.avatar_url %>" alt="<%= h data.organization.name %>"></p>
+
+    <section class="profile-detail">
+    <% unless data.organization.description.nil? || data.organization.description.empty? %>
+      <p><%= h data.organization.description %></p>
+    <% end %>
+
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(data.organization.url) %>"><%= data.organization.url %></a></p>
+
+    <% unless data.organization.location.nil? || data.organization.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%= h data.organization.location %></p>
+    <% end %>
+
+    <% unless data.organization.website_url.nil? || data.organization.website_url.empty? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.organization.website_url) %>"><%= h data.organization.website_url %></a></p>
+    <% end %>
+
+      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories?f=40"><%= pluralise(data.organization.repositories.total_count, nil, 'repositories') %></a> (<%= n data.organization.public_repositories.total_count %> public, <%= n data.organization.private_repositories.total_count %> private)</p>
+      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams?f=40"><%= pluralise(data.organization.teams.total_count, 'team') %></a> (<%= n data.organization.visible_teams.total_count %> visible, <%= n data.organization.secret_teams.total_count %> secret)</p>
+    </section>
+    <section class="profile-dates">
+      <p><span>Created:</span><%=d data.organization.created_at %></p>
+    </section>
+    <section id="administrators">
+      <h3>Organisation Owners</h3>
+      <ul>
+      <% owners.each do |owner| %>
+        <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%= h owner.login %>"><%= h owner.login %></a> <% unless owner.name.nil? || owner.name.empty? %>(<%= h owner.name %>)<% end %>
+      <% end %>
+      </ul>
+    </section>
+  </section>
+
+  <section class="column right">
+    <h2><%= h data.enterprise.name %> GitHub Enterprise</h2>
+    <p><img class="avatar-medium" src="<%= h data.enterprise.avatar_url %>" alt="<%= h data.enterprise.name %>"></p>
+
+    <section class="profile-detail">
+    <% unless data.enterprise.description.nil? || data.enterprise.description.empty? %>
+      <p><%= h data.enterprise.description %></p>
+    <% end %>
+
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(data.enterprise.url) %>"><%= data.enterprise.url %></a></p>
+
+    <% unless data.enterprise.location.nil? || data.enterprise.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%= h data.enterprise.location %></p>
+    <% end %>
+
+    <% unless data.enterprise.website_url.nil? || data.enterprise.website_url.empty? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.website_url) %>"><%= h data.enterprise.website_url %></a></p>
+    <% end %>
+
+      <p><img src="/svg/user.svg" alt="User"> <a href="/members?f=40"><%= pluralise(data.enterprise.members.total_count, 'member') %></a></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators?f=40"><%= pluralise(data.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
+    </section>
+    <section class="profile-dates">
+      <p><span>Created:</span><%=d data.enterprise.created_at %></p>
+    </section>
+    <section id="licensing">
+      <h3>Licensing</h3>
+      <p><%= n data.enterprise.billing_info.total_available_licenses %> available licenses</p>
+      <p><%= n data.enterprise.billing_info.total_licenses %> total licenses</p>
+    </section>
+    <section id="administrators">
+      <h3>Enterprise Administrators</h3>
+      <ul>
+      <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
+        <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%= h admin.login %>"><%= h admin.login %></a> <% unless admin.name.nil? || admin.name.empty? %>(<%= h admin.name %>)<% end %>
+      <% end %>
+      </ul>
+    </section>
+  </section>
+</section>
