@@ -10,17 +10,6 @@ require_relative 'context_transport'
 class GitHub
   attr_reader :members_teams, :owners
 
-  # HTTP = GraphQL::Client::HTTP.new('https://api.github.com/graphql') do
-  #   def headers(context)
-  #     puts context
-  #     {
-  #       'Authorization': "Bearer [REDACTED]",
-  #       'Accept-Encoding': 'gzip'
-  #     }
-  #   end
-  # end
-
-  # GraphQL::Client.dump_schema(HTTP, File.join(__dir__, 'graphql', 'schema.json'))
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
