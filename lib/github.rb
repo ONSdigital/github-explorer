@@ -25,9 +25,13 @@ class GitHub
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
   ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!, $first: Int) {
+    query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
-        membersWithRole(first: $first) {
+        membersWithRole(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           edges {
             node {
               login
@@ -272,15 +276,22 @@ class GitHub
   end
 
   def perform_member_role_lookup(organisation)
-    members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: organisation, first: 100 },
-                                                         context: { base_uri: @base_uri, token: @token })
+    after = nil
+    next_page = true
 
-    members.data.organization.members_with_role.edges.each do |member|
-      user_tuple = OpenStruct.new
-      user_tuple.login = member.node.login
-      user_tuple.name  = member.node.name
+    while next_page do
+      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: organisation, first: 100, after: after },
+                                                           context: { base_uri: @base_uri, token: @token })
+      after = members.data.organization.members_with_role.page_info.end_cursor
+      next_page = members.data.organization.members_with_role.page_info.has_next_page
 
-      @owners << user_tuple if member.role.eql?('ADMIN')
+      members.data.organization.members_with_role.edges.each do |member|
+        user_tuple = OpenStruct.new
+        user_tuple.login = member.node.login
+        user_tuple.name  = member.node.name
+  
+        @owners << user_tuple if member.role.eql?('ADMIN')
+      end
     end
   end
 
