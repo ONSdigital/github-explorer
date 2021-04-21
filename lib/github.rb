@@ -34,7 +34,7 @@ class GitHub
   GRAPHQL
 
   ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($slug: String!, $first: Int, $after: String) {
+    query($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
           totalCount
@@ -80,9 +80,9 @@ class GitHub
   GRAPHQL
 
   ALL_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!, $first: Int, $last: Int, $before: String, $after: String) {
+    query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
-        teams(first: $first, last: $last, before: $before, after: $after) {
+        teams(first: $first, after: $after) {
           totalCount
           pageInfo {
             startCursor
@@ -254,12 +254,20 @@ class GitHub
     all_members
   end
 
-  def all_teams(organisation, first = nil, last = nil, before = nil, after = nil)
-    first_count = first.to_i if first
-    last_count  = last.to_i if last
-    CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: first_count, last: last_count,
-                                               before: before, after: after },
-                                  context: { base_uri: @base_uri, token: @token })
+  def all_teams(organisation)
+    after = nil
+    next_page = true
+    all_teams = []
+
+    while next_page
+      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: 100, after: after },
+                                            context: { base_uri: @base_uri, token: @token })
+      after = teams.data.organization.teams.page_info.end_cursor
+      next_page = teams.data.organization.teams.page_info.has_next_page
+      teams.data.organization.teams.nodes.each { |team| all_teams << team }
+    end
+
+    all_teams
   end
 
   def owner?(login)
