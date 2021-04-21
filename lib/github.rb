@@ -91,6 +91,7 @@ class GitHub
             description
             name
             privacy
+            slug
             updatedAt
             members(first: 1, membership: IMMEDIATE) {
               totalCount
@@ -103,6 +104,7 @@ class GitHub
                 description
                 name
                 privacy
+                slug
                 updatedAt
                 members(first: 1, membership: IMMEDIATE) {
                   totalCount
@@ -115,6 +117,7 @@ class GitHub
                     description
                     name
                     privacy
+                    slug
                     updatedAt
                     members(first: 1, membership: IMMEDIATE) {
                       totalCount

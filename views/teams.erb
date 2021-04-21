@@ -21,7 +21,7 @@
   <tbody>
   <% teams.each do |team| %>
     <tr>
-      <td><img class="avatar-small" src="<%= team.avatar_url %>" alt="<%= h team.name %>"> <a href="/teams/<%= h team.name %>"><%= h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+      <td><img class="avatar-small" src="<%= team.avatar_url %>" alt="<%= h team.name %>"> <a href="/teams/<%= h team.slug %>"><%= h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if team.description.nil? || team.description.empty? %>-<% else %><%= h team.description %><% end %></td>
       <td>
       <%= pluralise(team.members.total_count, 'member') %></td>
@@ -30,7 +30,7 @@
     </tr>  
   <% team.child_teams.nodes.each do |child_team| %>
     <tr class="child">
-      <td><img class="avatar-small" src="<%= child_team.avatar_url %>" alt="<%= h child_team.name %>"> <a href="/teams/<%= h team.name %>"><%= h child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+      <td><img class="avatar-small" src="<%= child_team.avatar_url %>" alt="<%= h child_team.name %>"> <a href="/teams/<%= h child_team.slug %>"><%= h child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if child_team.description.nil? || child_team.description.empty? %>-<% else %><%= h child_team.description %><% end %></td>
       <td><%= pluralise(child_team.members.total_count, 'member') %></td>
       <td><%= d child_team.created_at %></td>
@@ -38,7 +38,7 @@
     </tr>
   <% child_team.child_teams.nodes.each do |child_child_team| %>
     <tr class="child-child">
-      <td><img class="avatar-small" src="<%= child_child_team.avatar_url %>" alt="<%= h child_child_team.name %>"> <a href="/teams/<%= h team.name %>"><%= h child_child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+      <td><img class="avatar-small" src="<%= child_child_team.avatar_url %>" alt="<%= h child_child_team.name %>"> <a href="/teams/<%= h child_child_team.slug %>"><%= h child_child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if child_child_team.description.nil? || child_child_team.description.empty? %>-<% else %><%= h child_child_team.description %><% end %></td>
       <td><%= pluralise(child_child_team.members.total_count, 'member') %></td>
       <td><%= d child_child_team.created_at %></td>
