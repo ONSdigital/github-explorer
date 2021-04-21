@@ -146,12 +146,13 @@ th {
 }
 
 th, td {
-  padding: 5px;
+  padding: 8px;
   vertical-align: top;
 }
 
 td {
   background-color: #fff;
+  vertical-align: middle;
 }
 
 #back-link {
@@ -236,8 +237,19 @@ td {
   width: 32px;
 }
 
+.avatar-small {
+  border-radius: 20px;
+  height: 20px;
+  margin-right: 6px;
+  width: 20px;
+}
+
 .child td {
   padding-left: 25px;
+}
+
+.child-child td {
+  padding-left: 50px;
 }
 
 .code {
@@ -288,7 +300,7 @@ td {
   background-color: #fff;
   border: 1px solid #aaa;
   border-radius: 6px;
-  color: #aaa;
+  color: #999;
   font-size: 80%;
   padding: 1px 6px;
 }

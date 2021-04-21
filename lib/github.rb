@@ -5,6 +5,7 @@ require 'graphql/client'
 require 'graphql/client/http'
 
 require_relative 'context_transport'
+require_relative 'rate_limit_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
@@ -43,7 +44,7 @@ class GitHub
           }
           nodes {
             ... on EnterpriseUserAccount {
-              avatarUrl(size: 20)
+              avatarUrl
               createdAt
               login
               name
@@ -77,40 +78,50 @@ class GitHub
   GRAPHQL
 
   ALL_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!, $first: Int!, $after: String) {
+    query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
-        teams(first: $first, after: $after) {
-          totalCount
+        teams(first: $first, after: $after, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
           pageInfo {
-            startCursor
             endCursor
             hasNextPage
-            hasPreviousPage
           }
           nodes {
+            avatarUrl
             createdAt
             description
             name
             privacy
             updatedAt
-            parentTeam {
-              name
+            members(first: 1, membership: IMMEDIATE) {
+              totalCount
             }
-            childTeams(first: 100) {
+            childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
               totalCount
               nodes {
+                avatarUrl
                 createdAt
                 description
                 name
                 privacy
                 updatedAt
-                members(first: 1) {
+                members(first: 1, membership: IMMEDIATE) {
                   totalCount
                 }
+                childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
+                  totalCount
+                  nodes {
+                    avatarUrl
+                    createdAt
+                    description
+                    name
+                    privacy
+                    updatedAt
+                    members(first: 1, membership: IMMEDIATE) {
+                      totalCount
+                    }
+                  }
+                }
               }
-            }
-            members(first: 1) {
-              totalCount
             }
           }
         }
@@ -124,7 +135,7 @@ class GitHub
         members(first: 1, query: $login) {
           nodes {
             ... on EnterpriseUserAccount {
-              avatarUrl(size: 250)
+              avatarUrl
               createdAt
               login
               name
@@ -259,6 +270,8 @@ class GitHub
     while next_page
       teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: 100, after: after },
                                             context: { base_uri: @base_uri, token: @token })
+      # raise RateLimitError.new if teams.data.errors.first.type.eql?('RATE_LIMITED')
+
       after = teams.data.organization.teams.page_info.end_cursor
       next_page = teams.data.organization.teams.page_info.has_next_page
       teams.data.organization.teams.nodes.each { |team| all_teams << team }

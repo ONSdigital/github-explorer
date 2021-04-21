@@ -6,6 +6,7 @@ require 'pagy'
 
 require_relative 'lib/configuration'
 require_relative 'lib/github'
+require_relative 'lib/rate_limit_error'
 
 set :partial_template_engine, :erb
 
@@ -82,7 +83,12 @@ get '/members/?' do
 end
 
 get '/teams/?' do
-  all_teams = GITHUB.all_teams(settings.github_organisation)
+  begin
+    all_teams = GITHUB.all_teams(settings.github_organisation)
+  rescue RateLimitError => e
+    return erb :error, locals: { title: 'Error - GitHub Explorer' }
+  end
+
   pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   teams = all_teams[pagy.offset, pagy.items]
   erb :teams, locals: { title: 'Teams - GitHub Explorer', teams: teams, pagy: pagy }
