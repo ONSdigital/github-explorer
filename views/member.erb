@@ -3,7 +3,7 @@
     <li><a href="/">Organisation</a></li>
     <li id="active">Members</li>
     <li><a href="/collaborators">Outside Collaborators</a></li>
-    <li><a href="/teams?f=40">Teams</a></li>
+    <li><a href="/teams">Teams</a></li>
     <li><a href="/repositories">Repositories</a></li>
   </ul>
 </nav>
@@ -63,12 +63,12 @@
     <% end %>
     </section>
 
-    <p id="back-link"><a href="/members?f=40">Back to members</a></p>
+    <p id="back-link"><a href="/members">Back to members</a></p>
   </section>
   
   <section class="column right">
     <h2>Teams</h2>
-    <section id="teams" class="object-list">
+    <section id="teams" class="links-list">
     <% if teams && teams.any? %>
       <ul>
       <% teams.each do |team| %>
@@ -80,7 +80,7 @@
     <% end %>
     </section>
     <h2>Top Repositories</h2>
-    <section id="repositories" class="object-list">
+    <section id="repositories" class="links-list">
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>

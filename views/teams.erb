@@ -1,7 +1,7 @@
 <nav>
   <ul>
     <li><a href="/">Organisation</a></li>
-    <li><a href="/members?f=40">Members</a></li>
+    <li><a href="/members">Members</a></li>
     <li><a href="/collaborators">Outside Collaborators</a></li>
     <li id="active">Teams</li>
     <li><a href="/repositories">Repositories</a></li>
@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-  <% data.organization.teams.nodes.each_with_index do |team, i| %>
+  <% teams.each_with_index do |team, i| %>
   <% if team.parent_team.nil? %>
     <tr class="<%= i.even? ? 'even' : 'odd' %>">
       <td><%= h team.name %> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
@@ -40,20 +40,8 @@
     </tr>
   <% end %> <%# team.child_teams.nodes.each do |child_team| %>
   <% end %> <%# if team.parent_team.nil? %>
-  <% end %> <%# data.organization.teams.nodes.each_with_index do |team, i| %>
+  <% end %> <%# teams.each_with_index do |team, i| %>
   </tbody>
-</table>
-<nav class="paginator">
-  <ul>
-  <% if data.organization.teams.page_info.has_previous_page %>
-    <li><a href="/teams?l=40&amp;b=<%= data.organization.teams.page_info.start_cursor %>">&lt; Previous</a></li>
-  <% else %>
-    <li class="disabled">&lt; Previous</li>
-  <% end %>
-  <% if data.organization.teams.page_info.has_next_page %>
-    <li><a href="/teams?f=40&amp;a=<%= data.organization.teams.page_info.end_cursor %>">Next &gt;</a></li>
-  <% else %>
-    <li class="disabled">Next &gt;</li>
-  <% end %>
-  </ul>
-</nav>
+</table><section id="pagination">
+  <%= pagy_nav(pagy) %>
+</section>

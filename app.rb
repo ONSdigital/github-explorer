@@ -19,6 +19,7 @@ set :github_organisation, config.github_organisation
 set :github_token,        config.github_token
 
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
+ITEMS_COUNT = 40
 
 helpers do
   include Pagy::Frontend
@@ -75,19 +76,15 @@ get '/members/:login' do |login|
 end
 
 get '/members/?' do
-  first  = params[:f]
-  last   = params[:l]
-  before = params[:b]
-  after  = params[:a]
-  data = GITHUB.all_members(settings.github_enterprise, first, last, before, after).data
-  erb :members, locals: { title: 'Members - GitHub Explorer', data: data }
+  all_members = GITHUB.all_members(settings.github_enterprise)
+  pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  members = all_members[pagy.offset, pagy.items]
+  erb :members, locals: { title: 'Members - GitHub Explorer', members: members, pagy: pagy }
 end
 
 get '/teams/?' do
-  first  = params[:f]
-  last   = params[:l]
-  before = params[:b]
-  after  = params[:a]
-  data = GITHUB.all_teams(settings.github_organisation, first, last, before, after).data
-  erb :teams, locals: { title: 'Teams - GitHub Explorer', data: data }
+  all_teams = GITHUB.all_teams(settings.github_organisation)
+  pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  teams = all_teams[pagy.offset, pagy.items]
+  erb :teams, locals: { title: 'Teams - GitHub Explorer', teams: teams, pagy: pagy }
 end

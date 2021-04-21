@@ -80,50 +80,9 @@ nav li#active {
   padding: 6px 10px;
 }
 
-nav.paginator ul {
-  margin: 25px 0;
-  padding-left: 0;
-  text-align: center;
-  white-space: nowrap;
-}
-
-nav.paginator li {
-  display: inline;
-  font-weight: bold;
-  list-style-type: none;
-  margin-right: 6px;
-}
-
-nav.paginator li.disabled {
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
-nav.paginator a {
-  border: 1px solid #000;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
-nav.paginator a:link, nav.paginator a:visited {
-  background-color: fff;
-  color: #000;
-  text-decoration: none;
-}
-
-nav.paginator a:hover {
-  background-color: #000;
-  border: 1px solid #000;
-  border-radius: 6px;
-  color: #fff;
-  text-decoration: none;
-}
-
 nav.pagy-nav {
   margin: 25px 0;
   padding-left: 0;
-  /* text-align: center; */
   white-space: nowrap;
 }
 
@@ -243,6 +202,10 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
+#pagination {
+  text-align: center;
+}
+
 #profile-stats {
   font-size: 100%;
   margin-bottom: 25px;
@@ -311,6 +274,16 @@ td {
   background-color: #ddd;
 }
 
+.links-list a:link, .links-list a:visited, .links-list a:active {
+  color: #000;
+  text-decoration: none;
+}
+
+.links-list a:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
 .note {
   background-color: #fff;
   border: 1px solid #aaa;
@@ -318,16 +291,6 @@ td {
   color: #aaa;
   font-size: 80%;
   padding: 1px 6px;
-}
-
-.object-list a:link, .object-list a:visited, .object-list a:active {
-  color: #000;
-  text-decoration: none;
-}
-
-.object-list a:hover {
-  color: blue;
-  text-decoration: underline;
 }
 
 .profile-dates span {

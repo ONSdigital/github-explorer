@@ -34,9 +34,9 @@ class GitHub
   GRAPHQL
 
   ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($slug: String!, $first: Int, $last: Int, $before: String, $after: String) {
+    query($slug: String!, $first: Int, $after: String) {
       enterprise(slug: $slug) {
-        members(first: $first, last: $last, before: $before, after: $after) {
+        members(first: $first, after: $after) {
           totalCount
           pageInfo {
             startCursor
@@ -238,12 +238,20 @@ class GitHub
     @owners        = Set[]
   end
 
-  def all_members(enterprise, first = nil, last = nil, before = nil, after = nil)
-    first_count = first.to_i if first
-    last_count  = last.to_i if last
-    CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: first_count, last: last_count,
-                                                 before: before, after: after },
-                                    context: { base_uri: @base_uri, token: @token })
+  def all_members(enterprise)
+    after = nil
+    next_page = true
+    all_members = []
+
+    while next_page
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: 100, after: after },
+                                                context: { base_uri: @base_uri, token: @token })
+      after = members.data.enterprise.members.page_info.end_cursor
+      next_page = members.data.enterprise.members.page_info.has_next_page
+      members.data.enterprise.members.nodes.each { |member| all_members << member }
+    end
+
+    all_members
   end
 
   def all_teams(organisation, first = nil, last = nil, before = nil, after = nil)

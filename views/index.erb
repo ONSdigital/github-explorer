@@ -1,9 +1,9 @@
 <nav>
   <ul>
     <li id="active">Organisation</li>
-    <li><a href="/members?f=40">Members</a></li>
+    <li><a href="/members">Members</a></li>
     <li><a href="/collaborators">Outside Collaborators</a></li>
-    <li><a href="/teams?f=40">Teams</a></li>
+    <li><a href="/teams">Teams</a></li>
     <li><a href="/repositories">Repositories</a></li>
   </ul>
 </nav>
@@ -27,13 +27,13 @@
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.organization.website_url) %>"><%= h data.organization.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories?f=40"><%= pluralise(data.organization.repositories.total_count, nil, 'repositories') %></a> (<%= n data.organization.public_repositories.total_count %> public, <%= n data.organization.private_repositories.total_count %> private)</p>
-      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams?f=40"><%= pluralise(data.organization.teams.total_count, 'team') %></a> (<%= n data.organization.visible_teams.total_count %> visible, <%= n data.organization.secret_teams.total_count %> secret)</p>
+      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%= pluralise(data.organization.repositories.total_count, nil, 'repositories') %></a> (<%= n data.organization.public_repositories.total_count %> public, <%= n data.organization.private_repositories.total_count %> private)</p>
+      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%= pluralise(data.organization.teams.total_count, 'team') %></a> (<%= n data.organization.visible_teams.total_count %> visible, <%= n data.organization.secret_teams.total_count %> secret)</p>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.organization.created_at %></p>
     </section>
-     <section id="owners" class="object-list">
+     <section id="owners" class="links-list">
       <h3>Organisation Owners</h3>
       <ul>
       <% owners.each do |owner| %>
@@ -63,8 +63,8 @@
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.website_url) %>"><%= h data.enterprise.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/user.svg" alt="User"> <a href="/members?f=40"><%= pluralise(data.enterprise.members.total_count, 'member') %></a></p>
-      <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators?f=40"><%= pluralise(data.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/members"><%= pluralise(data.enterprise.members.total_count, 'member') %></a></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators"><%= pluralise(data.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.enterprise.created_at %></p>
@@ -74,7 +74,7 @@
       <p><%= n data.enterprise.billing_info.total_available_licenses %> available licenses</p>
       <p><%= n data.enterprise.billing_info.total_licenses %> total licenses</p>
     </section>
-    <section id="administrators" class="object-list">
+    <section id="administrators" class="links-list">
       <h3>Enterprise Administrators</h3>
       <ul>
       <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
