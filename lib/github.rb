@@ -5,7 +5,7 @@ require 'graphql/client'
 require 'graphql/client/http'
 
 require_relative 'context_transport'
-require_relative 'rate_limit_error'
+require_relative 'github_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
@@ -270,7 +270,7 @@ class GitHub
     while next_page
       teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: 100, after: after },
                                             context: { base_uri: @base_uri, token: @token })
-      # raise RateLimitError.new if teams.data.errors.first.type.eql?('RATE_LIMITED')
+      raise GitHubError.new(teams.errors) unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
       next_page = teams.data.organization.teams.page_info.has_next_page
