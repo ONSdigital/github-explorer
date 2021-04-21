@@ -51,8 +51,7 @@ end
 before do
   headers 'Content-Type' => 'text/html; charset=utf-8'
   user_header = request.env['HTTP_X_GOOG_AUTHENTICATED_USER_EMAIL']
-#   @user = user_header.partition('accounts.google.com:').last unless user_header.nil?
-  @user = 'john.topley@census.gov.uk'
+  @user = user_header.partition('accounts.google.com:').last unless user_header.nil?
 end
 
 get '/?' do
