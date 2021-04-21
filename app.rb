@@ -2,11 +2,15 @@
 
 require 'sinatra'
 require 'sinatra/partial'
+require 'pagy'
 
 require_relative 'lib/configuration'
 require_relative 'lib/github'
 
 set :partial_template_engine, :erb
+
+include Pagy::Backend
+Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
 config = Configuration.new(ENV)
 set :github_api_base_uri, config.github_api_base_uri
@@ -17,6 +21,8 @@ set :github_token,        config.github_token
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
 
 helpers do
+  include Pagy::Frontend
+
   def d(text)
     Time.parse(text).utc.strftime('%d %b %Y %H:%M')
   end
@@ -52,8 +58,10 @@ get '/?' do
   GITHUB.perform_team_membership_lookup(settings.github_organisation)
   GITHUB.perform_member_role_lookup(settings.github_organisation)
   data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
+  pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
+  owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer", data: data,
-                        owners: GITHUB.owners.sort_by(&:login) }
+                        owners: owners, pagy: pagy }
 end
 
 get '/health?' do

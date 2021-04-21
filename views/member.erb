@@ -68,7 +68,7 @@
   
   <section class="column right">
     <h2>Teams</h2>
-    <section id="teams">
+    <section id="teams" class="object-list">
     <% if teams && teams.any? %>
       <ul>
       <% teams.each do |team| %>
@@ -80,11 +80,11 @@
     <% end %>
     </section>
     <h2>Top Repositories</h2>
-    <section id="repositories">
+    <section id="repositories" class="object-list">
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
-        <li><img src="/svg/respository.svg" alt="Respository"> <%= h repo.name %> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%= h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>

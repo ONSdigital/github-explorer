@@ -33,13 +33,14 @@
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.organization.created_at %></p>
     </section>
-    <section id="administrators">
+     <section id="owners" class="object-list">
       <h3>Organisation Owners</h3>
       <ul>
       <% owners.each do |owner| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%= h owner.login %>"><%= h owner.login %></a> <% unless owner.name.nil? || owner.name.empty? %>(<%= h owner.name %>)<% end %>
       <% end %>
       </ul>
+      <%= pagy_nav(pagy) %>
     </section>
   </section>
 
@@ -73,7 +74,7 @@
       <p><%= n data.enterprise.billing_info.total_available_licenses %> available licenses</p>
       <p><%= n data.enterprise.billing_info.total_licenses %> total licenses</p>
     </section>
-    <section id="administrators">
+    <section id="administrators" class="object-list">
       <h3>Enterprise Administrators</h3>
       <ul>
       <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
