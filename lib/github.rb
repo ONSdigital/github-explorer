@@ -37,12 +37,9 @@ class GitHub
     query($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
-          totalCount
           pageInfo {
-            startCursor
             endCursor
             hasNextPage
-            hasPreviousPage
           }
           nodes {
             ... on EnterpriseUserAccount {
