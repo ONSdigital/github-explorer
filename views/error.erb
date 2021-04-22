@@ -7,5 +7,13 @@
     <li><a href="/repositories">Repositories</a></li>
   </ul>
 </nav>
-<h2><%=h type %></h2>
-<p><%=h message %></p>
+<div id="error">
+  <div>
+    <h2>Something Went Wrong</h2>
+    <p>The error below occurred whilst invoking the GitHub GraphQL API:</p>
+    <section id="error-details">
+      <p><strong><%=h type %></strong></p>
+      <p><%=h message %></p>
+    </section>
+  </div>
+</div>

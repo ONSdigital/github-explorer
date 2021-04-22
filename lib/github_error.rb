@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+# Class representing an error received in response to making a request to GitHub's GraphQL API.
 class GitHubError < StandardError
   def initialize(errors)
+    super
     @errors = errors
   end
 

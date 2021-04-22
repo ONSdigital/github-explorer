@@ -258,6 +258,8 @@ class GitHub
     while next_page
       members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: 100, after: after },
                                                 context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, members.errors unless members.errors.empty?
+
       after = members.data.enterprise.members.page_info.end_cursor
       next_page = members.data.enterprise.members.page_info.has_next_page
       members.data.enterprise.members.nodes.each { |member| all_members << member }
@@ -274,7 +276,7 @@ class GitHub
     while next_page
       teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: 100, after: after },
                                             context: { base_uri: @base_uri, token: @token })
-      raise GitHubError.new(teams.errors) unless teams.errors.empty?
+      raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
       next_page = teams.data.organization.teams.page_info.has_next_page
@@ -290,8 +292,11 @@ class GitHub
   end
 
   def member(enterprise, login)
-    CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login },
-                               context: { base_uri: @base_uri, token: @token })
+    member = CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login },
+                                        context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, member.errors unless member.errors.empty?
+
+    member
   end
 
   def perform_member_role_lookup(organisation)
@@ -301,6 +306,8 @@ class GitHub
     while next_page
       members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: organisation, first: 100, after: after },
                                                            context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, members.errors unless members.errors.empty?
+
       after = members.data.organization.members_with_role.page_info.end_cursor
       next_page = members.data.organization.members_with_role.page_info.has_next_page
 
@@ -317,6 +324,7 @@ class GitHub
   def perform_team_membership_lookup(organisation)
     teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: organisation },
                                                       context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, teams.errors unless teams.errors.empty?
 
     teams.data.organization.teams.nodes.each do |team|
       team_tuple = OpenStruct.new
@@ -335,7 +343,10 @@ class GitHub
   end
 
   def summary(enterprise, organisation)
-    CLIENT.query(SUMMARY_QUERY, variables: { login: organisation, slug: enterprise },
-                                context: { base_uri: @base_uri, token: @token })
+    summary = CLIENT.query(SUMMARY_QUERY, variables: { login: organisation, slug: enterprise },
+                                          context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, summary.errors unless summary.errors.empty?
+
+    summary
   end
 end
