@@ -8,7 +8,7 @@
   </ul>
 </nav>
 <p><input type="text" id="filter" autocomplete="off" placeholder="Filter members..."></p>
-<table id="data">
+<table>
   <thead>
     <tr>
       <th>Login</th>
@@ -22,7 +22,7 @@
   <% members.each_with_index do |member, i| %>
     <tr class="<%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= member.avatar_url %>" alt="<%=h member.login %>"> <a href="/members/<%=h member.login %>"><%=h member.login %></a></td>
-      <td><% if member.name.nil? || member.name.empty? %>-<% else %><%=h member.name %><% end %></td>
+      <td><% if member.name.nil? || member.name.empty? %>-<% else %><a href="/members/<%=h member.login %>"><%=h member.name %><% end %></a></td>
       <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
       <td><%=d member.created_at %></td>
       <td><%=d member.user.updated_at %></td>

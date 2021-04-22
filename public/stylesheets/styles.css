@@ -5,20 +5,14 @@ body {
   margin: 1em;
 }
 
-a:link {
-  color: blue;
-}
-
-a:visited {
-  color: blue;
+a:link, a:visited, a:active {
+  color: #000;
+  text-decoration: none;
 }
 
 a:hover {
-  color: red;
-}
-
-a:active {
   color: blue;
+  text-decoration: underline;
 }
 
 h1 {
@@ -132,15 +126,16 @@ p {
 
 table {
   background-color: #f6f8fa;
-  border: 2px solid #e2e4e8;
+  border: 1px solid #e2e4e8;
   border-collapse: separate; /* Needed to get the rounded corners to appear. */
   border-spacing: 1px;
   border-radius: 6px;
-  font-size: 78%;
+  font-size: 90%;
   width: 100%;
 }
 
 th {
+  border-bottom: 1px solid #e2e4e8;
   font-weight: bold;
   text-align: left;
 }
@@ -313,16 +308,6 @@ td {
   background-color: #f6f8fa;
 }
 
-.links-list a:link, .links-list a:visited, .links-list a:active {
-  color: #000;
-  text-decoration: none;
-}
-
-.links-list a:hover {
-  color: blue;
-  text-decoration: underline;
-}
-
 .note {
   background-color: #fff;
   border: 1px solid #aaa;
@@ -339,14 +324,4 @@ td {
 
 .profile-detail p {
   font-size: 100%;
-}
-
-.profile-detail a:link, .profile-detail a:visited, .profile-detail a:active {
-  color: #000;
-  text-decoration: none;
-}
-
-.profile-detail a:hover {
-  color: blue;
-  text-decoration: underline;
 }
