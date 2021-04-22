@@ -19,8 +19,8 @@
     </tr>
   </thead>
   <tbody>
-  <% members.each do |member| %>
-    <tr>
+  <% members.each_with_index do |member, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= member.avatar_url %>" alt="<%=h member.login %>"> <a href="/members/<%=h member.login %>"><%=h member.login %></a></td>
       <td><% if member.name.nil? || member.name.empty? %>-<% else %><%=h member.name %><% end %></td>
       <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
