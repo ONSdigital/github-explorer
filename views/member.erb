@@ -23,7 +23,7 @@
     <p id="bio"><%=h data.enterprise.members.nodes.first.user.bio %></p>
   <% end %>
 
-    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%= pluralise(data.enterprise.members.nodes.first.user.followers.total_count, 'follower') %> &bull; <%=n data.enterprise.members.nodes.first.user.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%=n data.enterprise.members.nodes.first.user.starred_repositories.total_count %></p>
+    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%=pluralise(data.enterprise.members.nodes.first.user.followers.total_count, 'follower') %> &bull; <%=n data.enterprise.members.nodes.first.user.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%=n data.enterprise.members.nodes.first.user.starred_repositories.total_count %></p>
 
     <section class="profile-detail">
     <% if owner %>
