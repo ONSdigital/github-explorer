@@ -348,8 +348,6 @@ class GitHub
         @owners << user_tuple if member.role.eql?('ADMIN')
       end
     end
-
-    @owners.sort_by!(&:login)
   end
 
   def perform_team_membership_lookup(organisation)
