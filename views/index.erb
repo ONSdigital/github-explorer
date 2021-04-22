@@ -34,7 +34,7 @@
       <p><span>Created:</span><%=d data.organization.created_at %></p>
     </section>
      <section id="owners" class="links-list">
-      <h3>Organisation Owners</h3>
+      <h3>Organisation Owners (<%= pagy.count %>)</h3>
       <ul>
       <% owners.each do |owner| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h owner.login %>"><%=h owner.login %></a> <% unless owner.name.nil? || owner.name.empty? %>(<%=h owner.name %>)<% end %>
@@ -75,7 +75,7 @@
       <p><%=n data.enterprise.billing_info.total_licenses %> total licenses</p>
     </section>
     <section id="administrators" class="links-list">
-      <h3>Enterprise Administrators</h3>
+      <h3>Enterprise Administrators (<%= data.enterprise.owner_info.admins.nodes.count %>)</h3>
       <ul>
       <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h admin.login %>"><%=h admin.login %></a> <% unless admin.name.nil? || admin.name.empty? %>(<%=h admin.name %>)<% end %>
