@@ -242,12 +242,12 @@ td {
   vertical-align: middle;
 }
 
-#administrators ul, #owners ul, #teams ul, #repositories ul {
+#administrators ul, #members ul, #owners ul, #teams ul, #repositories ul {
   list-style-type: none;
   margin-left: -38px;
 }
 
-#administrators li, #owners li, #teams li, #repositories li {
+#administrators li, #members li, #owners li, #teams li, #repositories li {
   margin-bottom: 5px;
 }
 
@@ -271,11 +271,11 @@ td {
 }
 
 .child td {
-  padding-left: 25px;
+  padding-left: 20px;
 }
 
 .child-child td {
-  padding-left: 50px;
+  padding-left: 40px;
 }
 
 .column {

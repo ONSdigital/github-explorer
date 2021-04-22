@@ -97,7 +97,7 @@ class GitHub
             members(first: 1, membership: IMMEDIATE) {
               totalCount
             }
-            childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
+            childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
               totalCount
               nodes {
                 avatarUrl
@@ -243,6 +243,35 @@ class GitHub
     }
   GRAPHQL
 
+  TEAM_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $first: Int!, $after: String, $slug: String!) {
+      organization(login: $login) {
+        team(slug: $slug) {
+          avatarUrl
+          createdAt
+          description
+          name
+          privacy
+          updatedAt
+          members(first: $first, after: $after, membership: IMMEDIATE) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              role
+              node {
+                email
+                login
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   def initialize(base_uri, token)
     @base_uri = URI.parse(base_uri)
     @token    = token
@@ -319,6 +348,8 @@ class GitHub
         @owners << user_tuple if member.role.eql?('ADMIN')
       end
     end
+
+    @owners.sort_by!(&:login)
   end
 
   def perform_team_membership_lookup(organisation)
@@ -348,5 +379,40 @@ class GitHub
     raise GitHubError, summary.errors unless summary.errors.empty?
 
     summary
+  end
+
+  def team(organisation, slug)
+    after = nil
+    next_page = true
+    team_tuple = OpenStruct.new
+    team_tuple.members = []
+
+    while next_page
+      team = CLIENT.query(TEAM_QUERY, variables: { login: organisation, slug: slug,
+                                                   first: 100, after: after },
+                                      context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, team.errors unless team.errors.empty?
+
+      after = team.data.organization.team.members.page_info.end_cursor
+      next_page = team.data.organization.team.members.page_info.has_next_page
+
+      team_tuple.avatar_url  = team.data.organization.team.avatar_url
+      team_tuple.created_at  = team.data.organization.team.created_at
+      team_tuple.description = team.data.organization.team.description
+      team_tuple.name        = team.data.organization.team.name
+      team_tuple.privacy     = team.data.organization.team.privacy
+      team_tuple.updated_at  = team.data.organization.team.updated_at
+
+      team.data.organization.team.members.edges.each do |member|
+        user_tuple = OpenStruct.new
+        user_tuple.role  = member.role
+        user_tuple.login = member.node.login
+        user_tuple.name  = member.node.name
+        team_tuple.members << user_tuple
+      end
+    end
+
+    team_tuple.members.sort_by!(&:login)
+    team_tuple
   end
 end

@@ -116,3 +116,15 @@ get '/teams/?' do
   teams = all_teams[pagy.offset, pagy.items]
   erb :teams, locals: { title: 'Teams - GitHub Explorer', teams: teams, pagy: pagy }
 end
+
+get '/teams/:team' do |team|
+  begin
+    team = GITHUB.team(settings.github_organisation, team)
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
+  members = team.members[pagy.offset, pagy.items]
+  erb :team, locals: { title: "#{team.name} - GitHub Explorer", team: team, members: members, pagy: pagy }
+end

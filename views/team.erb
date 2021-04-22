@@ -10,6 +10,38 @@
 
 <section class="row">
   <section class="column left">
-    <p><img class="avatar-large" src="<%=data.enterprise.members.nodes.first.avatar_url %>"></p>
+    <p><img class="avatar-large" src="<%=team.avatar_url %>"></p>
+
+    <h2><%=h team.name %></h2>
+
+    <section class="profile-detail">
+    <% unless team.description.nil? %>
+      <p><%=h team.description %></p>
+    <% end %>
+      <p><% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></p>
+      <p><img src="/svg/team.svg" alt="Team"> <%=pluralise(team.members.count, 'member') %>
+    </section>
+    <section class="profile-dates">
+      <p><span>Created:</span><%=d team.created_at %></p>
+      <p><span>Updated:</span><%=d team.updated_at %></p>
+    </section>
+
+    <p id="back-link"><a href="/teams">&lt; Back</a></p>
+  </section>
+
+  <section class="column right">
+    <h2>Members</h2>
+    <section id="members">
+    <% if members && members.any? %>
+      <ul>
+      <% members.each do |member| %>
+        <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h member.login %>"><%=h member.login %></a> <% unless member.name.nil? || member.name.empty? %>(<%=h member.name %>)<% end %> <% if member.role.eql?('MAINTAINER') %><span class="note">Maintainer</span><% end %></li>
+      <% end %>
+      </ul>
+      <%= pagination_links(pagy) %>
+    <% else %>
+      <p>This team doesn’t have any members.</p>
+    <% end %>
+    </section>
   </section>
 </section>
