@@ -66,6 +66,7 @@ class GitHub
           nodes {
             name
             privacy
+            slug
             members(first: 100) {
               nodes {
                 login
@@ -321,6 +322,7 @@ class GitHub
       team_tuple = OpenStruct.new
       team_tuple.name    = team.name
       team_tuple.privacy = team.privacy
+      team_tuple.slug    = team.slug
 
       team.members.nodes.each do |member|
         if @members_teams.key?(member.login)
