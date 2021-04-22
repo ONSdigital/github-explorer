@@ -40,7 +40,7 @@
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h owner.login %>"><%=h owner.login %></a> <% unless owner.name.nil? || owner.name.empty? %>(<%=h owner.name %>)<% end %>
       <% end %>
       </ul>
-      <%= pagy_nav(pagy) %>
+      <%= pagination_links(pagy) %>
     </section>
   </section>
 
