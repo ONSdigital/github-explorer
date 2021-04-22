@@ -61,9 +61,14 @@ before do
 end
 
 get '/?' do
-  GITHUB.perform_team_membership_lookup(settings.github_organisation)
-  GITHUB.perform_member_role_lookup(settings.github_organisation)
-  data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
+  begin
+    GITHUB.perform_team_membership_lookup(settings.github_organisation)
+    GITHUB.perform_member_role_lookup(settings.github_organisation)
+    data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
   pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
   owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer", data: data,
@@ -75,7 +80,12 @@ get '/health?' do
 end
 
 get '/members/:login' do |login|
-  data = GITHUB.member(settings.github_enterprise, login).data
+  begin
+    data = GITHUB.member(settings.github_enterprise, login).data
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
   count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
   pagy = Pagy.new(count: count, items: MEMBERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
@@ -84,7 +94,12 @@ get '/members/:login' do |login|
 end
 
 get '/members/?' do
-  all_members = GITHUB.all_members(settings.github_enterprise)
+  begin
+    all_members = GITHUB.all_members(settings.github_enterprise)
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
   pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   members = all_members[pagy.offset, pagy.items]
   erb :members, locals: { title: 'Members - GitHub Explorer', members: members, pagy: pagy }
@@ -93,8 +108,8 @@ end
 get '/teams/?' do
   begin
     all_teams = GITHUB.all_teams(settings.github_organisation)
-  rescue GitHubError => err
-    return erb :error, locals: { title: 'Error - GitHub Explorer', message: err.message, type: err.type }
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
