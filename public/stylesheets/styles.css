@@ -88,33 +88,41 @@ nav.pagy-nav {
 
 nav.pagy-nav .page {
   display: inline;
-  font-weight: bold;
-  margin-right: 6px;
+  margin-right: 2px;
+}
+
+nav.pagy-nav .active {
+  background-color: #999;
+  border: 1px solid #999;
+  border-radius: 6px;
+  color: #fff;
+  padding: 6px 10px;
 }
 
 nav.pagy-nav .disabled {
-  border: 1px solid #aaa;
+  border: 1px solid #e2e4e8;
   border-radius: 6px;
   padding: 6px 10px;
 }
 
+nav.pagy-nav .page .next, nav.pagy-nav .page .prev {
+  border: 1px solid #fff;
+}
+
 nav.pagy-nav a {
-  border: 1px solid #000;
-  border-radius: 6px;
+  border: 1px solid #e2e4e8;
   padding: 6px 10px;
 }
 
 nav.pagy-nav a:link, nav.pagy-nav a:visited {
-  background-color: fff;
+  background-color: #fff;
   color: #000;
   text-decoration: none;
 }
 
 nav.pagy-nav a:hover {
-  background-color: #000;
-  border: 1px solid #000;
+  border: 1px solid #aaa;
   border-radius: 6px;
-  color: #fff;
   text-decoration: none;
 }
 
@@ -123,21 +131,13 @@ p {
 }
 
 table {
-  background-color: #000;
-  border: 2px solid #000;
+  background-color: #f6f8fa;
+  border: 2px solid #e2e4e8;
   border-collapse: separate; /* Needed to get the rounded corners to appear. */
   border-spacing: 1px;
   border-radius: 6px;
   font-size: 78%;
   width: 100%;
-}
-
-thead {
-  color: #fff;
-}
-
-tbody th {
-  color: #000;
 }
 
 th {
@@ -172,7 +172,7 @@ td {
 }
 
 #error div {
-  border: 1px solid #aaa;
+  border: 1px solid #e2e4e8;
   border-radius: 6px;
   padding: 0 40px 20px;
   width: 50%;
@@ -187,7 +187,7 @@ td {
 }
 
 #error-details {
-  background-color: #ddd;
+  background-color: #f6f8fa;
   border-radius: 6px;
   font-family: "Courier New", Courier, monospace;
   margin: 30px 0 20px;
@@ -198,7 +198,7 @@ td {
   background-image: url('/svg/search.svg');
   /* background-position: 10px 12px; */
   background-repeat: no-repeat;
-  border: 1px solid #aaa;
+  border: 1px solid #e2e4e8;
   border-radius: 6px;
   font-size: 100%;
   line-height: 20px;
@@ -231,7 +231,7 @@ td {
 }
 
 #licensing, #organisations, .profile-dates, .profile-detail, #teams {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e2e4e8;
 }
 
 #pagination {
@@ -302,7 +302,7 @@ td {
 }
 
 .disabled {
-  color: #aaa;
+  color: #e2e4e8;
 }
 
 .even td {
@@ -310,7 +310,7 @@ td {
 }
 
 .odd td {
-  background-color: #ddd;
+  background-color: #f6f8fa;
 }
 
 .links-list a:link, .links-list a:visited, .links-list a:active {
