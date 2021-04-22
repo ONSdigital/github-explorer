@@ -75,6 +75,7 @@
         <li><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
       <% end %>
       </ul>
+      <%= pagination_links(pagy) %>
     <% else %>
       <p>This user isn’t a member of any teams.</p>
     <% end %>

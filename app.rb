@@ -20,7 +20,8 @@ set :github_organisation, config.github_organisation
 set :github_token,        config.github_token
 
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
-ITEMS_COUNT = 40
+ITEMS_COUNT         = 40
+MEMBERS_ITEMS_COUNT = 10
 
 helpers do
   include Pagy::Frontend
@@ -36,6 +37,10 @@ helpers do
   def n(count)
     count_groups = count.to_s.chars.to_a.reverse.each_slice(3)
     count_groups.map(&:join).join(',').reverse
+  end
+
+  def pagination_links(pagy)
+    pagy_nav(pagy) if pagy.pages > 1
   end
 
   def pluralise(count, singular_noun, plural_noun = nil)
@@ -71,8 +76,11 @@ end
 
 get '/members/:login' do |login|
   data = GITHUB.member(settings.github_enterprise, login).data
+  count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
+  pagy = Pagy.new(count: count, items: MEMBERS_ITEMS_COUNT, page: (params[:page] || 1))
+  teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} - GitHub Explorer", data: data,
-                         owner: GITHUB.owner?(login), teams: GITHUB.members_teams[login] }
+                         owner: GITHUB.owner?(login), teams: teams, pagy: pagy }
 end
 
 get '/members/?' do
