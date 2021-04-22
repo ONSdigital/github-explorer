@@ -23,7 +23,7 @@
     <p id="bio"><%=h data.enterprise.members.nodes.first.user.bio %></p>
   <% end %>
 
-    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%= pluralise(data.enterprise.members.nodes.first.user.followers.total_count, 'follower') %> &bull; <%= n data.enterprise.members.nodes.first.user.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%= n data.enterprise.members.nodes.first.user.starred_repositories.total_count %></p>
+    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%= pluralise(data.enterprise.members.nodes.first.user.followers.total_count, 'follower') %> &bull; <%=n data.enterprise.members.nodes.first.user.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%=n data.enterprise.members.nodes.first.user.starred_repositories.total_count %></p>
 
     <section class="profile-detail">
     <% if owner %>
@@ -31,15 +31,15 @@
     <% end %>
 
     <% unless data.enterprise.members.nodes.first.user.company.nil? || data.enterprise.members.nodes.first.user.company.empty? %>
-      <p><img src="/svg/company.svg" alt="Company"> <%= h data.enterprise.members.nodes.first.user.company %></p>
+      <p><img src="/svg/company.svg" alt="Company"> <%=h data.enterprise.members.nodes.first.user.company %></p>
     <% end %>
 
     <% unless data.enterprise.members.nodes.first.user.location.nil? || data.enterprise.members.nodes.first.user.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%= h data.enterprise.members.nodes.first.user.location %></p>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h data.enterprise.members.nodes.first.user.location %></p>
     <% end %>
 
     <% unless data.enterprise.members.nodes.first.user.email.nil? || data.enterprise.members.nodes.first.user.email.empty? %>
-      <p><img src="/svg/email.svg" alt="Email"> <a href="mailto:<%= h data.enterprise.members.nodes.first.user.email %>"><%= h data.enterprise.members.nodes.first.user.email %></a></p>
+      <p><img src="/svg/email.svg" alt="Email"> <a href="mailto:<%=h data.enterprise.members.nodes.first.user.email %>"><%=h data.enterprise.members.nodes.first.user.email %></a></p>
     <% end %>
 
     <% unless data.enterprise.members.nodes.first.user.twitter_username.nil? || data.enterprise.members.nodes.first.user.twitter_username.empty? %>
@@ -47,7 +47,7 @@
     <% end %>
 
     <% unless data.enterprise.members.nodes.first.user.website_url.nil? || data.enterprise.members.nodes.first.user.website_url.empty? %>
-      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.members.nodes.first.user.website_url) %>"><%= h data.enterprise.members.nodes.first.user.website_url %></a></p>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.members.nodes.first.user.website_url) %>"><%=h data.enterprise.members.nodes.first.user.website_url %></a></p>
     <% end %>
     </section>
     <section class="profile-dates">
@@ -59,7 +59,7 @@
     <h3>Organisations</h3>
     <section id="organisations">
     <% data.enterprise.members.nodes.first.user.organizations.nodes.each do |org| %>
-      <p><img class="avatar-medium" src="<%= h org.avatar_url %>" alt="<%= h org.name %>"> <%= h org.name %></p>
+      <p><img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <%=h org.name %></p>
     <% end %>
     </section>
 
@@ -72,7 +72,7 @@
     <% if teams && teams.any? %>
       <ul>
       <% teams.each do |team| %>
-        <li><img src="/svg/team.svg" alt="Team"> <a href=""><%= h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
+        <li><img src="/svg/team.svg" alt="Team"> <a href=""><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
       <% end %>
       </ul>
     <% else %>
@@ -84,7 +84,7 @@
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
-        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%= h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>
