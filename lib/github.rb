@@ -299,6 +299,9 @@ class GitHub
           outsideCollaborators(first: 1) {
             totalCount
           }
+          pendingMemberInvitations(first: 1) {
+            totalCount
+          }
         }
       }
       organization(login: $login) {
