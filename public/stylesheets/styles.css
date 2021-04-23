@@ -158,6 +158,15 @@ td {
   font-size: 100%;
 }
 
+#debug {
+  background-color: #e2e4e8;
+  border-radius: 6px;
+  float: right;
+  font-size: 90%;
+  margin-top: -50px;
+  padding: 0 6px;
+}
+
 #error {
   align-items: center;
   display: flex;

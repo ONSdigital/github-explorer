@@ -56,6 +56,7 @@ end
 
 before do
   headers 'Content-Type' => 'text/html; charset=utf-8'
+  @debug = true if params[:debug]
 end
 
 get '/?' do

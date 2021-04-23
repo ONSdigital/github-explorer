@@ -7,6 +7,13 @@
     <li><a href="/repositories">Repositories</a></li>
   </ul>
 </nav>
+
+<% if @debug %>
+<section id="debug">
+  <p>GitHub GraphQL query: <%=n data.rate_limit.remaining %>/<%=n data.rate_limit.limit %> rate limit points remaining. Resets <%=d data.rate_limit.reset_at %>.</p>
+</section>
+<% end %>
+
 <section class="row">
   <section class="column left">
     <h2><%=h data.organization.name %> GitHub Organisation</h2>
