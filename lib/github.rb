@@ -176,8 +176,8 @@ class GitHub
                 company
                 email
                 location
-                updatedAt
                 twitterUsername
+                updatedAt
                 websiteUrl
                 contributionsCollection {
                   hasAnyContributions
@@ -199,8 +199,8 @@ class GitHub
                 }
                 topRepositories(first: 10, orderBy: { field: NAME, direction: ASC }) {
                   nodes {
-                    name
                     isPrivate
+                    name
                   }
                 }
               }
@@ -249,15 +249,15 @@ class GitHub
                 }
                 topRepositories(first: 10, orderBy: {field: NAME, direction: ASC}) {
                   nodes {
-                    name
                     isPrivate
+                    name
                   }
                 }
               }
               repositories(first: 50) {
                 nodes {
-                  name
                   isPrivate
+                  name
                 }
               }
             }
