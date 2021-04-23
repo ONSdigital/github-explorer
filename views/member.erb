@@ -5,6 +5,7 @@
     <li><a href="/collaborators">Outside Collaborators</a></li>
     <li><a href="/teams">Teams</a></li>
     <li><a href="/repositories">Repositories</a></li>
+    <li><a href="/two-factor-security">2FA Security</a></li>
   </ul>
 </nav>
 
@@ -53,7 +54,8 @@
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.enterprise.members.nodes.first.created_at %></p>
       <p><span>Updated:</span><%=d data.enterprise.members.nodes.first.user.updated_at %></p>
-      <p><% if data.enterprise.members.nodes.first.user.contributions_collection.has_any_contributions %>The user has contributions within the last year. <img src="/svg/tick.svg"><% else %>This user doesn’t have contributions within the last year.<% end %></p>
+      <p><% if data.enterprise.members.nodes.first.user.contributions_collection.has_any_contributions %>This user has contributions within the last year. <img src="/svg/tick.svg" alt="Tick"><% else %>This user doesn’t have contributions within the last year. <img src="/svg/cross.svg" alt="Cross"><% end %></p>
+      <p><% if two_factor_disabled %>This user doesn’t have two-factor security enabled. <img src="/svg/cross.svg" alt="Cross"><% else %>This user has two-factor security enabled. <img src="/svg/tick.svg" alt="Tick"><% end %></p>
     </section>
 
     <h3>Organisations</h3>

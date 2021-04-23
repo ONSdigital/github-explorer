@@ -20,8 +20,8 @@ set :github_organisation, config.github_organisation
 set :github_token,        config.github_token
 
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
-ITEMS_COUNT         = 40
-MEMBERS_ITEMS_COUNT = 10
+ITEMS_COUNT       = 40
+USERS_ITEMS_COUNT = 10
 
 helpers do
   include Pagy::Frontend
@@ -63,6 +63,8 @@ get '/?' do
   begin
     GITHUB.perform_team_membership_lookup(settings.github_organisation)
     GITHUB.perform_member_role_lookup(settings.github_organisation)
+    GITHUB.perform_two_factor_disabled_lookup(settings.github_enterprise)
+
     data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
@@ -70,8 +72,12 @@ get '/?' do
 
   pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
   owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
-  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer", data: data,
-                        owners: owners, pagy: pagy }
+  two_factor_disabled_count = GITHUB.two_factor_disabled.count
+  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
+                        data: data,
+                        owners: owners,
+                        two_factor_disabled_count: two_factor_disabled_count,
+                        pagy: pagy }
 end
 
 get '/collaborators/?' do
@@ -84,7 +90,8 @@ get '/collaborators/?' do
   pagy = Pagy.new(count: all_outside_collaborators.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   collaborators = all_outside_collaborators[pagy.offset, pagy.items]
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
-                                collaborators: collaborators, pagy: pagy }
+                                collaborators: collaborators,
+                                pagy: pagy }
 end
 
 get '/collaborators/:login' do |login|
@@ -95,10 +102,13 @@ get '/collaborators/:login' do |login|
   end
 
   count = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
-  pagy = Pagy.new(count: count, items: 10, page: (params[:page] || 1))
+  pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   repos = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
-  erb :collaborator, locals: { title: "#{login} - GitHub Explorer", data: data,
-                               repos: repos, pagy: pagy }
+  erb :collaborator, locals: { title: "#{login} - GitHub Explorer",
+                               data: data,
+                               two_factor_disabled: GITHUB.two_factor_disabled?(login),
+                               repos: repos,
+                               pagy: pagy }
 end
 
 get '/health?' do
@@ -113,10 +123,14 @@ get '/members/:login' do |login|
   end
 
   count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
-  pagy = Pagy.new(count: count, items: MEMBERS_ITEMS_COUNT, page: (params[:page] || 1))
+  pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
-  erb :member, locals: { title: "#{login} - GitHub Explorer", data: data,
-                         owner: GITHUB.owner?(login), teams: teams, pagy: pagy }
+  erb :member, locals: { title: "#{login} - GitHub Explorer",
+                         data: data,
+                         owner: GITHUB.owner?(login),
+                         two_factor_disabled: GITHUB.two_factor_disabled?(login),
+                         teams: teams,
+                         pagy: pagy }
 end
 
 get '/members/?' do
@@ -128,7 +142,9 @@ get '/members/?' do
 
   pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   members = all_members[pagy.offset, pagy.items]
-  erb :members, locals: { title: 'Members - GitHub Explorer', members: members, pagy: pagy }
+  erb :members, locals: { title: 'Members - GitHub Explorer',
+                          members: members,
+                          pagy: pagy }
 end
 
 get '/teams/?' do
@@ -140,7 +156,9 @@ get '/teams/?' do
 
   pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   teams = all_teams[pagy.offset, pagy.items]
-  erb :teams, locals: { title: 'Teams - GitHub Explorer', teams: teams, pagy: pagy }
+  erb :teams, locals: { title: 'Teams - GitHub Explorer',
+                        teams: teams,
+                        pagy: pagy }
 end
 
 get '/teams/:team' do |team|
@@ -152,5 +170,23 @@ get '/teams/:team' do |team|
 
   pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
   members = team.members[pagy.offset, pagy.items]
-  erb :team, locals: { title: "#{team.name} - GitHub Explorer", team: team, members: members, pagy: pagy }
+  erb :team, locals: { title: "#{team.name} - GitHub Explorer",
+                       team: team,
+                       members: members,
+                       pagy: pagy }
+end
+
+get '/two-factor-security/?' do
+  begin
+    two_factor_disabled_users = GITHUB.two_factor_disabled_users(settings.github_enterprise,
+                                                                 settings.github_organisation)
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  pagy = Pagy.new(count: two_factor_disabled_users.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  users = two_factor_disabled_users[pagy.offset, pagy.items]
+  erb :two_factor, locals: { title: '2FA Security - GitHub Explorer',
+                             users: users,
+                             pagy: pagy }
 end

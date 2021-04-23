@@ -9,7 +9,7 @@ require_relative 'github_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  attr_reader :members_teams, :owners
+  attr_reader :members_teams, :owners, :two_factor_disabled
 
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
@@ -364,11 +364,61 @@ class GitHub
     }
   GRAPHQL
 
+  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          affiliatedUsersWithTwoFactorDisabled(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            nodes {
+              login
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
+  TWO_FACTOR_DISABLED_USERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          affiliatedUsersWithTwoFactorDisabled(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            nodes {
+              avatarUrl
+              createdAt
+              email
+              login
+              name
+              updatedAt
+              organizations(first: 5) {
+                nodes {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+      organization(login: $login) {
+        name
+      }
+    }
+  GRAPHQL
+
   def initialize(base_uri, token)
     @base_uri = URI.parse(base_uri)
     @token    = token
-    @members_teams = {}
-    @owners        = Set[]
+    @members_teams       = {}
+    @owners              = Set[]
+    @two_factor_disabled = Set[]
   end
 
   def all_members(enterprise)
@@ -493,6 +543,24 @@ class GitHub
     end
   end
 
+  def perform_two_factor_disabled_lookup(enterprise)
+    after = nil
+    next_page = true
+
+    while next_page
+      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: enterprise, first: 100, after: after },
+                                                       context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, logins.errors unless logins.errors.empty?
+
+      after = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
+      next_page = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
+
+      logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
+        @two_factor_disabled << user.login
+      end
+    end
+  end
+
   def summary(enterprise, organisation)
     summary = CLIENT.query(SUMMARY_QUERY, variables: { login: organisation, slug: enterprise },
                                           context: { base_uri: @base_uri, token: @token })
@@ -534,5 +602,48 @@ class GitHub
 
     team_tuple.members.sort_by!(&:login)
     team_tuple
+  end
+
+  def two_factor_disabled_users(enterprise, organisation)
+    after = nil
+    next_page = true
+    two_factor_disabled_users = []
+
+    while next_page
+      users = CLIENT.query(TWO_FACTOR_DISABLED_USERS_QUERY, variables: { login: organisation, slug: enterprise,
+                                                                         first: 100, after: after },
+                                                            context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, users.errors unless users.errors.empty?
+
+      after = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
+      next_page = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
+
+      users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
+        user_tuple = OpenStruct.new
+        user_tuple.avatar_url = user.avatar_url
+        user_tuple.created_at = user.created_at
+        user_tuple.email      = user.email
+        user_tuple.login      = user.login
+        user_tuple.member     = false
+        user_tuple.name       = user.name
+        user_tuple.updated_at = user.updated_at
+
+        user.organizations.nodes.each do |org|
+          if org.name.eql?(users.data.organization.name)
+            user_tuple.member = true
+            break
+          end
+        end
+
+        two_factor_disabled_users << user_tuple
+      end
+    end
+
+    two_factor_disabled_users
+  end
+
+  def two_factor_disabled?(login)
+    @two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
+    false
   end
 end

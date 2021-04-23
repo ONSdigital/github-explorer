@@ -1,0 +1,38 @@
+<nav>
+  <ul>
+    <li><a href="/">Organisation</a></li>
+    <li><a href="/members">Members</a></li>
+    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li><a href="/teams">Teams</a></li>
+    <li><a href="/repositories">Repositories</a></li>
+    <li id="active">2FA Security</li>
+  </ul>
+</nav>
+
+<p>The users below don’t have two-factor security enabled on their GitHub accounts.</p>
+<p><input type="text" id="filter" autocomplete="off" placeholder="Filter users..."></p>
+<table id="data">
+  <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% users.each_with_index do |user, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><img class="avatar-small" src="<%= user.avatar_url %>" alt="<%=h user.login %>"> <% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.login %></a></td>
+      <td><% if user.name.nil? || user.name.empty? %>-<% else %><% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.name %><% end %></a></td>
+      <td><% if user.email.nil? || user.email.empty? %>-<% else %><%=h user.email %><% end %></td>
+      <td><%=d user.created_at %></td>
+      <td><%=d user.updated_at %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<section id="pagination">
+  <%= pagination_links(pagy) %>
+</section>
