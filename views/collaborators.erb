@@ -1,0 +1,37 @@
+<nav>
+  <ul>
+    <li><a href="/">Organisation</a></li>
+    <li><a href="/members">Members</a></li>
+    <li id="active">Outside Collaborators</li>
+    <li><a href="/teams">Teams</a></li>
+    <li><a href="/repositories">Repositories</a></li>
+  </ul>
+</nav>
+<p><input type="text" id="filter" autocomplete="off" placeholder="Filter outside collaborators..."></p>
+<table id="data">
+  <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Access</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% collaborators.each_with_index do |collaborator, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><img class="avatar-small" src="<%= collaborator.node.avatar_url %>" alt="<%=h collaborator.node.login %>"> <a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.login %></a></td>
+      <td><% if collaborator.node.name.nil? || collaborator.node.name.empty? %>-<% else %><a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.name %><% end %></a></td>
+      <td><% if collaborator.node.email.nil? || collaborator.node.email.empty? %>-<% else %><%=h collaborator.node.email %><% end %></td>
+      <td><%=pluralise(collaborator.repositories.total_count, 'repository', 'repositories') %></td>
+      <td><%=d collaborator.node.created_at %></td>
+      <td><%=d collaborator.node.updated_at %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<section id="pagination">
+  <%= pagination_links(pagy) %>
+</section>
