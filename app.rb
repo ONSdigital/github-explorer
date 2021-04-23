@@ -73,6 +73,19 @@ get '/?' do
                         owners: owners, pagy: pagy }
 end
 
+get '/collaborators/?' do
+  begin
+    all_outside_collaborators = GITHUB.all_outside_collaborators(settings.github_enterprise)
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  pagy = Pagy.new(count: all_outside_collaborators.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  collaborators = all_outside_collaborators[pagy.offset, pagy.items]
+  erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
+                                collaborators: collaborators, pagy: pagy }
+end
+
 get '/health?' do
   halt 200
 end

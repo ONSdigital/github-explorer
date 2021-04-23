@@ -14,6 +14,34 @@ class GitHub
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
+  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          outsideCollaborators(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              node {
+                avatarUrl
+                createdAt
+                email
+                login
+                name
+                updatedAt
+              }
+              repositories(first: 1) {
+                totalCount
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
@@ -295,6 +323,28 @@ class GitHub
     end
 
     all_members
+  end
+
+  def all_outside_collaborators(enterprise)
+    after = nil
+    next_page = true
+    all_outside_collaborators = []
+
+    while next_page
+      collaborators = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_QUERY, variables: { slug: enterprise,
+                                                                                 first: 100, after: after },
+                                                                    context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, collaborators.errors unless collaborators.errors.empty?
+
+      after = collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
+      next_page = collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
+
+      collaborators.data.enterprise.owner_info.outside_collaborators.edges.each do |collaborator|
+        all_outside_collaborators << collaborator
+      end
+    end
+
+    all_outside_collaborators
   end
 
   def all_teams(organisation)
