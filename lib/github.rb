@@ -269,6 +269,11 @@ class GitHub
 
   SUMMARY_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $slug: String!) {
+      rateLimit {
+        limit
+        remaining
+        resetAt
+      }
       enterprise(slug: $slug) {
         avatarUrl
         createdAt
