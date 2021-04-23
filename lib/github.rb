@@ -211,6 +211,62 @@ class GitHub
     }
   GRAPHQL
 
+  OUTSIDE_COLLABORATOR_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $login: String!) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          outsideCollaborators(first: 1, query: $login) {
+            edges {
+              node {
+                avatarUrl
+                bio
+                company
+                createdAt
+                email
+                location
+                login
+                name
+                twitterUsername
+                updatedAt
+                websiteUrl
+                contributionsCollection {
+                  hasAnyContributions
+                }
+                followers(first: 1) {
+                  totalCount
+                }
+                following(first: 1) {
+                  totalCount
+                }
+                organizations(first: 10) {
+                  nodes {
+                    avatarUrl
+                    name
+                  }
+                }
+                starredRepositories(first: 1) {
+                  totalCount
+                }
+                topRepositories(first: 10, orderBy: {field: NAME, direction: ASC}) {
+                  nodes {
+                    name
+                    isPrivate
+                  }
+                }
+              }
+              repositories(first: 50) {
+                nodes {
+                  name
+                  isPrivate
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   SUMMARY_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $slug: String!) {
       enterprise(slug: $slug) {
@@ -363,6 +419,14 @@ class GitHub
     end
 
     all_teams
+  end
+
+  def outside_collaborator(enterprise, login)
+    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: enterprise, login: login },
+                                                                    context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
+
+    outside_collaborator
   end
 
   def owner?(login)

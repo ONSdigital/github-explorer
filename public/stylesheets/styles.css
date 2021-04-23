@@ -242,12 +242,12 @@ td {
   vertical-align: middle;
 }
 
-#administrators ul, #members ul, #owners ul, #teams ul, #repositories ul {
+#administrators ul, #members ul, #owners ul, #teams ul {
   list-style-type: none;
   margin-left: -38px;
 }
 
-#administrators li, #members li, #owners li, #teams li, #repositories li {
+#administrators li, #members li, #owners li, #teams li {
   margin-bottom: 5px;
 }
 
@@ -324,4 +324,17 @@ td {
 
 .profile-detail p {
   font-size: 100%;
+}
+
+.repositories {
+  border-bottom: 1px solid #e2e4e8;
+}
+
+.repositories ul {
+  list-style-type: none;
+  margin-left: -38px;  
+}
+
+.repositories li {
+  margin-bottom: 5px; 
 }

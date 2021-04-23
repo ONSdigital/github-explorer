@@ -86,6 +86,20 @@ get '/collaborators/?' do
                                 collaborators: collaborators, pagy: pagy }
 end
 
+get '/collaborators/:login' do |login|
+  begin
+    data = GITHUB.outside_collaborator(settings.github_enterprise, login).data
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  count = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
+  pagy = Pagy.new(count: count, items: 10, page: (params[:page] || 1))
+  repos = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
+  erb :collaborator, locals: { title: "#{login} - GitHub Explorer", data: data,
+                               repos: repos, pagy: pagy }
+end
+
 get '/health?' do
   halt 200
 end

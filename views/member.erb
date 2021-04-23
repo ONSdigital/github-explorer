@@ -81,7 +81,7 @@
     <% end %>
     </section>
     <h2>Top Repositories</h2>
-    <section id="repositories">
+    <section class="repositories">
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
