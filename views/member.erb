@@ -53,7 +53,7 @@
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.enterprise.members.nodes.first.created_at %></p>
       <p><span>Updated:</span><%=d data.enterprise.members.nodes.first.user.updated_at %></p>
-      <p><% if data.enterprise.members.nodes.first.user.contributions_collection.has_any_contributions %>The user has contributions within the last year. <img src="/svg/tick.svg"><% else %>This user doesn’t have contributions within the last year.<% end %></p>
+      <p><% if data.enterprise.members.nodes.first.user.contributions_collection.has_any_contributions %>This person has contributions within the last year. <img src="/svg/tick.svg"><% else %>This person doesn’t have contributions within the last year.<% end %></p>
     </section>
 
     <h3>Organisations</h3>
@@ -77,7 +77,7 @@
       </ul>
       <%= pagination_links(pagy) %>
     <% else %>
-      <p>This user isn’t a member of any teams.</p>
+      <p>This person isn’t a member of any teams.</p>
     <% end %>
     </section>
     <h2>Top Repositories</h2>
@@ -89,7 +89,7 @@
       <% end %>
       </ul>
     <% else %>
-      <p>This user hasn’t contributed to or created any repositories.</p>
+      <p>This person hasn’t contributed to or created any repositories.</p>
     <% end %>
     </section>
   </section>
