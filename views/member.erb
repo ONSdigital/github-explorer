@@ -89,7 +89,7 @@
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
-        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>

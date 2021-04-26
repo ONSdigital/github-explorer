@@ -76,7 +76,7 @@
     <% if repos && repos.any? %>
       <ul>
       <% repos.each do |repo| %>
-        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
       <%= pagination_links(pagy) %>
@@ -89,7 +89,7 @@
     <% if data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.any? %>
       <ul>
       <% data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.each do |repo| %>
-        <li><a href=""><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>
