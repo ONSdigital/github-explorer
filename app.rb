@@ -204,3 +204,7 @@ get '/two-factor-security/?' do
                              users: users,
                              pagy: pagy }
 end
+
+not_found do
+  erb :not_found, locals: { title: '404 Not Found - GitHub Explorer' }
+end
