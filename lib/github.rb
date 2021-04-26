@@ -295,6 +295,81 @@ class GitHub
     }
   GRAPHQL
 
+  REPOSITORY_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $name: String!) {
+      organization(login: $login) {
+        repository(name: $name) {
+          createdAt
+          description
+          forkCount
+          isArchived
+          isEmpty
+          isPrivate
+          name
+          pushedAt
+          stargazerCount
+          updatedAt
+          # collaborators(first: 100, after: $after) {
+          #   edges {
+          #     permissionSources {
+          #       permission
+          #       source {
+          #         ... on Organization {
+          #           name
+          #         }
+          #         ... on Team {
+          #           name
+          #         }
+          #       }
+          #     }
+          #     node {
+          #       login
+          #     }
+          #   }
+          # }
+          branchProtectionRules(first: 10) {
+            nodes {
+              allowsDeletions
+              allowsForcePushes
+              creator {
+                login
+              }
+              dismissesStaleReviews
+              isAdminEnforced
+              pattern
+              requiredApprovingReviewCount
+              requiresCodeOwnerReviews
+              requiresCommitSignatures
+              requiresLinearHistory
+              requiresStatusChecks
+              requiresStrictStatusChecks
+              restrictsPushes
+              restrictsReviewDismissals
+            }
+          }
+          defaultBranchRef {
+            name
+          }
+          languages(first: 10) {
+            edges {
+              size
+              node {
+                color
+                name
+              }
+            }
+          }
+          vulnerabilityAlerts(first: 1) {
+            totalCount
+          }
+          watchers(first: 1) {
+            totalCount
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   SUMMARY_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $slug: String!) {
       rateLimit {
@@ -606,6 +681,14 @@ class GitHub
         @two_factor_disabled << user.login
       end
     end
+  end
+
+  def repository(organisation, repository)
+    repository = CLIENT.query(REPOSITORY_QUERY, variables: { login: organisation, name: repository },
+                                                context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, repository.errors unless repository.errors.empty?
+
+    repository
   end
 
   def summary(enterprise, organisation)

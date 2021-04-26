@@ -158,6 +158,14 @@ td {
   font-size: 100%;
 }
 
+#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #teams {
+  border-bottom: 1px solid #e2e4e8;
+}
+
+#branch-protection-rules table {
+  font-size: 75%;
+}
+
 #debug {
   background-color: #e2e4e8;
   border-radius: 6px;
@@ -209,6 +217,10 @@ td {
   padding: 2px 2px 2px 25px;
 }
 
+#languages ul {
+  columns: 2;
+}
+
 #licensing p {
   font-size: 100%;
 }
@@ -234,10 +246,6 @@ td {
   font-size: 100%;
 }
 
-#licensing, #organisations, .profile-dates, .profile-detail, #teams {
-  border-bottom: 1px solid #e2e4e8;
-}
-
 #pagination {
   text-align: center;
 }
@@ -251,12 +259,12 @@ td {
   vertical-align: middle;
 }
 
-#administrators ul, #members ul, #owners ul, #teams ul {
+#administrators ul, #languages ul, #members ul, #owners ul, #teams ul {
   list-style-type: none;
   margin-left: -38px;
 }
 
-#administrators li, #members li, #owners li, #teams li {
+#administrators li, #languages li, #members li, #owners li, #teams li {
   margin-bottom: 5px;
 }
 
@@ -317,6 +325,11 @@ td {
   background-color: #f6f8fa;
 }
 
+.language-size {
+  color: #aaa;
+  font-size: 80%;
+}
+
 .no-wrap {
   white-space: nowrap;
 }
@@ -354,4 +367,8 @@ td {
 
 .repositories li {
   margin-bottom: 5px; 
+}
+
+.swatch {
+  margin-right: 6px;
 }

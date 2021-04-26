@@ -34,6 +34,10 @@ helpers do
     Rack::Utils.escape_html(text)
   end
 
+  def kb(bytes)
+    "#{(bytes.to_f / 1000).round(2)} KB"
+  end
+
   def n(count)
     count_groups = count.to_s.chars.to_a.reverse.each_slice(3)
     count_groups.map(&:join).join(',').reverse
@@ -159,6 +163,19 @@ get '/repositories/?' do
   erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
                                repositories: repositories,
                                pagy: pagy }
+end
+
+get '/repositories/:repository' do |repository|
+  begin
+    data = GITHUB.repository(settings.github_organisation, repository).data
+    repo = data.organization.repository
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  erb :repository, locals: { title: "#{repository} - GitHub Explorer",
+                             repository: repository,
+                             repo: repo }
 end
 
 get '/teams/?' do

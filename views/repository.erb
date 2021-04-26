@@ -1,0 +1,112 @@
+<nav>
+  <ul>
+    <li><a href="/">Organisation</a></li>
+    <li><a href="/members">Members</a></li>
+    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li><a href="/teams">Teams</a></li>
+    <li id="active">Repositories</li>
+    <li><a href="/two-factor-security">2FA Security</a></li>
+  </ul>
+</nav>
+
+<section class="row">
+  <section class="column left">
+    <h2><%=h repository %></h2>
+  <% if repo.nil? %>
+    <section class="profile-detail">
+      <p>This repository no longer exists.</p>
+    </section>
+  <% else %>
+    <p id="profile-stats"><img src="/svg/watch.svg" alt="Watching"> <%=pluralise(repo.watchers.total_count, 'watcher') %> &bull; <img src="/svg/star.svg" alt="Stars"> <%=n repo.stargazer_count %> &bull; <img src="/svg/fork.svg" alt="Forks"> <%=pluralise(repo.fork_count, 'fork') %></p>
+    
+    <section class="profile-detail">
+    <% unless repo.description.nil? %>
+      <p><%=h repo.description %><% unless repo.description.end_with?('.') %>.<% end %></p>
+      <p><% if repo.is_private %><span class="note">Private</span><% end %> <% if repo.is_archived == true %><span class="note">Archived</span><% end %></p>
+      <p><img src="/svg/branch.svg" alt="Branch"> Default branch: <strong><%=h repo.default_branch_ref.name %></strong></p>
+    <% end %>
+    </section>
+      
+    <section class="profile-dates">
+      <p><span>Created:</span><%=d repo.created_at %></p>
+      <p><span>Updated:</span><%=d repo.updated_at %></p>
+      <p><span>Pushed:</span><%=d repo.pushed_at %></p>
+    </section>
+
+    <h3>Languages</h3>
+    <section id="languages">
+    <ul>
+    <% repo.languages.edges.sort_by(&:size).reverse.each do |language| %>
+      <li><span class="swatch" style="color: <%= language.node.color %>;">&#9632;</span><%= language.node.name %> <span class="language-size"><%=kb language.size %></span></li>
+    <% end %>
+    </ul>
+    </section>
+
+    <h3>Branch Protection Rules</h3>
+    <section id="branch-protection-rules">
+    <% if repo.branch_protection_rules.nodes.any? %>
+      <table style="margin-bottom: 25px;">
+        <thead>
+          <tr>
+            <th>Branch Name Pattern</th>
+            <th>Required Approving PR Reviews</th>
+            <th>Dismiss Stale PR Approvals Upon New Commits</th>
+            <th>Require Code Owner Reviews</th>
+            <th>Restrict PR Review Dismissal</th>
+            <th>Require Status Checks To Pass Before Merging</th>
+            <th>Require Branches To Be Up-To-Date Before Merging</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% repo.branch_protection_rules.nodes.sort_by(&:pattern).each_with_index do |rule, i| %>
+          <tr class="<%= i.even? ? 'even' : 'odd' %>">
+            <td><% if repo.default_branch_ref.name.eql?(rule.pattern) %><strong><% end %><%=h rule.pattern %><% if repo.default_branch_ref.name.eql?(rule.pattern) %></strong><% end %></td>
+            <td><%= rule.required_approving_review_count %></td>
+            <td><% if rule.dismisses_stale_reviews %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.requires_code_owner_reviews %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.restricts_review_dismissals %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.requires_status_checks %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.requires_strict_status_checks %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+          </tr>  
+        <% end %>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Branch Name Pattern</th>
+            <th>Require Signed Commits</th>
+            <th>Require Linear History</th>
+            <th>Include Administrators</th>
+            <th>Restrict Who Can Push To Matching Branches</th>
+            <th>Allow Force Pushes</th>
+            <th>Allow Deletions</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% repo.branch_protection_rules.nodes.sort_by(&:pattern).each_with_index do |rule, i| %>
+          <tr class="<%= i.even? ? 'even' : 'odd' %>">
+            <td><% if repo.default_branch_ref.name.eql?(rule.pattern) %><strong><% end %><%=h rule.pattern %><% if repo.default_branch_ref.name.eql?(rule.pattern) %></strong><% end %></td>
+            <td><% if rule.requires_commit_signatures %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.requires_linear_history %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.is_admin_enforced %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.restricts_pushes %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.allows_force_pushes %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+            <td><% if rule.allows_deletions %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+          </tr>  
+        <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>This repository doesn’t have any branch protection rules.</p>
+    <% end %>
+    </section>
+  <% end %>
+
+    <p id="back-link"><a href="/repositories">&lt; Back</a></p>
+  </section>
+
+  <section class="column right">
+
+  </section>
+</section>
