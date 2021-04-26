@@ -2,7 +2,7 @@
   <ul>
     <li><a href="/">Organisation</a></li>
     <li><a href="/members">Members</a></li>
-    <li><a href="/collaborators">Outside Collaborators</a></li>
+    <li><a href="/collaborators">Access</a></li>
     <li><a href="/teams">Teams</a></li>
     <li id="active">Repositories</li>
     <li><a href="/two-factor-security">2FA Security</a></li>
@@ -16,20 +16,20 @@
       <th>Name</th>
       <th>Description</th>
       <th>Primary Language</th>
-      <th>Outside Collaborators</th>
-      <th class="date">Created</th>
-      <th class="date">Updated</th>
+      <th class="no-wrap">Access</th>
+      <th class="no-wrap">Created</th>
+      <th class="no-wrap">Updated</th>
     </tr>
   </thead>
   <tbody>
-  <% repositories.each_with_index do |repository, i| %>
+  <% repositories.each_with_index do |repo, i| %>
     <tr class="<%= i.even? ? 'even' : 'odd' %>">
-      <td><a href="/repositories/<%=h repository.name %>"><%=h repository.name %></a> <% if repository.is_private %><span class="note">Private</span><% end %> <% if repository.is_archived == true %><span class="note">Archived</span><% end %></td>
-      <td><% if repository.description.nil? || repository.description.empty? %>-<% else %><%=h repository.description %><% end %></td>
-      <td><% if repository.primary_language.nil? %>-<% else %><%=h repository.primary_language.name %><% end %></td>
-      <td><% if repository.collaborators.nil? %>0<% else %><a href="/repositories/<%=h repository.name %>"><%=n repository.collaborators.total_count %></a><% end %></td>
-      <td class="date"><%=d repository.created_at %></td>
-      <td class="date"><%=d repository.updated_at %></td>
+      <td><a href="/repositories/<%=h repo.name %>"><%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %> <% if repo.is_archived == true %><span class="note">Archived</span><% end %></td>
+      <td><% if repo.description.nil? || repo.description.empty? %>-<% else %><%=h repo.description %><% end %></td>
+      <td><% if repo.primary_language.nil? %>-<% else %><%=h repo.primary_language.name %><% end %></td>
+      <td class="no-wrap"><% if repo.collaborators.nil? %>0 members<% else %><a href="/repositories/<%=h repo.name %>"><%=pluralise(repo.collaborators.total_count, 'member') %></a><% end %></td>
+      <td class="no-wrap"><%=d repo.created_at %></td>
+      <td class="no-wrap"><%=d repo.updated_at %></td>
     </tr>
   <% end %>
   </tbody>

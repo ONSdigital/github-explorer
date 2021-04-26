@@ -305,10 +305,6 @@ td {
   display: flex;
 }
 
-.date {
-  white-space: nowrap;
-}
-
 .disabled {
   color: #e2e4e8;
 }
@@ -319,6 +315,10 @@ td {
 
 .odd td {
   background-color: #f6f8fa;
+}
+
+.no-wrap {
+  white-space: nowrap;
 }
 
 .note {

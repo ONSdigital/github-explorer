@@ -17,8 +17,8 @@
       <th>Name</th>
       <th>Email</th>
       <th>Access</th>
-      <th class="date">Created</th>
-      <th class="date">Updated</th>
+      <th class="no-wrap">Created</th>
+      <th class="no-wrap">Updated</th>
     </tr>
   </thead>
   <tbody>
@@ -28,8 +28,8 @@
       <td><% if collaborator.node.name.nil? || collaborator.node.name.empty? %>-<% else %><a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.name %><% end %></a></td>
       <td><% if collaborator.node.email.nil? || collaborator.node.email.empty? %>-<% else %><%=h collaborator.node.email %><% end %></td>
       <td><%=pluralise(collaborator.repositories.total_count, 'repository', 'repositories') %></td>
-      <td class="date"><%=d collaborator.node.created_at %></td>
-      <td class="date"><%=d collaborator.node.updated_at %></td>
+      <td class="no-wrap"><%=d collaborator.node.created_at %></td>
+      <td class="no-wrap"><%=d collaborator.node.updated_at %></td>
     </tr>
   <% end %>
   </tbody>
