@@ -87,6 +87,34 @@ class GitHub
     }
   GRAPHQL
 
+  ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        repositories(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            createdAt
+            description
+            isArchived
+            # isEmpty
+            isPrivate
+            name
+            updatedAt
+            collaborators(first: 1) {
+              totalCount
+            }
+            primaryLanguage {
+              name
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   ALL_TEAMS_ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!) {
       organization(login: $login) {
@@ -459,6 +487,25 @@ class GitHub
     end
 
     all_outside_collaborators
+  end
+
+  def all_repositories(organisation)
+    after = nil
+    next_page = true
+    all_repositories = []
+
+    while next_page
+      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: organisation, first: 100, after: after},
+                                                                       context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, repositories.errors unless repositories.errors.empty?
+
+      after = repositories.data.organization.repositories.page_info.end_cursor
+      next_page = repositories.data.organization.repositories.page_info.has_next_page
+
+      repositories.data.organization.repositories.nodes.each { |repository| all_repositories << repository }
+    end
+
+    all_repositories.sort_by(&:name)
   end
 
   def all_teams(organisation)

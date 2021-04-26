@@ -147,6 +147,20 @@ get '/members/?' do
                           pagy: pagy }
 end
 
+get '/repositories/?' do
+  begin
+    all_repositories = GITHUB.all_repositories(settings.github_organisation)
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  pagy = Pagy.new(count: all_repositories.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  repositories = all_repositories[pagy.offset, pagy.items]
+  erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
+                               repositories: repositories,
+                               pagy: pagy }
+end
+
 get '/teams/?' do
   begin
     all_teams = GITHUB.all_teams(settings.github_organisation)
