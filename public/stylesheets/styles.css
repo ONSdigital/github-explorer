@@ -326,6 +326,10 @@ td {
   padding: 1px 6px;
 }
 
+.organisation {
+  margin-right: 6px;
+}
+
 .profile-dates span {
   display: inline-block;
   width: 5em;

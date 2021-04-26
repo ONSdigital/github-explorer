@@ -57,8 +57,10 @@
     <h3>Organisations</h3>
     <section id="organisations">
     <% if data.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.any? %>
-    <% data.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.each do |org| %>
-      <p><img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <%=h org.name %></p>
+      <p>
+    <% data.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.sort_by(&:name).each do |org| %>
+      <img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <span class="organisation"><%=h org.name %></span>
+      </p>
     <% end %>
     <% else %>
       <p>This user isn’t a member of any organisations.</p>
