@@ -14,34 +14,6 @@ class GitHub
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
-  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query ($slug: String!, $first: Int!, $after: String) {
-      enterprise(slug: $slug) {
-        ownerInfo {
-          outsideCollaborators(first: $first, after: $after) {
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-            edges {
-              node {
-                avatarUrl
-                createdAt
-                email
-                login
-                name
-                updatedAt
-              }
-              repositories(first: 1) {
-                totalCount
-              }
-            }
-          }
-        }
-      }
-    }
-  GRAPHQL
-
   ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
@@ -86,6 +58,34 @@ class GitHub
       }
     }
   GRAPHQL
+
+  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  query ($slug: String!, $first: Int!, $after: String) {
+    enterprise(slug: $slug) {
+      ownerInfo {
+        outsideCollaborators(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          edges {
+            node {
+              avatarUrl
+              createdAt
+              email
+              login
+              name
+              updatedAt
+            }
+            repositories(first: 1) {
+              totalCount
+            }
+          }
+        }
+      }
+    }
+  }
+GRAPHQL
 
   ALL_TEAMS_ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!) {
