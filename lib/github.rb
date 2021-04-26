@@ -398,7 +398,7 @@ class GitHub
               login
               name
               updatedAt
-              organizations(first: 5) {
+              organizations(first: 3) {
                 nodes {
                   name
                 }
