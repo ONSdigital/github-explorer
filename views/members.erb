@@ -16,8 +16,8 @@
       <th>Login</th>
       <th>Name</th>
       <th>Email</th>
-      <th>Created</th>
-      <th>Updated</th>
+      <th class="date">Created</th>
+      <th class="date">Updated</th>
     </tr>
   </thead>
   <tbody>
@@ -26,8 +26,8 @@
       <td><img class="avatar-small" src="<%= member.avatar_url %>" alt="<%=h member.login %>"> <a href="/members/<%=h member.login %>"><%=h member.login %></a></td>
       <td><% if member.name.nil? || member.name.empty? %>-<% else %><a href="/members/<%=h member.login %>"><%=h member.name %><% end %></a></td>
       <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
-      <td><%=d member.created_at %></td>
-      <td><%=d member.user.updated_at %></td>
+      <td class="date"><%=d member.created_at %></td>
+      <td class="date"><%=d member.user.updated_at %></td>
     </tr>
   <% end %>
   </tbody>

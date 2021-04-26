@@ -305,6 +305,10 @@ td {
   display: flex;
 }
 
+.date {
+  white-space: nowrap;
+}
+
 .disabled {
   color: #e2e4e8;
 }
