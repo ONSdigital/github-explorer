@@ -60,32 +60,32 @@ class GitHub
   GRAPHQL
 
   ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
-  query ($slug: String!, $first: Int!, $after: String) {
-    enterprise(slug: $slug) {
-      ownerInfo {
-        outsideCollaborators(first: $first, after: $after) {
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-          edges {
-            node {
-              avatarUrl
-              createdAt
-              email
-              login
-              name
-              updatedAt
+    query ($slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          outsideCollaborators(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
             }
-            repositories(first: 1) {
-              totalCount
+            edges {
+              node {
+                avatarUrl
+                createdAt
+                email
+                login
+                name
+                updatedAt
+              }
+              repositories(first: 1) {
+                totalCount
+              }
             }
           }
         }
       }
     }
-  }
-GRAPHQL
+  GRAPHQL
 
   ALL_TEAMS_ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($login: String!) {
