@@ -90,7 +90,7 @@ class GitHub
   ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
-        repositories(first: $first, after: $after) {
+        repositories(first: $first, after: $after, orderBy: {field: NAME, direction: ASC}) {
           pageInfo {
             endCursor
             hasNextPage
@@ -505,7 +505,7 @@ class GitHub
       repositories.data.organization.repositories.nodes.each { |repository| all_repositories << repository }
     end
 
-    all_repositories.sort_by(&:name)
+    all_repositories
   end
 
   def all_teams(organisation)
