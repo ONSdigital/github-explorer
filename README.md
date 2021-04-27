@@ -34,7 +34,7 @@ The GitHub personal access token for using this application requires the followi
 
 ### To Do
 - Extract expensive queries into a separate out-of-band process run on a schedule
-- Correctly handle nested paging through results for ALL_TEAMS_ALL_MEMBERS_QUERY GraphQL query
+- Correctly handle nested paging through results for `ALL_TEAMS_ALL_MEMBERS_QUERY` GraphQL query
 - Makes tables sortable by different columns
 - Make the table filter fields operate against the full list rather than just the current page
 
