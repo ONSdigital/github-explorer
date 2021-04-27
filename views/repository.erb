@@ -119,6 +119,32 @@
   </section>
 
   <section class="column right">
-
+    <h2>Access</h2>
+  <% access.sort_by { |access, users| access }.each do |access, users| %>
+    <h3><%= access.capitalize %></h3>
+    <section class="repository-access">
+      <ul>
+        <% users.sort_by(&:login).each do |user| %>
+        <li><img src="/svg/user.svg" alt="User"> <% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.login %></a> <% unless user.name.nil? || user.name.empty? %>(<%=h user.name %>)<% end %></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+    <!-- <section class="repository-access">
+      <h3>Admin</h3>
+      <p><img class="avatar-small" src="https://avatars.githubusercontent.com/t/3128188?s=400&amp;v=4" alt="AddressIndexAdmin"> <a href="">AddressIndexAdmin</a> Team</p>
+      <ul>
+        <li><img src="/svg/user.svg" alt="User"> <a href="">steve-thorne-ons</a> (Steven Thorne)</li>
+        <li><img src="/svg/user.svg" alt="User"> <a href="">RichardSmithONS</a> (Richard Smith)</li>
+      </ul>
+    </section>
+    <section class="repository-access">
+      <h3>Write</h3>
+      <p><img class="avatar-small" src="https://avatars.githubusercontent.com/t/2622017?s=400&amp;v=4" alt="fwmt-dev"> <a href="">fwmt-dev</a> Team</p>
+      <ul>
+        <li><img src="/svg/user.svg" alt="User"> <a href="">muthus</a> (Shan)</li>
+        <li><img src="/svg/user.svg" alt="User"> <a href="">RichardSmithONS</a> (Richard Smith)</li>
+      </ul>
+    </section> -->
   </section>
 </section>

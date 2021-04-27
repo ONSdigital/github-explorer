@@ -168,6 +168,7 @@ end
 get '/repositories/:repository' do |repository|
   begin
     data = GITHUB.repository(settings.github_organisation, repository).data
+    access = GITHUB.repository_access(settings.github_organisation, repository)
     repo = data.organization.repository
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
@@ -175,7 +176,8 @@ get '/repositories/:repository' do |repository|
 
   erb :repository, locals: { title: "#{repository} Repository - GitHub Explorer",
                              repository: repository,
-                             repo: repo }
+                             repo: repo,
+                             access: access }
 end
 
 get '/teams/?' do

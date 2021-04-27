@@ -317,24 +317,6 @@ class GitHub
           stargazerCount
           updatedAt
           url
-          # collaborators(first: 100, after: $after) {
-          #   edges {
-          #     permissionSources {
-          #       permission
-          #       source {
-          #         ... on Organization {
-          #           name
-          #         }
-          #         ... on Team {
-          #           name
-          #         }
-          #       }
-          #     }
-          #     node {
-          #       login
-          #     }
-          #   }
-          # }
           branchProtectionRules(first: 10) {
             nodes {
               allowsDeletions
@@ -375,6 +357,44 @@ class GitHub
           }
           watchers(first: 1) {
             totalCount
+          }
+        }
+      }
+    }
+  GRAPHQL
+
+  REPOSITORY_ACCESS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $name: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        name
+        repository(name: $name) {
+          collaborators(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            edges {
+              permission
+              permissionSources {
+                source {
+                  ... on Team {
+                    name
+                    parentTeam {
+                      name
+                    }
+                  }
+                }
+              }
+              node {
+                login
+                name
+                organizations(first: 5) {
+                  nodes {
+                    name
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -701,6 +721,44 @@ class GitHub
     raise GitHubError, repository.errors unless repository.errors.empty?
 
     repository
+  end
+
+  def repository_access(organisation, repository)
+    after = nil
+    next_page = true
+    repository_access = {}
+
+    while next_page
+      access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: organisation, name: repository,
+                                                                  first: 100, after: after },
+                                                     context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, access.errors unless access.errors.empty?
+
+      after = access.data.organization.repository.collaborators.page_info.end_cursor
+      next_page = access.data.organization.repository.collaborators.page_info.has_next_page
+
+      access.data.organization.repository.collaborators.edges.each do |collaborator|
+        user_tuple = OpenStruct.new
+        user_tuple.login  = collaborator.node.login
+        user_tuple.member = false
+        user_tuple.name   = collaborator.node.name
+
+        collaborator.node.organizations.nodes.each do |org|
+          if org.name.eql?(access.data.organization.name)
+            user_tuple.member = true
+            break
+          end
+        end
+
+        if repository_access.key?(collaborator.permission)
+          repository_access[collaborator.permission] << user_tuple
+        else
+          repository_access[collaborator.permission] = [user_tuple]
+        end
+      end
+    end
+
+    repository_access
   end
 
   def summary(enterprise, organisation)
