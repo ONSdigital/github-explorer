@@ -17,6 +17,7 @@
       <th>Description</th>
       <th>Primary Language</th>
       <th>Branch Protection Rules</th>
+      <th>Security Vulnerability Alerts</th>
       <th class="no-wrap">Access</th>
       <th class="no-wrap">Created</th>
       <th class="no-wrap">Updated</th>
@@ -29,6 +30,7 @@
       <td><% if repo.description.nil? || repo.description.empty? %>-<% else %><%=h repo.description %><% end %></td>
       <td><% if repo.primary_language.nil? %>-<% else %><%=h repo.primary_language.name %><% end %></td>
       <td><% if repo.branch_protection_rules.total_count.zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
+      <td><%=n repo.vulnerability_alerts.total_count %></td>
       <td class="no-wrap"><% if repo.collaborators.nil? %>0 members<% else %><a href="/repositories/<%=h repo.name %>"><%=pluralise(repo.collaborators.total_count, 'member') %></a><% end %></td>
       <td class="no-wrap"><%=d repo.created_at %></td>
       <td class="no-wrap"><%=d repo.updated_at %></td>

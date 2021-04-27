@@ -111,6 +111,9 @@ class GitHub
             primaryLanguage {
               name
             }
+            vulnerabilityAlerts(first: 1) {
+              totalCount
+            }
           }
         }
       }
