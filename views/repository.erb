@@ -72,7 +72,7 @@
         <% repo.branch_protection_rules.nodes.sort_by(&:pattern).each_with_index do |rule, i| %>
           <tr class="<%= i.even? ? 'even' : 'odd' %>">
             <td><% if repo.default_branch_ref.name.eql?(rule.pattern) %><strong><% end %><%=h rule.pattern %><% if repo.default_branch_ref.name.eql?(rule.pattern) %></strong><% end %></td>
-            <td><%= rule.required_approving_review_count %></td>
+            <td><% if rule.required_approving_review_count.nil? %>0<% else %><%= rule.required_approving_review_count %><% end %></td>
             <td><% if rule.dismisses_stale_reviews %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
             <td><% if rule.requires_code_owner_reviews %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
             <td><% if rule.restricts_review_dismissals %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
