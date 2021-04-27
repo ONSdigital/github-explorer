@@ -334,12 +334,22 @@ td {
   white-space: nowrap;
 }
 
+h2 .note {
+  font-size: 60%;
+  vertical-align: middle;
+}
+
+h2 .note:first-of-type {
+  margin-left: 6px;
+}
+
 .note {
   background-color: #fff;
   border: 1px solid #aaa;
   border-radius: 6px;
   color: #999;
   font-size: 80%;
+  font-weight: normal;
   padding: 1px 6px;
 }
 
