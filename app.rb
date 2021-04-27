@@ -34,10 +34,6 @@ helpers do
     Rack::Utils.escape_html(text)
   end
 
-  def kb(bytes)
-    "#{(bytes.to_f / 1000).round(2)} KB"
-  end
-
   def n(count)
     count_groups = count.to_s.chars.to_a.reverse.each_slice(3)
     count_groups.map(&:join).join(',').reverse
@@ -45,6 +41,10 @@ helpers do
 
   def pagination_links(pagy)
     pagy_nav(pagy) if pagy.pages > 1
+  end
+
+  def percentage(num, total)
+    "#{((num.to_f / total.to_f) * 100).round(2)}%"
   end
 
   def pluralise(count, singular_noun, plural_noun = nil)
