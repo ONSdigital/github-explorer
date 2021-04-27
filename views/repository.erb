@@ -35,11 +35,15 @@
 
     <h3>Languages</h3>
     <section id="languages">
+    <% if repo.languages.edges.any? %>
     <ul>
     <% repo.languages.edges.sort_by(&:size).reverse.each do |language| %>
       <li><span class="swatch" style="color: <%= language.node.color %>;">&#9632;</span><%= language.node.name %> <span class="language-size"><%=kb language.size %></span></li>
     <% end %>
     </ul>
+    <% else %>
+      <p>This repository doesn’t have any programming language files.</p>
+    <% end %>
     </section>
 
     <h3>Branch Protection Rules</h3>
