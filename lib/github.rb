@@ -361,6 +361,9 @@ class GitHub
               }
             }
           }
+          licenseInfo {
+            name
+          }
           vulnerabilityAlerts(first: 1) {
             totalCount
           }

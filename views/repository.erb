@@ -22,8 +22,13 @@
     <section class="profile-detail">
     <% unless repo.description.nil? %>
       <p><%=h repo.description %><% unless repo.description.end_with?('.') %>.<% end %></p>
+    <% end %>
+
       <p><% if repo.is_private %><span class="note">Private</span><% end %> <% if repo.is_archived == true %><span class="note">Archived</span><% end %></p>
       <p><img src="/svg/branch.svg" alt="Branch"> Default branch: <strong><%=h repo.default_branch_ref.name %></strong></p>
+    
+    <% unless repo.license_info.nil? %>
+      <p><img src="/svg/licence.svg" alt="Licence"> <%=h repo.license_info.name %></p>
     <% end %>
     </section>
       
