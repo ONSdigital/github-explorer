@@ -31,6 +31,7 @@
     <% end %>
 
       <p><img src="/svg/security.svg" alt="Security"> <%=pluralise(repo.vulnerability_alerts.total_count, 'security vulnerability alert') %></p>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h repo.url %>">View on GitHub</a></p>
     </section>
       
     <section class="profile-dates">

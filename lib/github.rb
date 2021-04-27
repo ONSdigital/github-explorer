@@ -211,6 +211,7 @@ class GitHub
                 location
                 twitterUsername
                 updatedAt
+                url
                 websiteUrl
                 contributionsCollection {
                   hasAnyContributions
@@ -261,6 +262,7 @@ class GitHub
                 name
                 twitterUsername
                 updatedAt
+                url
                 websiteUrl
                 contributionsCollection {
                   hasAnyContributions
@@ -314,6 +316,7 @@ class GitHub
           pushedAt
           stargazerCount
           updatedAt
+          url
           # collaborators(first: 100, after: $after) {
           #   edges {
           #     permissionSources {
@@ -456,6 +459,7 @@ class GitHub
           name
           privacy
           updatedAt
+          url
           members(first: $first, after: $after, membership: IMMEDIATE) {
             pageInfo {
               endCursor
@@ -728,6 +732,7 @@ class GitHub
       team_tuple.name        = team.data.organization.team.name
       team_tuple.privacy     = team.data.organization.team.privacy
       team_tuple.updated_at  = team.data.organization.team.updated_at
+      team_tuple.url         = team.data.organization.team.url
 
       team.data.organization.team.members.edges.each do |member|
         user_tuple = OpenStruct.new

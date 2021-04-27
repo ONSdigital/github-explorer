@@ -46,6 +46,8 @@
     <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.empty? %>
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url) %>"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url %></a></p>
     <% end %>
+
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.url %>">View on GitHub</a></p>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d data.enterprise.owner_info.outside_collaborators.edges.first.node.created_at %></p>

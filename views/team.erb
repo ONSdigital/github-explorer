@@ -21,6 +21,7 @@
     <% end %>
       <p><% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></p>
       <p><img src="/svg/team.svg" alt="Team"> <%=pluralise(team.members.count, 'member') %>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h team.url %>">View on GitHub</a></p>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d team.created_at %></p>
