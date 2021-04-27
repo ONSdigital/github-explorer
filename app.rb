@@ -108,7 +108,7 @@ get '/collaborators/:login' do |login|
   count = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
   pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   repos = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
-  erb :collaborator, locals: { title: "#{login} - GitHub Explorer",
+  erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
                                data: data,
                                two_factor_disabled: GITHUB.two_factor_disabled?(login),
                                repos: repos,
@@ -129,7 +129,7 @@ get '/members/:login' do |login|
   count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
   pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
-  erb :member, locals: { title: "#{login} - GitHub Explorer",
+  erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          data: data,
                          owner: GITHUB.owner?(login),
                          two_factor_disabled: GITHUB.two_factor_disabled?(login),
@@ -173,7 +173,7 @@ get '/repositories/:repository' do |repository|
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  erb :repository, locals: { title: "#{repository} - GitHub Explorer",
+  erb :repository, locals: { title: "#{repository} Repository - GitHub Explorer",
                              repository: repository,
                              repo: repo }
 end
@@ -201,7 +201,7 @@ get '/teams/:team' do |team|
 
   pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
   members = team.members[pagy.offset, pagy.items]
-  erb :team, locals: { title: "#{team.name} - GitHub Explorer",
+  erb :team, locals: { title: "#{team.name} Team - GitHub Explorer",
                        team: team,
                        members: members,
                        pagy: pagy }
