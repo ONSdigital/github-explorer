@@ -99,10 +99,12 @@ class GitHub
             createdAt
             description
             isArchived
-            # isEmpty
             isPrivate
             name
             updatedAt
+            branchProtectionRules(first: 1) {
+              totalCount
+            }
             collaborators(first: 1) {
               totalCount
             }
