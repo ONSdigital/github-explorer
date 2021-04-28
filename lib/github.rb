@@ -374,11 +374,15 @@ class GitHub
               hasNextPage
             }
             edges {
-              permission
               permissionSources {
+                permission
                 source {
                   ... on Team {
+                    avatarUrl
                     name
+                    members(first: 1, membership: IMMEDIATE) {
+                      totalCount
+                    }
                     parentTeam {
                       name
                     }
@@ -386,6 +390,7 @@ class GitHub
                 }
               }
               node {
+                avatarUrl
                 login
                 name
                 organizations(first: 5) {
@@ -726,7 +731,7 @@ class GitHub
   def repository_access(organisation, repository)
     after = nil
     next_page = true
-    repository_access = {}
+    repository_access = Set[]
 
     while next_page
       access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: organisation, name: repository,
@@ -737,24 +742,40 @@ class GitHub
       after = access.data.organization.repository.collaborators.page_info.end_cursor
       next_page = access.data.organization.repository.collaborators.page_info.has_next_page
 
-      access.data.organization.repository.collaborators.edges.each do |collaborator|
-        user_tuple = OpenStruct.new
-        user_tuple.login  = collaborator.node.login
-        user_tuple.member = false
-        user_tuple.name   = collaborator.node.name
+      access.data.organization.repository.collaborators.edges.each do |collaborator_edge|
+        collaborator_edge.permission_sources.each do |permission_source|
 
-        collaborator.node.organizations.nodes.each do |org|
+          # Ignore organisations and repositories and child teams.
+          if permission_source.source.__typename.eql?('Team') && permission_source.source.parent_team.nil?
+            team_tuple = OpenStruct.new
+            team_tuple.id           = permission_source.source.name
+            team_tuple.avatar_url   = permission_source.source.avatar_url
+            team_tuple.name         = permission_source.source.name
+            team_tuple.member_count = permission_source.source.members.total_count
+            team_tuple.permission   = permission_source.permission
+            team_tuple.type         = 'team'
+            repository_access << team_tuple
+          end
+        end
+
+        user_tuple = OpenStruct.new
+        user_tuple.id         = collaborator_edge.node.login
+        user_tuple.avatar_url = collaborator_edge.node.avatar_url
+        user_tuple.login      = collaborator_edge.node.login
+        user_tuple.member     = false
+        user_tuple.name       = collaborator_edge.node.name
+        user_tuple.permission = collaborator_edge.permission_sources.first.permission
+        user_tuple.type       = 'user'
+
+        collaborator_edge.node.organizations.nodes.each do |org|
           if org.name.eql?(access.data.organization.name)
             user_tuple.member = true
             break
           end
         end
 
-        if repository_access.key?(collaborator.permission)
-          repository_access[collaborator.permission] << user_tuple
-        else
-          repository_access[collaborator.permission] = [user_tuple]
-        end
+        # Only add users who are outside collaborators i.e. not members.
+        repository_access << user_tuple unless user_tuple.member
       end
     end
 

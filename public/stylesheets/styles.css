@@ -366,31 +366,6 @@ h2 .note:first-of-type {
   font-size: 100%;
 }
 
-.repository-access {
-  border: 1px solid #e2e4e8;
-  border-radius: 6px;
-  margin-bottom: 25px;
-  padding: 0 8px;
-}
-
-.repository-access h3 {
-  margin: 8px 0 0 2px;
-}
-
-.repository-access ul {
-  list-style-type: none;
-  margin-left: -38px;
-}
-
-.repository-access li {
-  margin-bottom: 5px;
-}
-
-.repository-access p {
-  font-size: 100%;
-  font-weight: bold;
-}
-
 .repositories {
   border-bottom: 1px solid #e2e4e8;
 }
