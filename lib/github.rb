@@ -607,8 +607,8 @@ class GitHub
     all_repositories = []
 
     while next_page
-      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: organisation, first: 100, after: after},
-                                                                       context: { base_uri: @base_uri, token: @token })
+      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: organisation, first: 100, after: after },
+                                                          context: { base_uri: @base_uri, token: @token })
       raise GitHubError, repositories.errors unless repositories.errors.empty?
 
       after = repositories.data.organization.repositories.page_info.end_cursor
@@ -744,7 +744,6 @@ class GitHub
 
       access.data.organization.repository.collaborators.edges.each do |collaborator_edge|
         collaborator_edge.permission_sources.each do |permission_source|
-
           # Ignore organisations and repositories and child teams.
           if permission_source.source.__typename.eql?('Team') && permission_source.source.parent_team.nil?
             team_tuple = OpenStruct.new
