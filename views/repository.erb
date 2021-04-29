@@ -119,6 +119,7 @@
   </section>
 
   <section class="column right">
+  <% unless access.nil? || access.empty? %>
     <h2>Access</h2>
     <table>
       <tbody>
@@ -136,5 +137,6 @@
       <% end %>
       </tbody>
     </table>
+  <% end %>
   </section>
 </section>
