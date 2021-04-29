@@ -380,6 +380,7 @@ class GitHub
                   ... on Team {
                     avatarUrl
                     name
+                    slug
                     members(first: 1, membership: IMMEDIATE) {
                       totalCount
                     }
@@ -748,11 +749,12 @@ class GitHub
           # Ignore organisations and repositories and child teams.
           if permission_source.source.__typename.eql?('Team') && permission_source.source.parent_team.nil?
             team_tuple = OpenStruct.new
+            team_tuple.permission   = permission_source.permission
             team_tuple.id           = permission_source.source.name
             team_tuple.avatar_url   = permission_source.source.avatar_url
             team_tuple.name         = permission_source.source.name
             team_tuple.member_count = permission_source.source.members.total_count
-            team_tuple.permission   = permission_source.permission
+            team_tuple.slug         = permission_source.source.slug
             team_tuple.type         = 'team'
             repository_access << team_tuple
           end

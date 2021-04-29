@@ -14,7 +14,7 @@
     <h2><%=h repository %> <% if repo && repo.is_private %><span class="note">Private</span><% end %> <% if repo && repo.is_archived == true %><span class="note">Archived</span><% end %></h2>
   <% if repo.nil? %>
     <section class="profile-detail">
-      <p>This repository doesn’t exist.</p>
+      <p>This repository doesn’t exist or isn’t within the GitHub organisation.</p>
     </section>
   <% else %>
     <p id="profile-stats"><img src="/svg/watch.svg" alt="Watching"> <%=pluralise(repo.watchers.total_count, 'watcher') %> &bull; <img src="/svg/star.svg" alt="Stars"> <%=n repo.stargazer_count %> &bull; <img src="/svg/fork.svg" alt="Forks"> <%=pluralise(repo.fork_count, 'fork') %></p>
@@ -123,10 +123,10 @@
     <h2>Access</h2>
     <table>
       <tbody>
-      <% access.sort_by(&:permission).each_with_index do |permission_line, i| %>
+      <% access.sort_by(&:id).each_with_index do |permission_line, i| %>
         <tr class="<%= i.even? ? 'even' : 'odd' %>">
         <% if permission_line.type.eql?('team') %>
-          <td><img class="avatar-small" src="<%= permission_line.avatar_url %>" alt="<%=h permission_line.name %>"> <a href="/teams/<%=h permission_line.name %>"><%=h permission_line.name %></a></td>
+          <td><img class="avatar-small" src="<%= permission_line.avatar_url %>" alt="<%=h permission_line.name %>"> <a href="/teams/<%=h permission_line.slug %>"><%=h permission_line.name %></a></td>
           <td><%=pluralise(permission_line.member_count, 'member') %></td>
         <% else %>
           <td><img class="avatar-small" src="<%= permission_line.avatar_url %>" alt="<%=h permission_line.login %>"> <% if permission_line.member %><a href="/members/<%=h permission_line.login %>"><% else %><a href="/collaborators/<%=h permission_line.login %>"><% end %><%=h permission_line.login %></a> <% unless permission_line.name.nil? || permission_line.name.empty? %>(<%=h permission_line.name %>)<% end %></td>
