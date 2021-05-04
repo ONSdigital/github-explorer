@@ -44,7 +44,7 @@ helpers do
   end
 
   def percentage(num, total)
-    "#{((num.to_f / total.to_f) * 100).round(2)}%"
+    "#{((num.to_f / total) * 100).round(2)}%"
   end
 
   def pluralise(count, singular_noun, plural_noun = nil)
