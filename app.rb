@@ -20,8 +20,9 @@ set :github_organisation, config.github_organisation
 set :github_token,        config.github_token
 
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
-ITEMS_COUNT       = 40
-USERS_ITEMS_COUNT = 10
+ACCESS_ITEMS_COUNT = 20
+ITEMS_COUNT        = 40
+USERS_ITEMS_COUNT  = 10
 
 helpers do
   include Pagy::Frontend
@@ -171,7 +172,7 @@ get '/repositories/:repository' do |repository|
     
     unless data.organization.repository.nil? || data.organization.repository.is_archived
       repository_access = GITHUB.repository_access(settings.github_organisation, repository)
-      pagy = Pagy.new(count: repository_access.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+      pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
       access = repository_access[pagy.offset, pagy.items]
     end
 
