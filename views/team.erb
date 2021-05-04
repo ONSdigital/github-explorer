@@ -13,7 +13,7 @@
   <section class="column left">
     <p><img class="avatar-large" src="<%=team.avatar_url %>"></p>
 
-    <h2><%=h team.name %></h2>
+    <h2><%=h team.name %> <% if team.parent_team %><span class="note">Child Team</span><% end %></h2>
 
     <section class="profile-detail">
     <% unless team.description.nil? %>
@@ -21,6 +21,11 @@
     <% end %>
       <p><% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></p>
       <p><img src="/svg/team.svg" alt="Team"> <%=pluralise(team.members.count, 'member') %>
+      
+    <% unless team.parent_team.nil? %>
+      <p><img src="/svg/team.svg" alt="Team"> Parent team: <a href="/teams/<%=h team.parent_team_slug %>"><%=h team.parent_team %></a></p>
+    <% end %>
+
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h team.url %>">View on GitHub</a></p>
     </section>
     <section class="profile-dates">

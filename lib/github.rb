@@ -501,6 +501,10 @@ class GitHub
               }
             }
           }
+          parentTeam {
+            name
+            slug
+          }
         }
       }
     }
@@ -812,6 +816,11 @@ class GitHub
       team_tuple.privacy     = team.data.organization.team.privacy
       team_tuple.updated_at  = team.data.organization.team.updated_at
       team_tuple.url         = team.data.organization.team.url
+
+      unless team.data.organization.team.parent_team.nil?
+        team_tuple.parent_team      = team.data.organization.team.parent_team.name
+        team_tuple.parent_team_slug = team.data.organization.team.parent_team.slug
+      end
 
       team.data.organization.team.members.edges.each do |member|
         user_tuple = OpenStruct.new
