@@ -168,14 +168,18 @@ end
 get '/repositories/:repository' do |repository|
   begin
     data = GITHUB.repository(settings.github_organisation, repository).data
-    repository_access = GITHUB.repository_access(settings.github_organisation, repository)
+    
+    unless data.organization.repository.is_archived
+      repository_access = GITHUB.repository_access(settings.github_organisation, repository)
+      pagy = Pagy.new(count: repository_access.count, items: ITEMS_COUNT, page: (params[:page] || 1))
+      access = repository_access[pagy.offset, pagy.items]
+    end
+
     repo = data.organization.repository
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: repository_access.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  access = repository_access[pagy.offset, pagy.items]
   erb :repository, locals: { title: "#{repository} Repository - GitHub Explorer",
                              repository: repository,
                              repo: repo,
