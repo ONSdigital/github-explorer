@@ -142,9 +142,9 @@
         <% access.each_with_index do |permission_line, i| %>
           <tr class="<%= i.even? ? 'even' : 'odd' %>">
             <td class="no-wrap"><% if permission_line.member %><a href="/members/<%=h permission_line.login %>"><% else %><a href="/collaborators/<%=h permission_line.login %>"><% end %><%=h permission_line.login %></a> <% unless permission_line.name.nil? || permission_line.name.empty? %>(<%=h permission_line.name %>)<% end %></td>
-            <td><% unless permission_line.organisation_permission.nil? %><%=h permission_line.organisation_permission.capitalize %><% end %></td>
-            <td><% unless permission_line.repository_permission.nil? %><%=h permission_line.repository_permission.capitalize %><% end %></td>
-            <td class="no-wrap"><% unless permission_line.team_permission.nil? %><%=h permission_line.team_permission.capitalize %> via <a href="/teams/<%=h permission_line.team_slug %>"><%=h permission_line.team_name %></a><% unless permission_line.team_parent.nil? %> <span class="note">Child Team</span><% end %><% end %></td>
+            <td><% if permission_line.organisation_permission.nil? %>-<% else %><%=h permission_line.organisation_permission.capitalize %><% end %></td>
+            <td><% if permission_line.repository_permission.nil? %>-<% else %><% if permission_line.organisation_permission.eql?(permission_line.repository_permission) %>-<% else %><%=h permission_line.repository_permission.capitalize %><% end %><% end %></td>
+            <td class="no-wrap"><% if permission_line.team_permission.nil? %>-<% else %><%=h permission_line.team_permission.capitalize %> via <a href="/teams/<%=h permission_line.team_slug %>"><%=h permission_line.team_name %></a><% unless permission_line.team_parent.nil? %> <span class="note">Child Team</span><% end %><% end %></td>
           </tr>
         <% end %>
         </tbody>
