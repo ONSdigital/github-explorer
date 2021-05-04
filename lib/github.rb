@@ -741,6 +741,7 @@ class GitHub
       raise GitHubError, access.errors unless access.errors.empty?
 
       break if access.data.organization.repository.nil?
+
       after = access.data.organization.repository.collaborators.page_info.end_cursor
       next_page = access.data.organization.repository.collaborators.page_info.has_next_page
 
