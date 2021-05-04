@@ -169,7 +169,7 @@ get '/repositories/:repository' do |repository|
   begin
     data = GITHUB.repository(settings.github_organisation, repository).data
     
-    unless data.organization.repository.is_archived
+    unless data.organization.repository.nil? || data.organization.repository.is_archived
       repository_access = GITHUB.repository_access(settings.github_organisation, repository)
       pagy = Pagy.new(count: repository_access.count, items: ITEMS_COUNT, page: (params[:page] || 1))
       access = repository_access[pagy.offset, pagy.items]
