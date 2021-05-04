@@ -768,7 +768,7 @@ class GitHub
             user_tuple.repositor_name = permission_source.source.repository_name
             user_tuple.repository_permission = permission_source.permission
           when 'Team'
-            user_tuple.parent_team     = permission_source.source.parent_team
+            user_tuple.team_parent     = permission_source.source.parent_team
             user_tuple.team_permission = permission_source.permission
             user_tuple.team_name = permission_source.source.team_name
             user_tuple.team_slug = permission_source.source.slug
