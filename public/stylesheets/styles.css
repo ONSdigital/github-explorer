@@ -150,6 +150,15 @@ td {
   vertical-align: middle;
 }
 
+#administrators ul, #languages ul, #members ul, #owners ul, #repository-access-key ul, #teams ul {
+  list-style-type: none;
+  margin-left: -38px;
+}
+
+#administrators li, #languages li, #members li, #owners li, #teams li {
+  margin-bottom: 5px;
+}
+
 #back-link {
   font-size: 100%;
 }
@@ -162,7 +171,7 @@ td {
   border-bottom: 1px solid #e2e4e8;
 }
 
-#branch-protection-rules table {
+#branch-protection-rules table, #repository-access table {
   font-size: 75%;
 }
 
@@ -259,13 +268,9 @@ td {
   vertical-align: middle;
 }
 
-#administrators ul, #languages ul, #members ul, #owners ul, #teams ul {
-  list-style-type: none;
-  margin-left: -38px;
-}
-
-#administrators li, #languages li, #members li, #owners li, #teams li {
-  margin-bottom: 5px;
+#repository-access-key {
+  font-size: 80%;
+  margin-bottom: 25px;
 }
 
 .avatar-large {
