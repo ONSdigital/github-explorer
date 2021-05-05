@@ -159,7 +159,6 @@ class GitHub
               totalCount
             }
             childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
-              totalCount
               nodes {
                 avatarUrl
                 createdAt
