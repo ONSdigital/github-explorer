@@ -21,12 +21,34 @@
     <% end %>
 
       <p><img src="/svg/team.svg" alt="Team"> <%=pluralise(team.members.count, 'member') %>
-
-    <% unless team.parent_team.nil? %>
-      <p><img src="/svg/team.svg" alt="Team"> Parent team: <a href="/teams/<%=h team.parent_team_slug %>"><%=h team.parent_team %></a></p>
-    <% end %>
-
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h team.url %>">View on GitHub</a></p>
+
+    <% unless team.ancestors.empty? %>
+      <h3>Parent Teams</h3>
+      <ul class="no-bullets">
+      <% team.ancestors.each_with_index do |ancestor, i| %>
+        <li class="child-<%= i %>"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h ancestor.slug %>"><%=h ancestor.name %></a> <% if ancestor.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
+      <% end %>
+      </ul>
+    <% end%>
+
+    <% unless team.child_teams.empty? %>
+      <h3>Child Teams</h3>
+      <ul class="no-bullets">
+      <% team.child_teams.each do |child| %>
+        <li class="child-0"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h child.slug %>"><%=h child.name %></a></li>
+      <% child.child_teams.nodes.each do |second_child| %>
+        <li class="child-1"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h second_child.slug %>"><%=h second_child.name %></a></li>
+      <% second_child.child_teams.nodes.each do |third_child| %>
+        <li class="child-2"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h third_child.slug %>"><%=h third_child.name %></a></li>
+      <% third_child.child_teams.nodes.each do |fourth_child| %>
+        <li class="child-3"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h fourth_child.slug %>"><%=h fourth_child.name %></a></li>
+      <% end %>
+      <% end %>
+      <% end %>
+      <% end %>
+      </ul>
+    <% end%>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d team.created_at %></p>

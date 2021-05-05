@@ -503,9 +503,50 @@ class GitHub
               }
             }
           }
-          parentTeam {
-            name
-            slug
+          ancestors(first: 10) {
+            nodes {
+              name
+              privacy
+              slug
+              ancestors(first: 10) {
+                nodes {
+                  name
+                  privacy
+                  slug
+                  ancestors(first: 10) {
+                    nodes {
+                      name
+                      privacy
+                      slug
+                    }
+                  }
+                }
+              }
+            }
+          }
+          childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
+            nodes {
+              name
+              slug
+              childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
+                nodes {
+                  name
+                  slug
+                  childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
+                    nodes {
+                      name
+                      slug
+                      childTeams(first: 10, orderBy: {field: NAME, direction: ASC}) {
+                        nodes {
+                          name
+                          slug
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -819,9 +860,12 @@ class GitHub
       team_tuple.updated_at  = team.data.organization.team.updated_at
       team_tuple.url         = team.data.organization.team.url
 
-      unless team.data.organization.team.parent_team.nil?
-        team_tuple.parent_team      = team.data.organization.team.parent_team.name
-        team_tuple.parent_team_slug = team.data.organization.team.parent_team.slug
+      unless team.data.organization.team.ancestors.nodes.nil?
+        team_tuple.ancestors = team.data.organization.team.ancestors.nodes
+      end
+
+      unless team.data.organization.team.child_teams.nodes.nil?
+        team_tuple.child_teams = team.data.organization.team.child_teams.nodes
       end
 
       team.data.organization.team.members.edges.each do |member|
