@@ -72,7 +72,7 @@
     <% end %>
 
       <p><img src="/svg/user.svg" alt="User"> <a href="/members"><%=pluralise(data.enterprise.members.total_count, 'member') %></a><% if data.enterprise.owner_info.pending_member_invitations.total_count >= 1 %> (<%=n data.enterprise.owner_info.pending_member_invitations.total_count %> pending)<% end %></p>
-      <p><img src="/svg/user.svg" alt="User"> <a href="/two-factor-security"><%=pluralise(two_factor_disabled_count, 'member') %> without two-factor security enabled</a></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/two-factor-security"><%=pluralise(two_factor_disabled_count, 'user') %> without two-factor security enabled</a></p>
       <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators"><%=pluralise(data.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
     </section>
     <section class="profile-dates">
