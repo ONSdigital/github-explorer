@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+
+	"github.com/ONSdigital/github-explorer/agent/pkg/github"
 )
 
 func main() {
@@ -29,5 +31,19 @@ func main() {
 	gitHubToken := ""
 	if gitHubToken = os.Getenv("GITHUB_TOKEN"); len(gitHubToken) == 0 {
 		log.Fatal("Missing GITHUB_TOKEN environment variable")
+	}
+
+	if len(os.Args[1:]) == 0 {
+		log.Fatal("Missing GraphQL query command-line argument")
+	}
+
+	client := github.NewClient(gitHubToken, gitHubAPIBaseURI+"/graphql")
+	switch query := os.Args[1]; query {
+	case "all-repositories":
+	case "member-roles":
+	case "team-membership":
+		client.PerformTeamMembershipLookup(gitHubOrganisationName)
+	default:
+		log.Fatalf("Unknown GraphQL query: '%s'", query)
 	}
 }
