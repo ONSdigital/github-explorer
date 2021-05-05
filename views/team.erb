@@ -17,7 +17,7 @@
 
     <section class="profile-detail">
     <% unless team.description.nil? %>
-      <p><%=h team.description %><% unless team.description.end_with?('.') %>.<% end %></p>
+      <p><%=h team.description %></p>
     <% end %>
 
       <p><img src="/svg/team.svg" alt="Team"> <%=pluralise(team.members.count, 'member') %>
