@@ -195,9 +195,9 @@ class GitHub
   GRAPHQL
 
   MEMBER_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($slug: String!, $login: String!) {
+    query($slug: String!, $login: String!, $user_login: String!) {
       enterprise(slug: $slug) {
-        members(first: 1, query: $login) {
+        members(first: 1, query: $user_login) {
           nodes {
             ... on EnterpriseUserAccount {
               avatarUrl
@@ -241,6 +241,9 @@ class GitHub
             }
           }
         }
+      }
+      organization(login: $login) {
+        name
       }
     }
   GRAPHQL
@@ -657,8 +660,8 @@ class GitHub
     false
   end
 
-  def member(enterprise, login)
-    member = CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login },
+  def member(enterprise, login, user_login)
+    member = CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login, user_login: user_login },
                                         context: { base_uri: @base_uri, token: @token })
     raise GitHubError, member.errors unless member.errors.empty?
 

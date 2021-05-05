@@ -122,7 +122,7 @@ end
 
 get '/members/:login' do |login|
   begin
-    data = GITHUB.member(settings.github_enterprise, login).data
+    data = GITHUB.member(settings.github_enterprise, settings.github_organisation, login).data
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end

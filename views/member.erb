@@ -63,8 +63,8 @@
     <h3>Organisations</h3>
     <section id="organisations">
       <ul class="no-bullets">
-    <% data.enterprise.members.nodes.first.user.organizations.nodes.sort_by(&:name).each do |org| %>
-        <li><img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <%=h org.name %></li>
+    <% data.enterprise.members.nodes.first.user.organizations.nodes.sort_by(&:name).each do |organisation| %>
+        <li><img class="avatar-medium" src="<%=h organisation.avatar_url %>" alt="<%=h organisation.name %>"> <% if data.organization.name.eql?(organisation.name) %><a href="/"><%=h organisation.name %></a><% else %><%=h organisation.name %><% end %></li>
     <% end %>
       </ul>
     </section>
