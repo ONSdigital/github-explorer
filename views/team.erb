@@ -24,7 +24,7 @@
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h team.url %>">View on GitHub</a></p>
 
     <% unless team.ancestors.empty? %>
-      <h3>Parent Teams</h3>
+      <h3>Parent <% if team.ancestors.count == 1 %>Team<% else %>Teams<% end %></h3>
       <ul class="no-bullets">
       <% team.ancestors.each_with_index do |ancestor, i| %>
         <li class="child-<%= i %>"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h ancestor.slug %>"><%=h ancestor.name %></a> <% if ancestor.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
@@ -33,7 +33,7 @@
     <% end%>
 
     <% unless team.child_teams.empty? %>
-      <h3>Child Teams</h3>
+      <h3>Child <% if team.child_teams.count == 1 %>Team<% else %>Teams<% end %></h3>
       <ul class="no-bullets">
       <% team.child_teams.each do |child| %>
         <li class="child-0"><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h child.slug %>"><%=h child.name %></a></li>
