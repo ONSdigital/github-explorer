@@ -40,7 +40,7 @@
     <h2>Members</h2>
     <section id="members">
     <% if members && members.any? %>
-      <ul>
+      <ul class="no-bullets">
       <% members.each do |member| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h member.login %>"><%=h member.login %></a> <% unless member.name.nil? || member.name.empty? %>(<%=h member.name %>)<% end %> <% if member.role.eql?('MAINTAINER') %><span class="note">Maintainer</span><% end %></li>
       <% end %>

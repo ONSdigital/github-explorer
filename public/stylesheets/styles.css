@@ -150,15 +150,6 @@ td {
   vertical-align: middle;
 }
 
-#administrators ul, #languages ul, #members ul, #owners ul, #repository-access-key ul, #teams ul {
-  list-style-type: none;
-  margin-left: -38px;
-}
-
-#administrators li, #languages li, #members li, #owners li, #teams li {
-  margin-bottom: 5px;
-}
-
 #back-link {
   font-size: 100%;
 }
@@ -348,6 +339,15 @@ h2 .note:first-of-type {
   margin-left: 6px;
 }
 
+.no-bullets {
+  list-style-type: none;
+  margin-left: -38px;  
+}
+
+.no-bullets li {
+  margin-bottom: 5px;
+}
+
 .note {
   background-color: #fff;
   border: 1px solid #aaa;
@@ -373,11 +373,6 @@ h2 .note:first-of-type {
 
 .repositories {
   border-bottom: 1px solid #e2e4e8;
-}
-
-.repositories ul {
-  list-style-type: none;
-  margin-left: -38px;  
 }
 
 .repositories li {

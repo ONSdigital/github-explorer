@@ -76,7 +76,7 @@
     <h2>Repository Access</h2>
     <section class="repositories">
     <% if repos && repos.any? %>
-      <ul>
+      <ul class="no-bullets">
       <% repos.each do |repo| %>
         <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
@@ -89,7 +89,7 @@
     <h2>Top Repositories</h2>
     <section class="repositories">
     <% if data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.any? %>
-      <ul>
+      <ul class="no-bullets">
       <% data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.each do |repo| %>
         <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>

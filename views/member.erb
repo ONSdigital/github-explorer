@@ -76,7 +76,7 @@
     <h2>Teams</h2>
     <section id="teams">
     <% if teams && teams.any? %>
-      <ul>
+      <ul class="no-bullets">
       <% teams.each do |team| %>
         <li><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
       <% end %>
@@ -89,7 +89,7 @@
     <h2>Top Repositories</h2>
     <section class="repositories">
     <% if data.enterprise.members.nodes.first.user.top_repositories.nodes.any? %>
-      <ul>
+      <ul class="no-bullets">
       <% data.enterprise.members.nodes.first.user.top_repositories.nodes.each do |repo| %>
         <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>

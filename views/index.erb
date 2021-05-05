@@ -43,7 +43,7 @@
     </section>
      <section id="owners">
       <h3>Organisation Owners (<%= pagy.count %>)</h3>
-      <ul>
+      <ul class="no-bullets">
       <% owners.each do |owner| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h owner.login %>"><%=h owner.login %></a> <% unless owner.name.nil? || owner.name.empty? %>(<%=h owner.name %>)<% end %>
       <% end %>
@@ -85,7 +85,7 @@
     </section>
     <section id="administrators">
       <h3>Enterprise Administrators (<%= data.enterprise.owner_info.admins.nodes.count %>)</h3>
-      <ul>
+      <ul class="no-bullets">
       <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h admin.login %>"><%=h admin.login %></a> <% unless admin.name.nil? || admin.name.empty? %>(<%=h admin.name %>)<% end %>
       <% end %>

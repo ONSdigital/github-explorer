@@ -44,7 +44,7 @@
     <section id="languages">
     <% if repo.languages.edges.any? %>
     <% total = repo.languages.edges.inject(0) { |sum, edge| sum + edge.size } %>
-    <ul>
+    <ul class="no-bullets">
     <% repo.languages.edges.sort_by(&:size).reverse.each do |language| %>
       <li><span class="swatch" style="color: <%= language.node.color %>;">&#9632;</span><%= language.node.name %> <span class="language-size"><%=percentage(language.size, total) %></span></li>
     <% end %>
@@ -122,7 +122,7 @@
   <% unless access.nil? || access.empty? %>
     <h2>Access</h2>
     <section id="repository-access-key">
-      <ul>
+      <ul class="no-bullets">
         <li><img src="/svg/github.svg" alt="Organisation"> = Access granted via organisation membership</li>
         <li><img src="/svg/respository.svg" alt="Respository"> = Access granted directly on the repository</li>
         <li><img src="/svg/team.svg" alt="Team"> = Access granted via team membership</li>
