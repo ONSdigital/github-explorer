@@ -11,10 +11,9 @@ This repository contains a [Ruby](https://ruby-lang.org/) [Sinatra](http://sinat
 The environment variables below are required:
 
 ```
-GITHUB_API_BASE_URI      # URI of GitHub's GraphQL API host
-GITHUB_ENTERPRISE_NAME   # Name of the GitHub Enterprise
-GITHUB_ORGANISATION_NAME # Name of the GitHub Organisation
-GITHUB_TOKEN             # GitHub personal access token
+GITHUB_API_BASE_URI    # URI of GitHub's GraphQL API host
+GITHUB_ENTERPRISE_NAME # Name of the GitHub Enterprise
+GITHUB_TOKEN           # GitHub personal access token
 ```
 
 Run the application locally using the [Puma web server](https://puma.io/) with the command:
@@ -34,7 +33,6 @@ The GitHub personal access token for using this application requires the followi
 - `user`
 
 ### To Do
-- Add hyperlink where ONS Digital organisation appears
 - Extract expensive queries into a separate out-of-band process run on a schedule
 - Correctly handle nested paging through results for `ALL_TEAMS_ALL_MEMBERS_QUERY` GraphQL query
 - Refactor `lib/github.rb` God class

@@ -35,9 +35,9 @@ class GitHub
   GRAPHQL
 
   ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($slug: String!, $first: Int!, $after: String) {
+    query($slug: String!, $login: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
-        members(first: $first, after: $after) {
+        members(first: $first, after: $after, organizationLogins: [$login]) {
           pageInfo {
             endCursor
             hasNextPage
@@ -52,6 +52,32 @@ class GitHub
                 email
                 updatedAt
               }
+            }
+          }
+        }
+      }
+      organization(login: $login) {
+        name
+      }
+    }
+  GRAPHQL
+
+  ALL_ORGANISATIONS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!) {
+      enterprise(slug: $slug) {
+        organizations(first: 50) {
+          nodes {
+            avatarUrl
+            createdAt
+            description
+            login
+            name
+            updatedAt
+            repositories(first: 1) {
+              totalCount
+            }
+            teams(first: 1) {
+              totalCount
             }
           }
         }
@@ -90,6 +116,7 @@ class GitHub
   ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
+        name
         repositories(first: $first, after: $after, orderBy: {field: NAME, direction: ASC}) {
           pageInfo {
             endCursor
@@ -142,6 +169,7 @@ class GitHub
   ALL_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
+        name
         teams(first: $first, after: $after, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
           pageInfo {
             endCursor
@@ -240,6 +268,16 @@ class GitHub
               }
             }
           }
+        }
+      }
+    }
+  GRAPHQL
+
+  ORGANISATION_MEMBER_COUNT_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $login: String!) {
+      enterprise(slug: $slug) {
+        members(first: 1, organizationLogins: [$login]) {
+          totalCount
         }
       }
     }
@@ -567,13 +605,14 @@ class GitHub
     @two_factor_disabled = Set[]
   end
 
-  def all_members(enterprise)
+  def all_members(enterprise, organisation)
     after = nil
     next_page = true
     all_members = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: 100, after: after },
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, login: organisation,
+                                                             first: 100, after: after },
                                                 context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -582,7 +621,15 @@ class GitHub
       members.data.enterprise.members.nodes.each { |member| all_members << member }
     end
 
-    all_members
+    return all_members, members.data.organization.name
+  end
+
+  def all_organisations(enterprise)
+    all_organisations = CLIENT.query(ALL_ORGANISATIONS_QUERY, variables: { slug: enterprise },
+                                                              context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, all_organisations.errors unless all_organisations.errors.empty?
+
+    all_organisations
   end
 
   def all_outside_collaborators(enterprise)
@@ -623,7 +670,7 @@ class GitHub
       repositories.data.organization.repositories.nodes.each { |repository| all_repositories << repository }
     end
 
-    all_repositories
+    return all_repositories, repositories.data.organization.name
   end
 
   def all_teams(organisation)
@@ -641,7 +688,7 @@ class GitHub
       teams.data.organization.teams.nodes.each { |team| all_teams << team }
     end
 
-    all_teams
+    return all_teams, teams.data.organization.name
   end
 
   def outside_collaborator(enterprise, login)
@@ -663,6 +710,14 @@ class GitHub
     raise GitHubError, member.errors unless member.errors.empty?
 
     member
+  end
+
+  def organisation_member_count(enterprise, organisation)
+    member_count = CLIENT.query(ORGANISATION_MEMBER_COUNT_QUERY, variables: { slug: enterprise, login: organisation },
+                                                                 context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, member_count.errors unless member_count.errors.empty?
+
+    member_count
   end
 
   def perform_member_role_lookup(organisation)

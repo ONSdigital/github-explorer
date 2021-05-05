@@ -16,7 +16,6 @@ Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 config = Configuration.new(ENV)
 set :github_api_base_uri, config.github_api_base_uri
 set :github_enterprise,   config.github_enterprise
-set :github_organisation, config.github_organisation
 set :github_token,        config.github_token
 
 GITHUB = GitHub.new(settings.github_api_base_uri, settings.github_token)
@@ -66,23 +65,24 @@ end
 
 get '/?' do
   begin
-    GITHUB.perform_team_membership_lookup(settings.github_organisation)
-    GITHUB.perform_member_role_lookup(settings.github_organisation)
-    GITHUB.perform_two_factor_disabled_lookup(settings.github_enterprise)
+    data = GITHUB.all_organisations(settings.github_enterprise).data
+    member_counts = []
 
-    data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
+    data.enterprise.organizations.nodes.each do |organisation|
+      organisation_member_count = GITHUB.organisation_member_count(settings.github_enterprise, organisation.login).data
+      member_counts << organisation_member_count.enterprise.members.total_count
+    end
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
-  owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
-  two_factor_disabled_count = GITHUB.two_factor_disabled.count
-  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
-                        data: data,
-                        owners: owners,
-                        two_factor_disabled_count: two_factor_disabled_count,
-                        pagy: pagy }
+  count = data.enterprise.organizations.nodes.count
+  pagy = Pagy.new(count: count, items: ITEMS_COUNT, page: (params[:page] || 1))
+  organisations = data.enterprise.organizations.nodes[pagy.offset, pagy.items]
+  erb :index, locals: {title: 'Organisations - GitHub Explorer',
+                       organisations: organisations,
+                       member_counts: member_counts,
+                       pagy: pagy }
 end
 
 get '/collaborators/?' do
@@ -138,30 +138,52 @@ get '/members/:login' do |login|
                          pagy: pagy }
 end
 
-get '/members/?' do
+get '/organisations/:organisation/members/?' do |organisation|
   begin
-    all_members = GITHUB.all_members(settings.github_enterprise)
+    all_members = GITHUB.all_members(settings.github_enterprise, organisation)
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  members = all_members[pagy.offset, pagy.items]
-  erb :members, locals: { title: 'Members - GitHub Explorer',
+  members, organisation_name = all_members[pagy.offset, pagy.items]
+  erb :members, locals: { title: "#{organisation_name} Members - GitHub Explorer",
                           members: members,
+                          organisation: organisation,
                           pagy: pagy }
 end
 
-get '/repositories/?' do
+get '/organisations/:organisation' do |organisation|
   begin
-    all_repositories = GITHUB.all_repositories(settings.github_organisation)
+    GITHUB.perform_team_membership_lookup(settings.github_organisation)
+    GITHUB.perform_member_role_lookup(settings.github_organisation)
+    GITHUB.perform_two_factor_disabled_lookup(settings.github_enterprise)
+
+    data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
+  rescue GitHubError => e
+    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
+  owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
+  two_factor_disabled_count = GITHUB.two_factor_disabled.count
+  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
+                        data: data,
+                        owners: owners,
+                        two_factor_disabled_count: two_factor_disabled_count,
+                        pagy: pagy }
+end
+
+get '/organisations/:organisation/repositories/?' do |organisation|
+  begin
+    all_repositories = GITHUB.all_repositories(organisation)
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_repositories.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  repositories = all_repositories[pagy.offset, pagy.items]
-  erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
+  repositories, organisation_name = all_repositories[pagy.offset, pagy.items]
+  erb :repositories, locals: { title: "#{organisation_name} Repositories - GitHub Explorer",
                                repositories: repositories,
                                pagy: pagy }
 end
@@ -188,16 +210,16 @@ get '/repositories/:repository' do |repository|
                              pagy: pagy }
 end
 
-get '/teams/?' do
+get '/organisations/:organisation/teams/?' do |organisation|
   begin
-    all_teams = GITHUB.all_teams(settings.github_organisation)
+    all_teams = GITHUB.all_teams(organisation)
   rescue GitHubError => e
     return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  teams = all_teams[pagy.offset, pagy.items]
-  erb :teams, locals: { title: 'Teams - GitHub Explorer',
+  teams, organisation_name = all_teams[pagy.offset, pagy.items]
+  erb :teams, locals: { title: "#{organisation_name} Teams - GitHub Explorer",
                         teams: teams,
                         pagy: pagy }
 end

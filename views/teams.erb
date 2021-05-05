@@ -1,6 +1,6 @@
 <nav>
   <ul>
-    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisation</a></li>
+    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisations</a></li>
     <li id="active"><img src="/svg/team.svg" alt="Team"> Teams</li>
     <li><a href="/members"><img src="/svg/user.svg" alt="User"> Members</a></li>
     <li><a href="/collaborators"><img src="/svg/user.svg" alt="User"> Outside Collaborators</a></li>
@@ -9,47 +9,51 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter teams..."></p>
-<table id="data">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Members</th>
-      <th class="no-wrap">Created</th>
-      <th class="no-wrap">Updated</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% i = 1 %>
-  <% teams.each do |team| i += 1 %>
-    <tr class="<%= i.even? ? 'even' : 'odd' %>">
-      <td><img class="avatar-small" src="<%= team.avatar_url %>" alt="<%=h team.name %>"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
-      <td><% if team.description.nil? || team.description.empty? %>-<% else %><%=h team.description %><% end %></td>
-      <td><a href="/teams/<%=h team.slug %>"><%=pluralise(team.members.total_count, 'member') %></a></td>
-      <td class="no-wrap"><%=d team.created_at %></td>
-      <td class="no-wrap"><%=d team.updated_at %></td>
-    </tr>  
-  <% team.child_teams.nodes.each do |child_team| i+= 1 %>
-    <tr class="child <%= i.even? ? 'even' : 'odd' %>">
-      <td><img class="avatar-small" src="<%= child_team.avatar_url %>" alt="<%=h child_team.name %>"> <a href="/teams/<%=h child_team.slug %>"><%=h child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
-      <td><% if child_team.description.nil? || child_team.description.empty? %>-<% else %><%=h child_team.description %><% end %></td>
-      <td><a href="/teams/<%=h child_team.slug %>"><%=pluralise(child_team.members.total_count, 'member') %></a></td>
-      <td class="no-wrap"><%=d child_team.created_at %></td>
-      <td class="no-wrap"><%=d child_team.updated_at %></td>
-    </tr>
-  <% child_team.child_teams.nodes.each do |child_child_team| i += 1 %>
-    <tr class="child-child <%= i.even? ? 'even' : 'odd' %>">
-      <td><img class="avatar-small" src="<%= child_child_team.avatar_url %>" alt="<%=h child_child_team.name %>"> <a href="/teams/<%=h child_child_team.slug %>"><%=h child_child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
-      <td><% if child_child_team.description.nil? || child_child_team.description.empty? %>-<% else %><%=h child_child_team.description %><% end %></td>
-      <td><a href="/teams/<%=h child_child_team.slug %>"><%=pluralise(child_child_team.members.total_count, 'member') %></a></td>
-      <td class="no-wrap"><%=d child_child_team.created_at %></td>
-      <td class="no-wrap"><%=d child_child_team.updated_at %></td>
-    </tr>  
-  <% end %> <%# team.child_teams.nodes.child_teams.nodes.each do |child_child_team| %>
-  <% end %> <%# team.child_teams.nodes.each do |child_team| %>
-  <% end %> <%# teams.each_with_index do |team, i| %>
-  </tbody>
-</table><section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>
+<% if teams.empty? %>
+  <p id="no-data">This organisation doesn’t have any teams.</p>
+<% else %>
+  <p><input type="text" id="filter" autocomplete="off" placeholder="Filter teams..."></p>
+  <table id="data">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Members</th>
+        <th class="no-wrap">Created</th>
+        <th class="no-wrap">Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% i = 1 %>
+    <% teams.each do |team| i += 1 %>
+      <tr class="<%= i.even? ? 'even' : 'odd' %>">
+        <td><img class="avatar-small" src="<%= team.avatar_url %>" alt="<%=h team.name %>"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+        <td><% if team.description.nil? || team.description.empty? %>-<% else %><%=h team.description %><% end %></td>
+        <td><a href="/teams/<%=h team.slug %>"><%=pluralise(team.members.total_count, 'member') %></a></td>
+        <td class="no-wrap"><%=d team.created_at %></td>
+        <td class="no-wrap"><%=d team.updated_at %></td>
+      </tr>  
+    <% team.child_teams.nodes.each do |child_team| i+= 1 %>
+      <tr class="child <%= i.even? ? 'even' : 'odd' %>">
+        <td><img class="avatar-small" src="<%= child_team.avatar_url %>" alt="<%=h child_team.name %>"> <a href="/teams/<%=h child_team.slug %>"><%=h child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+        <td><% if child_team.description.nil? || child_team.description.empty? %>-<% else %><%=h child_team.description %><% end %></td>
+        <td><a href="/teams/<%=h child_team.slug %>"><%=pluralise(child_team.members.total_count, 'member') %></a></td>
+        <td class="no-wrap"><%=d child_team.created_at %></td>
+        <td class="no-wrap"><%=d child_team.updated_at %></td>
+      </tr>
+    <% child_team.child_teams.nodes.each do |child_child_team| i += 1 %>
+      <tr class="child-child <%= i.even? ? 'even' : 'odd' %>">
+        <td><img class="avatar-small" src="<%= child_child_team.avatar_url %>" alt="<%=h child_child_team.name %>"> <a href="/teams/<%=h child_child_team.slug %>"><%=h child_child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
+        <td><% if child_child_team.description.nil? || child_child_team.description.empty? %>-<% else %><%=h child_child_team.description %><% end %></td>
+        <td><a href="/teams/<%=h child_child_team.slug %>"><%=pluralise(child_child_team.members.total_count, 'member') %></a></td>
+        <td class="no-wrap"><%=d child_child_team.created_at %></td>
+        <td class="no-wrap"><%=d child_child_team.updated_at %></td>
+      </tr>  
+    <% end %> <%# team.child_teams.nodes.child_teams.nodes.each do |child_child_team| %>
+    <% end %> <%# team.child_teams.nodes.each do |child_team| %>
+    <% end %> <%# teams.each_with_index do |team, i| %>
+    </tbody>
+  </table><section id="pagination">
+    <%= pagination_links(pagy) %>
+  </section>
+<% end %>

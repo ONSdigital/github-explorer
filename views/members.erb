@@ -1,6 +1,6 @@
 <nav>
   <ul>
-    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisation</a></li>
+    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisations</a></li>
     <li><a href="/teams"><img src="/svg/team.svg" alt="Team"> Teams</a></li>
     <li id="active"><img src="/svg/user.svg" alt="User"> Members</li>
     <li><a href="/collaborators"><img src="/svg/user.svg" alt="User"> Outside Collaborators</a></li>
@@ -9,29 +9,33 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter members..."></p>
-<table id="data">
-  <thead>
-    <tr>
-      <th>Login</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th class="no-wrap">Created</th>
-      <th class="no-wrap">Updated</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% members.each_with_index do |member, i| %>
-    <tr class="<%= i.even? ? 'even' : 'odd' %>">
-      <td><img class="avatar-small" src="<%= member.avatar_url %>" alt="<%=h member.login %>"> <a href="/members/<%=h member.login %>"><%=h member.login %></a></td>
-      <td><% if member.name.nil? || member.name.empty? %>-<% else %><a href="/members/<%=h member.login %>"><%=h member.name %><% end %></a></td>
-      <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
-      <td class="no-wrap"><%=d member.created_at %></td>
-      <td class="no-wrap"><%=d member.user.updated_at %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
-<section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>
+<% if members.empty? %>
+  <p id="no-data">This organisation doesn’t have any members.</p>
+<% else %>
+  <p><input type="text" id="filter" autocomplete="off" placeholder="Filter members..."></p>
+  <table id="data">
+    <thead>
+      <tr>
+        <th>Login</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th class="no-wrap">Created</th>
+        <th class="no-wrap">Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% members.each_with_index do |member, i| %>
+      <tr class="<%= i.even? ? 'even' : 'odd' %>">
+        <td><img class="avatar-small" src="<%= member.avatar_url %>" alt="<%=h member.login %>"> <a href="/members/<%=h member.login %>"><%=h member.login %></a></td>
+        <td><% if member.name.nil? || member.name.empty? %>-<% else %><a href="/members/<%=h member.login %>"><%=h member.name %><% end %></a></td>
+        <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
+        <td class="no-wrap"><%=d member.created_at %></td>
+        <td class="no-wrap"><%=d member.user.updated_at %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <section id="pagination">
+    <%= pagination_links(pagy) %>
+  </section>
+<% end %>

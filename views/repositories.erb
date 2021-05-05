@@ -1,6 +1,6 @@
 <nav>
   <ul>
-    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisation</a></li>
+    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisations</a></li>
     <li><a href="/teams"><img src="/svg/team.svg" alt="Team"> Teams</a></li>
     <li><a href="/members"><img src="/svg/user.svg" alt="User"> Members</a></li>
     <li><a href="/collaborators"><img src="/svg/user.svg" alt="User"> Outside Collaborators</a></li>
@@ -9,35 +9,39 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter repositories..."></p>
-<table id="data">
-  <thead>
-    <tr>
-      <th class="no-wrap">Name</th>
-      <th>Description</th>
-      <th>Primary Language</th>
-      <th>Branch Protection Rules</th>
-      <th>Security Vulnerability Alerts</th>
-      <th class="no-wrap">Access</th>
-      <th class="no-wrap">Created</th>
-      <th class="no-wrap">Updated</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% repositories.each_with_index do |repo, i| %>
-    <tr class="<%= i.even? ? 'even' : 'odd' %>">
-      <td class="no-wrap"><a href="/repositories/<%=h repo.name %>"><%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %> <% if repo.is_archived == true %><span class="note">Archived</span><% end %></td>
-      <td><% if repo.description.nil? || repo.description.empty? %>-<% else %><%=h repo.description %><% end %></td>
-      <td><% if repo.primary_language.nil? %>-<% else %><%=h repo.primary_language.name %><% end %></td>
-      <td><% if repo.branch_protection_rules.total_count.zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
-      <td><%=n repo.vulnerability_alerts.total_count %></td>
-      <td class="no-wrap"><% if repo.collaborators.nil? %>0 members<% else %><a href="/repositories/<%=h repo.name %>"><%=pluralise(repo.collaborators.total_count, 'member') %></a><% end %></td>
-      <td class="no-wrap"><%=d repo.created_at %></td>
-      <td class="no-wrap"><%=d repo.updated_at %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
-<section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>
+<% if repositories.empty? %>
+  <p id="no-data">This organisation doesn’t have any repositories.</p>
+<% else %>
+  <p><input type="text" id="filter" autocomplete="off" placeholder="Filter repositories..."></p>
+  <table id="data">
+    <thead>
+      <tr>
+        <th class="no-wrap">Name</th>
+        <th>Description</th>
+        <th>Primary Language</th>
+        <th>Branch Protection Rules</th>
+        <th>Security Vulnerability Alerts</th>
+        <th class="no-wrap">Access</th>
+        <th class="no-wrap">Created</th>
+        <th class="no-wrap">Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% repositories.each_with_index do |repo, i| %>
+      <tr class="<%= i.even? ? 'even' : 'odd' %>">
+        <td class="no-wrap"><a href="/repositories/<%=h repo.name %>"><%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %> <% if repo.is_archived %><span class="note">Archived</span><% end %></td>
+        <td><% if repo.description.nil? || repo.description.empty? %>-<% else %><%=h repo.description %><% end %></td>
+        <td><% if repo.primary_language.nil? %>-<% else %><%=h repo.primary_language.name %><% end %></td>
+        <td><% if repo.branch_protection_rules.total_count.zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
+        <td><%=n repo.vulnerability_alerts.total_count %></td>
+        <td class="no-wrap"><% if repo.collaborators.nil? %>0 members<% else %><a href="/repositories/<%=h repo.name %>"><%=pluralise(repo.collaborators.total_count, 'member') %></a><% end %></td>
+        <td class="no-wrap"><%=d repo.created_at %></td>
+        <td class="no-wrap"><%=d repo.updated_at %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <section id="pagination">
+    <%= pagination_links(pagy) %>
+  </section>
+<% end %>

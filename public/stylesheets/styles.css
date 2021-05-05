@@ -238,6 +238,10 @@ td {
   margin-top: 0;
 }
 
+#no-data {
+  font-size: 100%;
+}
+
 #organisations img {
   vertical-align: middle;
 }
