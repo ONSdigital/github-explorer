@@ -242,8 +242,8 @@ td {
   vertical-align: middle;
 }
 
-#organisations p {
-  font-size: 100%;
+#organisations ul {
+  columns: 3;
 }
 
 #pagination {
@@ -356,10 +356,6 @@ h2 .note:first-of-type {
   font-size: 80%;
   font-weight: normal;
   padding: 1px 6px;
-}
-
-.organisation {
-  margin-right: 6px;
 }
 
 .profile-dates span {

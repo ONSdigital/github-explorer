@@ -62,11 +62,11 @@
 
     <h3>Organisations</h3>
     <section id="organisations">
-      <p>
+      <ul class="no-bullets">
     <% data.enterprise.members.nodes.first.user.organizations.nodes.sort_by(&:name).each do |org| %>
-        <img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <span class="organisation"><%=h org.name %></span>
+        <li><img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <%=h org.name %></li>
     <% end %>
-      </p>
+      </ul>
     </section>
 
     <p id="back-link"><a href="/members">&lt; Members</a></p>
