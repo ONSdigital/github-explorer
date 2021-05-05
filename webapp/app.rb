@@ -72,7 +72,7 @@ get '/?' do
 
     data = GITHUB.summary(settings.github_enterprise, settings.github_organisation).data
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
@@ -89,7 +89,7 @@ get '/collaborators/?' do
   begin
     all_outside_collaborators = GITHUB.all_outside_collaborators(settings.github_enterprise)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_outside_collaborators.count, items: ITEMS_COUNT, page: (params[:page] || 1))
@@ -103,7 +103,7 @@ get '/collaborators/:login' do |login|
   begin
     data = GITHUB.outside_collaborator(settings.github_enterprise, login).data
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   count = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
@@ -124,7 +124,7 @@ get '/members/:login' do |login|
   begin
     data = GITHUB.member(settings.github_enterprise, settings.github_organisation, login).data
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
@@ -142,7 +142,7 @@ get '/members/?' do
   begin
     all_members = GITHUB.all_members(settings.github_enterprise)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
@@ -156,7 +156,7 @@ get '/repositories/?' do
   begin
     all_repositories = GITHUB.all_repositories(settings.github_organisation)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_repositories.count, items: ITEMS_COUNT, page: (params[:page] || 1))
@@ -178,7 +178,7 @@ get '/repositories/:repository' do |repository|
 
     repo = data.organization.repository
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   erb :repository, locals: { title: "#{repository} Repository - GitHub Explorer",
@@ -192,7 +192,7 @@ get '/teams/?' do
   begin
     all_teams = GITHUB.all_teams(settings.github_organisation)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
@@ -206,7 +206,7 @@ get '/teams/:team' do |team|
   begin
     team = GITHUB.team(settings.github_organisation, team)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
@@ -222,7 +222,7 @@ get '/two-factor-security/?' do
     two_factor_disabled_users = GITHUB.two_factor_disabled_users(settings.github_enterprise,
                                                                  settings.github_organisation)
   rescue GitHubError => e
-    return erb :error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   pagy = Pagy.new(count: two_factor_disabled_users.count, items: ITEMS_COUNT, page: (params[:page] || 1))
@@ -230,6 +230,10 @@ get '/two-factor-security/?' do
   erb :two_factor, locals: { title: '2FA Security - GitHub Explorer',
                              users: users,
                              pagy: pagy }
+end
+
+error do
+  erb :error, locals: { title: '500 Internal Service Error - GitHub Explorer' }
 end
 
 not_found do

@@ -9,7 +9,13 @@
   </ul>
 </nav>
 
-<h2><%=h env['sinatra.error'].message %></h2>
-<section id="error-details">
-  <p><%=h env['sinatra.error'].backtrace %></p>
-</section>
+<div id="error">
+  <div>
+    <h2>Something Went Wrong</h2>
+    <p>An error occurred whilst invoking the GitHub GraphQL API:</p>
+    <section id="error-details">
+      <p><strong><%=h type %></strong></p>
+      <p><%=h message %></p>
+    </section>
+  </div>
+</div>
