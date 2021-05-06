@@ -11,35 +11,35 @@
 
 <% if @debug %>
 <section id="debug">
-  <p>GitHub GraphQL query: <%=n data.rate_limit.remaining %>/<%=n data.rate_limit.limit %> rate limit points remaining. Resets <%=d data.rate_limit.reset_at %> UTC.</p>
+  <p>GitHub GraphQL query: <%=n organisation.rate_limit.remaining %>/<%=n organisation.rate_limit.limit %> rate limit points remaining. Resets <%=d organisation.rate_limit.reset_at %> UTC.</p>
 </section>
 <% end %>
 
 <section class="row">
   <section class="column left">
-    <h2><%=h data.organization.name %> GitHub Organisation</h2>
-    <p><img class="avatar-medium" src="<%=h data.organization.avatar_url %>" alt="<%=h data.organization.name %>"></p>
+    <h2><%=h organisation.organization.name %> GitHub Organisation</h2>
+    <p><img class="avatar-medium" src="<%=h organisation.organization.avatar_url %>" alt="<%=h organisation.organization.name %>"></p>
 
     <section class="profile-detail">
-    <% unless data.organization.description.nil? || data.organization.description.empty? %>
-      <p><%=h data.organization.description %></p>
+    <% unless organisation.organization.description.nil? || organisation.organization.description.empty? %>
+      <p><%=h organisation.organization.description %></p>
     <% end %>
 
-      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(data.organization.url) %>"><%= data.organization.url %></a></p>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(organisation.organization.url) %>"><%= organisation.organization.url %></a></p>
 
-    <% unless data.organization.location.nil? || data.organization.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%=h data.organization.location %></p>
+    <% unless organisation.organization.location.nil? || organisation.organization.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h organisation.organization.location %></p>
     <% end %>
 
-    <% unless data.organization.website_url.nil? || data.organization.website_url.empty? %>
-      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.organization.website_url) %>"><%=h data.organization.website_url %></a></p>
+    <% unless organisation.organization.website_url.nil? || organisation.organization.website_url.empty? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.organization.website_url) %>"><%=h organisation.organization.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%=pluralise(data.organization.repositories.total_count, 'repository', 'repositories') %></a> (<%=n data.organization.public_repositories.total_count %> public, <%=n data.organization.private_repositories.total_count %> private or internal)</p>
-      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%=pluralise(data.organization.teams.total_count, 'team') %></a> (<%=n data.organization.visible_teams.total_count %> visible, <%=n data.organization.secret_teams.total_count %> secret)</p>
+      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%=pluralise(organisation.organization.repositories.total_count, 'repository', 'repositories') %></a> (<%=n organisation.organization.public_repositories.total_count %> public, <%=n organisation.organization.private_repositories.total_count %> private or internal)</p>
+      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%=pluralise(organisation.organization.teams.total_count, 'team') %></a> (<%=n organisation.organization.visible_teams.total_count %> visible, <%=n organisation.organization.secret_teams.total_count %> secret)</p>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d data.organization.created_at %></p>
+      <p><span>Created:</span><%=d organisation.organization.created_at %></p>
     </section>
      <section id="owners">
       <h3>Organisation Owners (<%= pagy.count %>)</h3>
@@ -53,40 +53,40 @@
   </section>
 
   <section class="column right">
-    <h2><%=h data.enterprise.name %> GitHub Enterprise</h2>
-    <p><img class="avatar-medium" src="<%=h data.enterprise.avatar_url %>" alt="<%=h data.enterprise.name %>"></p>
+    <h2><%=h organisation.enterprise.name %> GitHub Enterprise</h2>
+    <p><img class="avatar-medium" src="<%=h organisation.enterprise.avatar_url %>" alt="<%=h organisation.enterprise.name %>"></p>
 
     <section class="profile-detail">
-    <% unless data.enterprise.description.nil? || data.enterprise.description.empty? %>
-      <p><%=h data.enterprise.description %></p>
+    <% unless organisation.enterprise.description.nil? || organisation.enterprise.description.empty? %>
+      <p><%=h organisation.enterprise.description %></p>
     <% end %>
 
-      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(data.enterprise.url) %>"><%= data.enterprise.url %></a></p>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(organisation.enterprise.url) %>"><%= organisation.enterprise.url %></a></p>
 
-    <% unless data.enterprise.location.nil? || data.enterprise.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%=h data.enterprise.location %></p>
+    <% unless organisation.enterprise.location.nil? || organisation.enterprise.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h organisation.enterprise.location %></p>
     <% end %>
 
-    <% unless data.enterprise.website_url.nil? || data.enterprise.website_url.empty? %>
-      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.website_url) %>"><%=h data.enterprise.website_url %></a></p>
+    <% unless organisation.enterprise.website_url.nil? || organisation.enterprise.website_url.empty? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.enterprise.website_url) %>"><%=h organisation.enterprise.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/user.svg" alt="User"> <a href="/members"><%=pluralise(data.enterprise.members.total_count, 'member') %></a><% if data.enterprise.owner_info.pending_member_invitations.total_count >= 1 %> (<%=n data.enterprise.owner_info.pending_member_invitations.total_count %> pending)<% end %></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/members"><%=pluralise(organisation.enterprise.members.total_count, 'member') %></a><% if organisation.enterprise.owner_info.pending_member_invitations.total_count >= 1 %> (<%=n organisation.enterprise.owner_info.pending_member_invitations.total_count %> pending)<% end %></p>
       <p><img src="/svg/user.svg" alt="User"> <a href="/two-factor-security"><%=pluralise(two_factor_disabled_count, 'user') %> without two-factor security enabled</a></p>
-      <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators"><%=pluralise(data.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
+      <p><img src="/svg/user.svg" alt="User"> <a href="/collaborators"><%=pluralise(organisation.enterprise.owner_info.outside_collaborators.total_count, 'outside collaborator') %></a></p>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d data.enterprise.created_at %></p>
+      <p><span>Created:</span><%=d organisation.enterprise.created_at %></p>
     </section>
     <section id="licensing">
       <h3>Licensing</h3>
-      <p><%=n data.enterprise.billing_info.total_available_licenses %> available licenses</p>
-      <p><%=n data.enterprise.billing_info.total_licenses %> total licenses</p>
+      <p><%=n organisation.enterprise.billing_info.total_available_licenses %> available licenses</p>
+      <p><%=n organisation.enterprise.billing_info.total_licenses %> total licenses</p>
     </section>
     <section id="administrators">
-      <h3>Enterprise Administrators (<%= data.enterprise.owner_info.admins.nodes.count %>)</h3>
+      <h3>Enterprise Administrators (<%= organisation.enterprise.owner_info.admins.nodes.count %>)</h3>
       <ul class="no-bullets">
-      <% data.enterprise.owner_info.admins.nodes.each do |admin| %>
+      <% organisation.enterprise.owner_info.admins.nodes.each do |admin| %>
         <li><img src="/svg/user.svg" alt="User"> <a href="/members/<%=h admin.login %>"><%=h admin.login %></a> <% unless admin.name.nil? || admin.name.empty? %>(<%=h admin.name %>)<% end %>
       <% end %>
       </ul>

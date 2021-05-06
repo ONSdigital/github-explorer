@@ -11,56 +11,56 @@
 
 <section class="row">
   <section class="column left">
-    <p><img class="avatar-large" src="<%= data.enterprise.owner_info.outside_collaborators.edges.first.node.avatar_url %>"></p>
+    <p><img class="avatar-large" src="<%= collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.avatar_url %>"></p>
 
-  <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.name.nil? %>
-    <h2><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.name %></h2>
-    <p id="login"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
+  <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.name.nil? %>
+    <h2><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.name %></h2>
+    <p id="login"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
   <% else %>
-    <p id="login-only"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
+    <p id="login-only"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
   <% end %> 
 
-  <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.bio.nil? %>
-    <p id="bio"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.bio %></p>
+  <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.bio.nil? %>
+    <p id="bio"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.bio %></p>
   <% end %>
 
-    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%=pluralise(data.enterprise.owner_info.outside_collaborators.edges.first.node.followers.total_count, 'follower') %> &bull; <%=n data.enterprise.owner_info.outside_collaborators.edges.first.node.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%=n data.enterprise.owner_info.outside_collaborators.edges.first.node.starred_repositories.total_count %></p>
+    <p id="profile-stats"><img src="/svg/followers.svg" alt="Followers"> <%=pluralise(collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.followers.total_count, 'follower') %> &bull; <%=n collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.following.total_count %> following &bull; <img src="/svg/star.svg" alt="Starred"> <%=n collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.starred_repositories.total_count %></p>
 
     <section class="profile-detail">
-    <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.company.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.company.empty? %>
-      <p><img src="/svg/company.svg" alt="Company"> <%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.company %></p>
+    <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.company.nil? || collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.company.empty? %>
+      <p><img src="/svg/company.svg" alt="Company"> <%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.company %></p>
     <% end %>
 
-    <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.location.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.location %></p>
+    <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.location.nil? || collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.location %></p>
     <% end %>
 
-    <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.email.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.email.empty? %>
-      <p><img src="/svg/email.svg" alt="Email"> <a href="mailto:<%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.email %>"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.email %></a></p>
+    <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.email.nil? || collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.email.empty? %>
+      <p><img src="/svg/email.svg" alt="Email"> <a href="mailto:<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.email %>"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.email %></a></p>
     <% end %>
 
-    <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username.empty? %>
-      <p><img src="/svg/twitter.svg" alt="Twitter"> <a href="https://twitter.com/<%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username %>">@<%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username %></a></p>
+    <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username.nil? || collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username.empty? %>
+      <p><img src="/svg/twitter.svg" alt="Twitter"> <a href="https://twitter.com/<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username %>">@<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.twitter_username %></a></p>
     <% end %>
 
-    <% unless data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.nil? || data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.empty? %>
-      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url) %>"><%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.website_url %></a></p>
+    <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.nil? || collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.website_url.empty? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.website_url) %>"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h data.enterprise.owner_info.outside_collaborators.edges.first.node.url %>">View on GitHub</a></p>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.url %>">View on GitHub</a></p>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d data.enterprise.owner_info.outside_collaborators.edges.first.node.created_at %></p>
-      <p><span>Updated:</span><%=d data.enterprise.owner_info.outside_collaborators.edges.first.node.updated_at %></p>
-      <p><% if data.enterprise.owner_info.outside_collaborators.edges.first.node.contributions_collection.has_any_contributions %>This user has contributions within the last year. <img src="/svg/tick.svg" alt="Tick"><% else %>This user doesn’t have contributions within the last year. <img src="/svg/cross.svg" alt="Cross"><% end %></p>
+      <p><span>Created:</span><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.created_at %></p>
+      <p><span>Updated:</span><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.updated_at %></p>
+      <p><% if collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.contributions_collection.has_any_contributions %>This user has contributions within the last year. <img src="/svg/tick.svg" alt="Tick"><% else %>This user doesn’t have contributions within the last year. <img src="/svg/cross.svg" alt="Cross"><% end %></p>
       <p><% if two_factor_disabled %>This user doesn’t have two-factor security enabled. <img src="/svg/cross.svg" alt="Cross"><% else %>This user has two-factor security enabled. <img src="/svg/tick.svg" alt="Tick"><% end %></p>
     </section>
 
     <h3>Organisations</h3>
     <section id="organisations">
-    <% if data.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.any? %>
+    <% if collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.any? %>
       <p>
-    <% data.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.sort_by(&:name).each do |org| %>
+    <% collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.organizations.nodes.sort_by(&:name).each do |org| %>
       <img class="avatar-medium" src="<%=h org.avatar_url %>" alt="<%=h org.name %>"> <span class="organisation"><%=h org.name %></span>
       </p>
     <% end %>
@@ -88,9 +88,9 @@
     </section>
     <h2>Top Repositories</h2>
     <section class="repositories">
-    <% if data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.any? %>
+    <% if collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.any? %>
       <ul class="no-bullets">
-      <% data.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.each do |repo| %>
+      <% collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.each do |repo| %>
         <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>

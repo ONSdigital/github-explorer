@@ -67,7 +67,7 @@ get '/?' do
     GITHUB.perform_team_membership_lookup
     GITHUB.perform_member_role_lookup
     GITHUB.perform_two_factor_disabled_lookup
-    data = GITHUB.summary.data
+    organisation = GITHUB.organisation.data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -76,7 +76,7 @@ get '/?' do
   owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
   two_factor_disabled_count = GITHUB.two_factor_disabled.count
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
-                        data: data,
+                        organisation: organisation,
                         owners: owners,
                         two_factor_disabled_count: two_factor_disabled_count,
                         pagy: pagy }
@@ -98,16 +98,16 @@ end
 
 get '/collaborators/:login' do |login|
   begin
-    data = GITHUB.outside_collaborator(login).data
+    collaborator = GITHUB.outside_collaborator(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  count = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
+  count = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
   pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
-  repos = data.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
+  repos = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
-                               data: data,
+                               collaborator: collaborator,
                                two_factor_disabled: GITHUB.two_factor_disabled?(login),
                                repos: repos,
                                pagy: pagy }
@@ -119,7 +119,7 @@ end
 
 get '/members/:login' do |login|
   begin
-    data = GITHUB.member(login).data
+    member = GITHUB.member(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -128,7 +128,7 @@ get '/members/:login' do |login|
   pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
-                         data: data,
+                         member: member,
                          owner: GITHUB.owner?(login),
                          two_factor_disabled: GITHUB.two_factor_disabled?(login),
                          teams: teams,
@@ -163,23 +163,23 @@ get '/repositories/?' do
                                pagy: pagy }
 end
 
-get '/repositories/:repository' do |repository|
+get '/repositories/:repository' do |repository_slug|
   begin
-    data = GITHUB.repository(repository).data
+    repository = GITHUB.repository(repository_slug).data
     
-    unless data.organization.repository.nil? || data.organization.repository.is_archived
-      repository_access = GITHUB.repository_access(repository)
+    unless repository.organization.repository.nil? || repository.organization.repository.is_archived
+      repository_access = GITHUB.repository_access(repository_slug)
       pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
       access = repository_access[pagy.offset, pagy.items]
     end
 
-    repo = data.organization.repository
+    repo = repository.organization.repository
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  erb :repository, locals: { title: "#{repository} Repository - GitHub Explorer",
-                             repository: repository,
+  erb :repository, locals: { title: "#{repository_slug} Repository - GitHub Explorer",
+                             repository_slug: repository_slug,
                              repo: repo,
                              access: access,
                              pagy: pagy }

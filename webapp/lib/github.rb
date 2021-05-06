@@ -247,6 +247,74 @@ class GitHub
     }
   GRAPHQL
 
+  ORGANISATION_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query($login: String!, $slug: String!) {
+      rateLimit {
+        limit
+        remaining
+        resetAt
+      }
+      enterprise(slug: $slug) {
+        avatarUrl
+        createdAt
+        description
+        location
+        name
+        url
+        websiteUrl
+        billingInfo {
+          totalAvailableLicenses
+          totalLicenses
+        }
+        members(first: 1) {
+          totalCount
+        }
+        ownerInfo {
+          admins(first: 1) {
+            nodes {
+              login
+              name
+            }
+          }
+          outsideCollaborators(first: 1) {
+            totalCount
+          }
+          pendingMemberInvitations(first: 1) {
+            totalCount
+          }
+        }
+      }
+      organization(login: $login) {
+        avatarUrl
+        createdAt
+        description
+        location
+        name
+        updatedAt
+        url
+        websiteUrl
+        repositories(first: 1) {
+          totalCount
+        }
+        publicRepositories: repositories(first: 1, privacy: PUBLIC) {
+          totalCount
+        }
+        privateRepositories: repositories(first: 1, privacy: PRIVATE) {
+          totalCount
+        }
+        teams(first: 1) {
+          totalCount
+        }
+        secretTeams: teams(first: 1, privacy: SECRET) {
+          totalCount
+        }
+        visibleTeams: teams(first: 1, privacy: VISIBLE) {
+          totalCount
+        }
+      }
+    }
+  GRAPHQL
+
   OUTSIDE_COLLABORATOR_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $login: String!) {
       enterprise(slug: $slug) {
@@ -405,74 +473,6 @@ class GitHub
               }
             }
           }
-        }
-      }
-    }
-  GRAPHQL
-
-  SUMMARY_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!, $slug: String!) {
-      rateLimit {
-        limit
-        remaining
-        resetAt
-      }
-      enterprise(slug: $slug) {
-        avatarUrl
-        createdAt
-        description
-        location
-        name
-        url
-        websiteUrl
-        billingInfo {
-          totalAvailableLicenses
-          totalLicenses
-        }
-        members(first: 1) {
-          totalCount
-        }
-        ownerInfo {
-          admins(first: 1) {
-            nodes {
-              login
-              name
-            }
-          }
-          outsideCollaborators(first: 1) {
-            totalCount
-          }
-          pendingMemberInvitations(first: 1) {
-            totalCount
-          }
-        }
-      }
-      organization(login: $login) {
-        avatarUrl
-        createdAt
-        description
-        location
-        name
-        updatedAt
-        url
-        websiteUrl
-        repositories(first: 1) {
-          totalCount
-        }
-        publicRepositories: repositories(first: 1, privacy: PUBLIC) {
-          totalCount
-        }
-        privateRepositories: repositories(first: 1, privacy: PRIVATE) {
-          totalCount
-        }
-        teams(first: 1) {
-          totalCount
-        }
-        secretTeams: teams(first: 1, privacy: SECRET) {
-          totalCount
-        }
-        visibleTeams: teams(first: 1, privacy: VISIBLE) {
-          totalCount
         }
       }
     }
@@ -710,6 +710,14 @@ class GitHub
     member
   end
 
+  def organisation
+    organisation = CLIENT.query(ORGANISATION_QUERY, variables: { login: @organisation, slug: @enterprise },
+                                                    context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, organisation.errors unless organisation.errors.empty?
+
+    organisation
+  end
+
   def perform_member_role_lookup
     after = nil
     next_page = true
@@ -830,14 +838,6 @@ class GitHub
     end
 
     repository_access.sort_by(&:login)
-  end
-
-  def summary
-    summary = CLIENT.query(SUMMARY_QUERY, variables: { login: @organisation, slug: @enterprise },
-                                          context: { base_uri: @base_uri, token: @token })
-    raise GitHubError, summary.errors unless summary.errors.empty?
-
-    summary
   end
 
   def team(slug)
