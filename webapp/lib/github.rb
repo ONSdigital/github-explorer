@@ -602,21 +602,23 @@ class GitHub
     }
   GRAPHQL
 
-  def initialize(base_uri, token)
-    @base_uri = URI.parse(base_uri)
-    @token    = token
+  def initialize(enterprise, organisation, base_uri, token)
+    @enterprise          = enterprise
+    @organisation        = organisation
+    @base_uri            = URI.parse(base_uri)
+    @token               = token
     @members_teams       = {}
     @owners              = Set[]
     @two_factor_disabled = Set[]
   end
 
-  def all_members(enterprise)
+  def all_members
     after = nil
     next_page = true
     all_members = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: enterprise, first: 100, after: after },
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: after },
                                                 context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -628,13 +630,13 @@ class GitHub
     all_members
   end
 
-  def all_outside_collaborators(enterprise)
+  def all_outside_collaborators
     after = nil
     next_page = true
     all_outside_collaborators = []
 
     while next_page
-      collaborators = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_QUERY, variables: { slug: enterprise,
+      collaborators = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_QUERY, variables: { slug: @enterprise,
                                                                                  first: 100, after: after },
                                                                     context: { base_uri: @base_uri, token: @token })
       raise GitHubError, collaborators.errors unless collaborators.errors.empty?
@@ -650,13 +652,13 @@ class GitHub
     all_outside_collaborators
   end
 
-  def all_repositories(organisation)
+  def all_repositories
     after = nil
     next_page = true
     all_repositories = []
 
     while next_page
-      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: organisation, first: 100, after: after },
+      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: @organisation, first: 100, after: after },
                                                           context: { base_uri: @base_uri, token: @token })
       raise GitHubError, repositories.errors unless repositories.errors.empty?
 
@@ -669,13 +671,13 @@ class GitHub
     all_repositories
   end
 
-  def all_teams(organisation)
+  def all_teams
     after = nil
     next_page = true
     all_teams = []
 
     while next_page
-      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: organisation, first: 100, after: after },
+      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: after },
                                             context: { base_uri: @base_uri, token: @token })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
@@ -687,8 +689,8 @@ class GitHub
     all_teams
   end
 
-  def outside_collaborator(enterprise, login)
-    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: enterprise, login: login },
+  def outside_collaborator(login)
+    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: login },
                                                                     context: { base_uri: @base_uri, token: @token })
     raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
 
@@ -700,20 +702,21 @@ class GitHub
     false
   end
 
-  def member(enterprise, login, user_login)
-    member = CLIENT.query(MEMBER_QUERY, variables: { slug: enterprise, login: login, user_login: user_login },
+  def member(user_login)
+    member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: user_login },
                                         context: { base_uri: @base_uri, token: @token })
     raise GitHubError, member.errors unless member.errors.empty?
 
     member
   end
 
-  def perform_member_role_lookup(organisation)
+  def perform_member_role_lookup
     after = nil
     next_page = true
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: organisation, first: 100, after: after },
+      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: @organisation,
+                                                                        first: 100, after: after },
                                                            context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -730,8 +733,8 @@ class GitHub
     end
   end
 
-  def perform_team_membership_lookup(organisation)
-    teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: organisation },
+  def perform_team_membership_lookup
+    teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: @organisation },
                                                       context: { base_uri: @base_uri, token: @token })
     raise GitHubError, teams.errors unless teams.errors.empty?
 
@@ -751,12 +754,12 @@ class GitHub
     end
   end
 
-  def perform_two_factor_disabled_lookup(enterprise)
+  def perform_two_factor_disabled_lookup
     after = nil
     next_page = true
 
     while next_page
-      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: enterprise, first: 100, after: after },
+      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: after },
                                                        context: { base_uri: @base_uri, token: @token })
       raise GitHubError, logins.errors unless logins.errors.empty?
 
@@ -769,21 +772,21 @@ class GitHub
     end
   end
 
-  def repository(organisation, repository)
-    repository = CLIENT.query(REPOSITORY_QUERY, variables: { login: organisation, name: repository },
+  def repository(repository)
+    repository = CLIENT.query(REPOSITORY_QUERY, variables: { login: @organisation, name: repository },
                                                 context: { base_uri: @base_uri, token: @token })
     raise GitHubError, repository.errors unless repository.errors.empty?
 
     repository
   end
 
-  def repository_access(organisation, repository)
+  def repository_access(repository)
     after = nil
     next_page = true
     repository_access = Set[]
 
     while next_page
-      access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: organisation, name: repository,
+      access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: @organisation, name: repository,
                                                                   first: 100, after: after },
                                                      context: { base_uri: @base_uri, token: @token })
       raise GitHubError, access.errors unless access.errors.empty?
@@ -829,22 +832,22 @@ class GitHub
     repository_access.sort_by(&:login)
   end
 
-  def summary(enterprise, organisation)
-    summary = CLIENT.query(SUMMARY_QUERY, variables: { login: organisation, slug: enterprise },
+  def summary
+    summary = CLIENT.query(SUMMARY_QUERY, variables: { login: @organisation, slug: @enterprise },
                                           context: { base_uri: @base_uri, token: @token })
     raise GitHubError, summary.errors unless summary.errors.empty?
 
     summary
   end
 
-  def team(organisation, slug)
+  def team(slug)
     after = nil
     next_page = true
     team_tuple = OpenStruct.new
     team_tuple.members = []
 
     while next_page
-      team = CLIENT.query(TEAM_QUERY, variables: { login: organisation, slug: slug,
+      team = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug: slug,
                                                    first: 100, after: after },
                                       context: { base_uri: @base_uri, token: @token })
       raise GitHubError, team.errors unless team.errors.empty?
@@ -881,13 +884,13 @@ class GitHub
     team_tuple
   end
 
-  def two_factor_disabled_users(enterprise, organisation)
+  def two_factor_disabled_users
     after = nil
     next_page = true
     two_factor_disabled_users = []
 
     while next_page
-      users = CLIENT.query(TWO_FACTOR_DISABLED_USERS_QUERY, variables: { login: organisation, slug: enterprise,
+      users = CLIENT.query(TWO_FACTOR_DISABLED_USERS_QUERY, variables: { login: @organisation, slug: @enterprise,
                                                                          first: 100, after: after },
                                                             context: { base_uri: @base_uri, token: @token })
       raise GitHubError, users.errors unless users.errors.empty?
