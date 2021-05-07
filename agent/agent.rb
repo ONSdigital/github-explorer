@@ -26,10 +26,10 @@ class Agent
       firestore = Firestore.new(CONFIG.firestore_project, logger)
       firestore.save_document(query, query_result)
     rescue GitHubError => e
-      logger.error("GitHub GraphQL API error: #{e.message}")
+      logger.error("A GitHub GraphQL API error occurred: #{e.message}")
       exit(1)
-    rescue NoMethodError
-      logger.error("Unknown GraphQL query command-line argument: '#{ARGV[0]}'")
+    rescue StandardError => e
+      logger.error("An error occurred: #{e.message}")
       exit(1)
     end
   end
