@@ -15,9 +15,11 @@ class Firestore
 
   def save_document(name, data)
     document = @client.col(FIRESTORE_COLLECTION).doc(name)
+    wrapper = []
+    data.each { |element| wrapper << element.to_h } if data.is_a?(Array)
 
     begin
-      document.set({ data: data, updated: Time.now.strftime(DATE_TIME_FORMAT) })
+      document.set({ data: wrapper, updated: Time.now.strftime(DATE_TIME_FORMAT) })
     rescue StandardError => e
       @logger.error("Failed to save Firestore document #{name} in collection #{FIRESTORE_COLLECTION}: #{e.message}")
       @logger.error(e.backtrace.join("\n"))
