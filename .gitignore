@@ -1,5 +1,5 @@
 .DS_Store
-secret.yml
+kubernetes
 
 # Created by https://www.toptal.com/developers/gitignore/api/ruby
 # Edit at https://www.toptal.com/developers/gitignore?templates=ruby
