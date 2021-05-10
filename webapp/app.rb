@@ -5,6 +5,7 @@ require 'sinatra/partial'
 require 'pagy'
 
 require_relative 'lib/configuration'
+require_relative 'lib/firestore'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
@@ -13,9 +14,10 @@ set :partial_template_engine, :erb
 include Pagy::Backend
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
-CONFIG = Configuration.new(ENV)
-GITHUB = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
-                    CONFIG.github_api_base_uri, CONFIG.github_token)
+CONFIG    = Configuration.new(ENV)
+FIRESTORE = Firestore.new(CONFIG.firestore_project)
+GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
+                       CONFIG.github_api_base_uri, CONFIG.github_token)
 ACCESS_ITEMS_COUNT = 20
 ITEMS_COUNT        = 40
 USERS_ITEMS_COUNT  = 10
@@ -150,12 +152,7 @@ get '/members/?' do
 end
 
 get '/repositories/?' do
-  begin
-    all_repositories = GITHUB.all_repositories
-  rescue GitHubError => e
-    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
-  end
-
+  all_repositories = FIRESTORE.all_repositories
   pagy = Pagy.new(count: all_repositories.count, items: ITEMS_COUNT, page: (params[:page] || 1))
   repositories = all_repositories[pagy.offset, pagy.items]
   erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
@@ -166,7 +163,7 @@ end
 get '/repositories/:repository' do |repository_slug|
   begin
     repository = GITHUB.repository(repository_slug).data
-    
+
     unless repository.organization.repository.nil? || repository.organization.repository.is_archived
       repository_access = GITHUB.repository_access(repository_slug)
       pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))

@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+require 'google/cloud/firestore'
+
+# Class to manage access to Firestore.
+class Firestore
+  FIRESTORE_COLLECTION = 'github-explorer'
+
+  def initialize(project)
+    Google::Cloud::Firestore.configure { |config| config.project_id = project }
+    @client = Google::Cloud::Firestore.new
+  end
+
+  def all_repositories
+    read_document('all_repositories')
+  end
+
+  private
+
+  def read_document(name)
+    document = @client.col(FIRESTORE_COLLECTION).doc(name)
+    snapshot = document.get
+    snapshot[:data]
+  end
+end
