@@ -36,6 +36,7 @@ The GitHub personal access token for using this application requires the followi
 - `user`
 
 ### To Do
+- Inconsistencies between 2FA Security page and individual member page in terms of two factor security status
 - Extract expensive queries into a separate out-of-band process run on a schedule
 - Correctly handle nested paging through results for `ALL_TEAMS_ALL_MEMBERS_QUERY` GraphQL query
 - Refactor `lib/github.rb` God class
