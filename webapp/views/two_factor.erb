@@ -17,6 +17,7 @@
       <th>Login</th>
       <th>Name</th>
       <th>Email</th>
+      <th>Account Type</th>
       <th class="no-wrap">Created</th>
       <th class="no-wrap">Updated</th>
     </tr>
@@ -27,6 +28,7 @@
       <td><img class="avatar-small" src="<%= user.avatar_url %>" alt="<%=h user.login %>"> <% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.login %></a></td>
       <td><% if user.name.nil? || user.name.empty? %>-<% else %><% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.name %><% end %></a></td>
       <td><% if user.email.nil? || user.email.empty? %>-<% else %><%=h user.email %><% end %></td>
+      <td><% if user.member %>Member<% else %>Outside Collaborator<% end %></td>
       <td class="no-wrap"><%=d user.created_at %></td>
       <td class="no-wrap"><%=d user.updated_at %></td>
     </tr>
