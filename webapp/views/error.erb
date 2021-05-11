@@ -11,5 +11,5 @@
 
 <h2><%=h env['sinatra.error'].message %></h2>
 <section id="error-details">
-  <p><%=h env['sinatra.error'].backtrace %></p>
+  <p><%=h env['sinatra.error'].backtrace.join("\n") %></p>
 </section>
