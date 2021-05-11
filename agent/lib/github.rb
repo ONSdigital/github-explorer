@@ -11,6 +11,7 @@ require_relative 'github_error'
 class GitHub
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
+  PAUSE  = 0.5
 
   ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String) {
@@ -45,6 +46,42 @@ class GitHub
     }
   GRAPHQL
 
+  ALL_TEAM_NAMES_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query($login: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        teams(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            name
+            privacy
+            slug
+          }
+        }
+      }
+    }
+  GRAPHQL
+
+  TEAM_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $slug: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        team(slug: $slug) {
+          members(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            nodes {
+              login
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   def initialize(enterprise, organisation, base_uri, token)
     @enterprise   = enterprise
     @organisation = organisation
@@ -69,5 +106,63 @@ class GitHub
     end
 
     all_repositories
+  end
+
+  def all_members_teams
+    after = nil
+    next_page = true
+    all_members_teams = {}
+    all_teams = []
+
+    while next_page
+      teams = CLIENT.query(ALL_TEAM_NAMES_QUERY, variables: { login: @organisation, first: 100, after: after },
+                                                 context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, teams.errors unless teams.errors.empty?
+
+      after = teams.data.organization.teams.page_info.end_cursor
+      next_page = teams.data.organization.teams.page_info.has_next_page
+
+      teams.data.organization.teams.nodes.each do |team|
+        team_tuple = OpenStruct.new
+        team_tuple.name    = team.name
+        team_tuple.privacy = team.privacy
+        team_tuple.slug    = team.slug
+        all_teams << team_tuple
+
+        team_logins = logins_for_team(team.slug)
+        team_logins.each do |login|
+          if all_members_teams.key?(login)
+            all_members_teams[login] << team_tuple
+          else
+            all_members_teams[login] = [team_tuple]
+          end
+        end
+
+        sleep PAUSE
+      end
+    end
+
+    all_members_teams
+  end
+
+  private
+
+  def logins_for_team(slug)
+    after = nil
+    next_page = true
+    logins_for_team = []
+
+    while next_page
+      team_members = CLIENT.query(TEAM_MEMBERS_QUERY, variables: { login: @organisation, slug: slug,
+                                                                   first: 100, after: after },
+                                                      context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, team_members.errors unless team_members.errors.empty?
+
+      after = team_members.data.organization.team.members.page_info.end_cursor
+      next_page = team_members.data.organization.team.members.page_info.has_next_page
+      team_members.data.organization.team.members.nodes.each { |member| logins_for_team << member.login }
+    end
+
+    logins_for_team
   end
 end
