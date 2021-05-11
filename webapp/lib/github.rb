@@ -9,7 +9,7 @@ require_relative 'github_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  attr_reader :members_teams, :owners, :two_factor_disabled
+  attr_reader :owners, :two_factor_disabled
 
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
@@ -79,25 +79,6 @@ class GitHub
               }
               repositories(first: 1) {
                 totalCount
-              }
-            }
-          }
-        }
-      }
-    }
-  GRAPHQL
-
-  ALL_TEAMS_ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!) {
-      organization(login: $login) {
-        teams(first: 100) {
-          nodes {
-            name
-            privacy
-            slug
-            members(first: 100) {
-              nodes {
-                login
               }
             }
           }
@@ -574,7 +555,6 @@ class GitHub
     @organisation        = organisation
     @base_uri            = URI.parse(base_uri)
     @token               = token
-    @members_teams       = {}
     @owners              = Set[]
     @two_factor_disabled = Set[]
   end
@@ -685,27 +665,6 @@ class GitHub
         user_tuple.name  = member.node.name
 
         @owners << user_tuple if member.role.eql?('ADMIN')
-      end
-    end
-  end
-
-  def perform_team_membership_lookup
-    teams = CLIENT.query(ALL_TEAMS_ALL_MEMBERS_QUERY, variables: { login: @organisation },
-                                                      context: { base_uri: @base_uri, token: @token })
-    raise GitHubError, teams.errors unless teams.errors.empty?
-
-    teams.data.organization.teams.nodes.each do |team|
-      team_tuple = OpenStruct.new
-      team_tuple.name    = team.name
-      team_tuple.privacy = team.privacy
-      team_tuple.slug    = team.slug
-
-      team.members.nodes.each do |member|
-        if @members_teams.key?(member.login)
-          @members_teams[member.login] << team_tuple
-        else
-          @members_teams[member.login] = Set[team_tuple]
-        end
       end
     end
   end

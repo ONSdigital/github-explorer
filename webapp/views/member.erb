@@ -78,7 +78,7 @@
     <% if teams && teams.any? %>
       <ul class="no-bullets">
       <% teams.each do |team| %>
-        <li><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></li>
+        <li><img src="/svg/team.svg" alt="Team"> <a href="/teams/<%=h team[:slug] %>"><%=h team[:name] %></a> <% if team[:privacy].eql?('SECRET') %><span class="note">Secret</span><% end %></li>
       <% end %>
       </ul>
       <%= pagination_links(pagy) %>

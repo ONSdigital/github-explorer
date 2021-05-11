@@ -66,7 +66,6 @@ end
 
 get '/?' do
   begin
-    GITHUB.perform_team_membership_lookup
     GITHUB.perform_member_role_lookup
     GITHUB.perform_two_factor_disabled_lookup
     organisation = GITHUB.organisation.data
@@ -126,9 +125,11 @@ get '/members/:login' do |login|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  count = GITHUB.members_teams[login].nil? ? 0 : GITHUB.members_teams[login].count
+  # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
+  login_symbol = login.to_sym
+  count = FIRESTORE.members_teams[login_symbol].nil? ? 0 : FIRESTORE.members_teams[login_symbol].count
   pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
-  teams = GITHUB.members_teams[login].to_a[pagy.offset, pagy.items]
+  teams = FIRESTORE.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          member: member,
                          owner: GITHUB.owner?(login),
