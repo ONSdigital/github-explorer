@@ -9,30 +9,10 @@ require_relative 'github_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  attr_reader :owners, :two_factor_disabled
+  attr_reader :two_factor_disabled
 
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
-
-  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($login: String!, $first: Int!, $after: String) {
-      organization(login: $login) {
-        membersWithRole(first: $first, after: $after) {
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-          edges {
-            node {
-              login
-              name
-            }
-            role
-          }
-        }
-      }
-    }
-  GRAPHQL
 
   ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query($slug: String!, $first: Int!, $after: String) {
@@ -555,7 +535,6 @@ class GitHub
     @organisation        = organisation
     @base_uri            = URI.parse(base_uri)
     @token               = token
-    @owners              = Set[]
     @two_factor_disabled = Set[]
   end
 
@@ -625,11 +604,6 @@ class GitHub
     outside_collaborator
   end
 
-  def owner?(login)
-    @owners.each { |owner| return true if owner.login.eql?(login) }
-    false
-  end
-
   def member(user_login)
     member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: user_login },
                                         context: { base_uri: @base_uri, token: @token })
@@ -644,29 +618,6 @@ class GitHub
     raise GitHubError, organisation.errors unless organisation.errors.empty?
 
     organisation
-  end
-
-  def perform_member_role_lookup
-    after = nil
-    next_page = true
-
-    while next_page
-      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: @organisation,
-                                                                        first: 100, after: after },
-                                                           context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, members.errors unless members.errors.empty?
-
-      after = members.data.organization.members_with_role.page_info.end_cursor
-      next_page = members.data.organization.members_with_role.page_info.has_next_page
-
-      members.data.organization.members_with_role.edges.each do |member|
-        user_tuple = OpenStruct.new
-        user_tuple.login = member.node.login
-        user_tuple.name  = member.node.name
-
-        @owners << user_tuple if member.role.eql?('ADMIN')
-      end
-    end
   end
 
   def perform_two_factor_disabled_lookup

@@ -13,6 +13,26 @@ class GitHub
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
   PAUSE  = 0.5
 
+  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query($login: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        membersWithRole(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          edges {
+            node {
+              login
+              name
+            }
+            role
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
@@ -143,6 +163,32 @@ class GitHub
     end
 
     all_members_teams
+  end
+
+  def all_owners
+    after = nil
+    next_page = true
+    all_owners = []
+
+    while next_page
+      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: @organisation,
+                                                                        first: 100, after: after },
+                                                           context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, members.errors unless members.errors.empty?
+
+      after = members.data.organization.members_with_role.page_info.end_cursor
+      next_page = members.data.organization.members_with_role.page_info.has_next_page
+
+      members.data.organization.members_with_role.edges.each do |member|
+        user_tuple = OpenStruct.new
+        user_tuple.login = member.node.login
+        user_tuple.name  = member.node.name
+
+        all_owners << user_tuple if member.role.eql?('ADMIN')
+      end
+    end
+
+    all_owners.sort_by(&:login)
   end
 
   private

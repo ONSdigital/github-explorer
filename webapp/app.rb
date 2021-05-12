@@ -66,15 +66,14 @@ end
 
 get '/?' do
   begin
-    GITHUB.perform_member_role_lookup
     GITHUB.perform_two_factor_disabled_lookup
     organisation = GITHUB.organisation.data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: GITHUB.owners.count, page: (params[:page] || 1))
-  owners = GITHUB.owners.sort_by(&:login)[pagy.offset, pagy.items]
+  pagy = Pagy.new(count: FIRESTORE.owners.count, page: (params[:page] || 1))
+  owners = FIRESTORE.owners[pagy.offset, pagy.items]
   two_factor_disabled_count = GITHUB.two_factor_disabled.count
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
                         organisation: organisation,
@@ -132,7 +131,7 @@ get '/members/:login' do |login|
   teams = FIRESTORE.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          member: member,
-                         owner: GITHUB.owner?(login),
+                         owner: FIRESTORE.owner?(login),
                          two_factor_disabled: GITHUB.two_factor_disabled?(login),
                          teams: teams,
                          pagy: pagy }

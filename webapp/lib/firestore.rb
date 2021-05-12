@@ -19,6 +19,15 @@ class Firestore
     @members_teams ||= read_document('all_members_teams')
   end
 
+  def owner?(login)
+    @owners.each { |owner| return true if owner[:login].eql?(login) }
+    false
+  end
+
+  def owners
+    @owners ||= read_document('all_owners')
+  end
+
   private
 
   def read_document(name)
