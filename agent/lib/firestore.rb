@@ -14,7 +14,6 @@ class Firestore
   end
 
   def save_document(name, data)
-    puts data
     document = @client.col(FIRESTORE_COLLECTION).doc(name)
     hash_data = data.map(&:to_h) if data.is_a?(Array)
 
