@@ -31,7 +31,7 @@ The environment variables below are required:
 The GitHub personal access token for using this application requires the following scopes:
 
 - `admin:enterprise`
-- `read:org`
+- `admin:org`
 - `read:user`
 - `repo`
 - `user:email`
