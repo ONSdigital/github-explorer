@@ -31,9 +31,10 @@ The environment variables below are required:
 The GitHub personal access token for using this application requires the following scopes:
 
 - `admin:enterprise`
-- `admin:org`
+- `read:org`
+- `read:user`
 - `repo`
-- `user`
+- `user:email`
 
 ### To Do
 - Refactor `lib/github.rb` God class
