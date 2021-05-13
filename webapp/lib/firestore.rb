@@ -28,6 +28,15 @@ class Firestore
     @owners ||= read_document('all_owners')
   end
 
+  def two_factor_disabled
+    @two_factor_disabled ||= read_document('all_two_factor_disabled')
+  end
+
+  def two_factor_disabled?(login)
+    @two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
+    false
+  end
+
   private
 
   def read_document(name)

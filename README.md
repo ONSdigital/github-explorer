@@ -36,8 +36,6 @@ The GitHub personal access token for using this application requires the followi
 - `user`
 
 ### To Do
-- Inconsistencies between 2FA Security page and individual member page in terms of two factor security status
-- Extract expensive queries into a separate out-of-band process run on a schedule
 - Refactor `lib/github.rb` God class
 - Extract common view code into partials
 - Make tables sortable by different columns

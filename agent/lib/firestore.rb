@@ -15,7 +15,10 @@ class Firestore
 
   def save_document(name, data)
     document = @client.col(FIRESTORE_COLLECTION).doc(name)
-    hash_data = data.map(&:to_h) if data.is_a?(Array)
+    if data.is_a?(Array)
+      hash_data = []
+      data.each { |element| element.respond_to?(:to_h) ? hash_data << element.to_h : hash_data << element }
+    end
 
     if data.is_a?(Hash)
       hash_data = {}

@@ -102,6 +102,24 @@ class GitHub
     }
   GRAPHQL
 
+  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          affiliatedUsersWithTwoFactorDisabled(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            nodes {
+              login
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   def initialize(enterprise, organisation, base_uri, token)
     @enterprise   = enterprise
     @organisation = organisation
@@ -189,6 +207,27 @@ class GitHub
     end
 
     all_owners.sort_by(&:login)
+  end
+
+  def all_two_factor_disabled
+    after = nil
+    next_page = true
+    all_two_factor_disabled = []
+
+    while next_page
+      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: after },
+                                                       context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, logins.errors unless logins.errors.empty?
+
+      after = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
+      next_page = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
+
+      logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
+        all_two_factor_disabled << user.login
+      end
+    end
+
+    all_two_factor_disabled.sort
   end
 
   private

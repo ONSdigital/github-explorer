@@ -9,8 +9,6 @@ require_relative 'github_error'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  attr_reader :two_factor_disabled
-
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
@@ -481,24 +479,6 @@ class GitHub
     }
   GRAPHQL
 
-  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query ($slug: String!, $first: Int!, $after: String) {
-      enterprise(slug: $slug) {
-        ownerInfo {
-          affiliatedUsersWithTwoFactorDisabled(first: $first, after: $after) {
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-            nodes {
-              login
-            }
-          }
-        }
-      }
-    }
-  GRAPHQL
-
   TWO_FACTOR_DISABLED_USERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
@@ -531,11 +511,10 @@ class GitHub
   GRAPHQL
 
   def initialize(enterprise, organisation, base_uri, token)
-    @enterprise          = enterprise
-    @organisation        = organisation
-    @base_uri            = URI.parse(base_uri)
-    @token               = token
-    @two_factor_disabled = Set[]
+    @enterprise   = enterprise
+    @organisation = organisation
+    @base_uri     = URI.parse(base_uri)
+    @token        = token
   end
 
   def all_members
@@ -618,24 +597,6 @@ class GitHub
     raise GitHubError, organisation.errors unless organisation.errors.empty?
 
     organisation
-  end
-
-  def perform_two_factor_disabled_lookup
-    after = nil
-    next_page = true
-
-    while next_page
-      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: after },
-                                                       context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, logins.errors unless logins.errors.empty?
-
-      after = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
-      next_page = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
-
-      logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
-        @two_factor_disabled << user.login
-      end
-    end
   end
 
   def repository(repository)
@@ -778,10 +739,5 @@ class GitHub
     end
 
     two_factor_disabled_users
-  end
-
-  def two_factor_disabled?(login)
-    @two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
-    false
   end
 end
