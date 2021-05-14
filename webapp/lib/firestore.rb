@@ -33,7 +33,7 @@ class Firestore
   end
 
   def two_factor_disabled?(login)
-    @two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
+    two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
     false
   end
 
