@@ -1,7 +1,6 @@
 .git
 .gitignore
 .rubocop.yml
-deployment.yml
-secret.yml
+kubernetes
 Dockerfile
 README.md

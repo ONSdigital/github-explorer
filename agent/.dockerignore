@@ -2,6 +2,5 @@
 .gitignore
 .rubocop.yml
 .ruby-version
-cronjob.yml
-secret.yml
+kubernetes
 Dockerfile
