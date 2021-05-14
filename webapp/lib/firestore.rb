@@ -20,7 +20,7 @@ class Firestore
   end
 
   def owner?(login)
-    @owners.each { |owner| return true if owner[:login].eql?(login) }
+    owners.each { |owner| return true if owner[:login].eql?(login) }
     false
   end
 
