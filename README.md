@@ -36,11 +36,10 @@ The GitHub personal access token for using this application requires the followi
 - `repo`
 - `user:email`
 
-### To Do
-- Refactor `lib/github.rb` God class
-- Extract common view code into partials
+## Roadmap
 - Make tables sortable by different columns
 - Make the table filter fields operate against the full list rather than just the current page
+- Allow annotations to be recorded against users e.g. who they are
 
 ## Copyright
 Copyright (C) 2021 Crown Copyright (Office for National Statistics)
