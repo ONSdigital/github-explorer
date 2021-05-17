@@ -6,8 +6,8 @@ en:
       other: "items"
 
     nav:
-      prev: "&lt; Previous"
-      next: "Next &gt;"
+      prev: "Previous"
+      next: "Next"
       gap: "&hellip;"
 
     info:

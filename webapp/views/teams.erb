@@ -9,8 +9,7 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter teams..."></p>
-<table id="data">
+<table id="data" class="row-border" data-page-length="20">
   <thead>
     <tr>
       <th>Name</th>
@@ -50,6 +49,4 @@
   <% end %> <%# team.child_teams.nodes.each do |child_team| %>
   <% end %> <%# teams.each_with_index do |team, i| %>
   </tbody>
-</table><section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>
+</table>

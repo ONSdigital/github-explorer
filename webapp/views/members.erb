@@ -9,8 +9,7 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter members..."></p>
-<table id="data">
+<table id="data" class="row-border" data-page-length="20">
   <thead>
     <tr>
       <th>Login</th>
@@ -32,6 +31,3 @@
   <% end %>
   </tbody>
 </table>
-<section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>

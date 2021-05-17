@@ -19,7 +19,6 @@ FIRESTORE = Firestore.new(CONFIG.firestore_project)
 GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
                        CONFIG.github_api_base_uri, CONFIG.github_token)
 ACCESS_ITEMS_COUNT = 20
-ITEMS_COUNT        = 40
 USERS_ITEMS_COUNT  = 10
 
 set :github_organisation, CONFIG.github_organisation
@@ -88,11 +87,8 @@ get '/collaborators/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: all_outside_collaborators.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  collaborators = all_outside_collaborators[pagy.offset, pagy.items]
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
-                                collaborators: collaborators,
-                                pagy: pagy }
+                                collaborators: all_outside_collaborators }
 end
 
 get '/collaborators/:login' do |login|
@@ -143,20 +139,14 @@ get '/members/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: all_members.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  members = all_members[pagy.offset, pagy.items]
   erb :members, locals: { title: 'Members - GitHub Explorer',
-                          members: members,
-                          pagy: pagy }
+                          members: all_members }
 end
 
 get '/repositories/?' do
   all_repositories = FIRESTORE.all_repositories
-  pagy = Pagy.new(count: all_repositories.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  repositories = all_repositories[pagy.offset, pagy.items]
   erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
-                               repositories: repositories,
-                               pagy: pagy }
+                               repositories: all_repositories }
 end
 
 get '/repositories/:repository' do |repository_slug|
@@ -188,11 +178,8 @@ get '/teams/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: all_teams.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  teams = all_teams[pagy.offset, pagy.items]
   erb :teams, locals: { title: 'Teams - GitHub Explorer',
-                        teams: teams,
-                        pagy: pagy }
+                        teams: all_teams }
 end
 
 get '/teams/:team' do |team|
@@ -217,11 +204,8 @@ get '/two-factor-security/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: two_factor_disabled_users.count, items: ITEMS_COUNT, page: (params[:page] || 1))
-  users = two_factor_disabled_users[pagy.offset, pagy.items]
   erb :two_factor, locals: { title: '2FA Security - GitHub Explorer',
-                             users: users,
-                             pagy: pagy }
+                             users: two_factor_disabled_users }
 end
 
 error do

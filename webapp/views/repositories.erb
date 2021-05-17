@@ -9,35 +9,31 @@
   </ul>
 </nav>
 
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter repositories..."></p>
-<table id="data">
+<table id="data" class="row-border" data-page-length="20">
   <thead>
     <tr>
-      <th class="no-wrap">Name</th>
+      <th>Name</th>
       <th>Description</th>
       <th>Primary Language</th>
       <th>Branch Protection Rules</th>
       <th>Security Vulnerability Alerts</th>
-      <th class="no-wrap">Access</th>
-      <th class="no-wrap">Created</th>
-      <th class="no-wrap">Updated</th>
+      <th>Access</th>
+      <th>Created</th>
+      <th>Updated</th>
     </tr>
   </thead>
   <tbody>
-  <% repositories.each_with_index do |repo, i| %>
-    <tr class="<%= i.even? ? 'even' : 'odd' %>">
-      <td class="no-wrap"><a href="/repositories/<%=h repo[:name] %>"><%=h repo[:name] %></a> <% if repo[:isPrivate] %><span class="note">Private</span><% end %> <% if repo[:isArchived] %><span class="note">Archived</span><% end %></td>
+  <% repositories.each do |repo| %>
+    <tr>
+      <td><a href="/repositories/<%=h repo[:name] %>"><%=h repo[:name] %></a> <% if repo[:isPrivate] %><span class="note">Private</span><% end %> <% if repo[:isArchived] %><span class="note">Archived</span><% end %></td>
       <td><% if repo[:description].nil? || repo[:description].empty? %>-<% else %><%=h repo[:description] %><% end %></td>
       <td><% if repo[:primaryLanguage].nil? %>-<% else %><%=h repo[:primaryLanguage][:name] %><% end %></td>
       <td><% if repo[:branchProtectionRules][:totalCount].zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td><%=n repo[:vulnerabilityAlerts][:totalCount] %></td>
-      <td class="no-wrap"><% if repo[:collaborators].nil? %>0 members<% else %><a href="/repositories/<%=h repo[:name] %>"><%=pluralise(repo[:collaborators][:totalCount], 'member') %></a><% end %></td>
-      <td class="no-wrap"><%=d repo[:createdAt] %></td>
-      <td class="no-wrap"><%=d repo[:updatedAt] %></td>
+      <td><% if repo[:collaborators].nil? %>0 members<% else %><a href="/repositories/<%=h repo[:name] %>"><%=pluralise(repo[:collaborators][:totalCount], 'member') %></a><% end %></td>
+      <td><%=d repo[:createdAt] %></td>
+      <td><%=d repo[:updatedAt] %></td>
     </tr>
   <% end %>
   </tbody>
 </table>
-<section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>

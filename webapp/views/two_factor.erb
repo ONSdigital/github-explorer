@@ -10,8 +10,7 @@
 </nav>
 
 <p>The users below don’t have two-factor security enabled on their GitHub accounts.</p>
-<p><input type="text" id="filter" autocomplete="off" placeholder="Filter users..."></p>
-<table id="data">
+<table id="data" class="row-border" data-page-length="20">
   <thead>
     <tr>
       <th>Login</th>
@@ -35,6 +34,3 @@
   <% end %>
   </tbody>
 </table>
-<section id="pagination">
-  <%= pagination_links(pagy) %>
-</section>
