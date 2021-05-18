@@ -25,7 +25,7 @@
     <tr class="<%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= team.avatar_url %>" alt="<%=h team.name %>"> <a href="/teams/<%=h team.slug %>"><%=h team.name %></a> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if team.description.nil? || team.description.empty? %>-<% else %><%=h team.description %><% end %></td>
-      <td><a href="/teams/<%=h team.slug %>"><%=pluralise(team.members.total_count, 'member') %></a></td>
+      <td data-order="<%= team.members.total_count %>"><a href="/teams/<%=h team.slug %>"><%=pluralise(team.members.total_count, 'member') %></a></td>
       <td class="no-wrap" data-order="<%= team.created_at %>"><%=d team.created_at %></td>
       <td class="no-wrap" data-order="<%= team.updated_at %>"><%=d team.updated_at %></td>
     </tr>  
@@ -33,7 +33,7 @@
     <tr class="child <%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= child_team.avatar_url %>" alt="<%=h child_team.name %>"> <a href="/teams/<%=h child_team.slug %>"><%=h child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if child_team.description.nil? || child_team.description.empty? %>-<% else %><%=h child_team.description %><% end %></td>
-      <td><a href="/teams/<%=h child_team.slug %>"><%=pluralise(child_team.members.total_count, 'member') %></a></td>
+      <td data-order="<%= child_team.members.total_count %>"><a href="/teams/<%=h child_team.slug %>"><%=pluralise(child_team.members.total_count, 'member') %></a></td>
       <td class="no-wrap" data-order="<%= child_team.created_at %>"><%=d child_team.created_at %></td>
       <td class="no-wrap" data-order="<%= child_team.updated_at %>"><%=d child_team.updated_at %></td>
     </tr>
@@ -41,7 +41,7 @@
     <tr class="child-child <%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= child_child_team.avatar_url %>" alt="<%=h child_child_team.name %>"> <a href="/teams/<%=h child_child_team.slug %>"><%=h child_child_team.name %></a> <span class="note">Child Team</span> <% if child_team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %></td>
       <td><% if child_child_team.description.nil? || child_child_team.description.empty? %>-<% else %><%=h child_child_team.description %><% end %></td>
-      <td><a href="/teams/<%=h child_child_team.slug %>"><%=pluralise(child_child_team.members.total_count, 'member') %></a></td>
+      <td data-order="<%= child_child_team.members.total_count %>"><a href="/teams/<%=h child_child_team.slug %>"><%=pluralise(child_child_team.members.total_count, 'member') %></a></td>
       <td class="no-wrap" data-order="<%= child_child_team.created_at %>"><%=d child_child_team.created_at %></td>
       <td class="no-wrap" data-order="<%= child_child_team.updated_at %>"><%=d child_child_team.updated_at %></td>
     </tr>  
