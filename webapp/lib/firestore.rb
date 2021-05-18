@@ -16,7 +16,7 @@ class Firestore
   end
 
   def members_teams
-    @members_teams ||= read_document('all_members_teams')
+    read_document('all_members_teams')
   end
 
   def owner?(login)
@@ -25,11 +25,11 @@ class Firestore
   end
 
   def owners
-    @owners ||= read_document('all_owners')
+    read_document('all_owners')
   end
 
   def two_factor_disabled
-    @two_factor_disabled ||= read_document('all_two_factor_disabled')
+    read_document('all_two_factor_disabled')
   end
 
   def two_factor_disabled?(login)
