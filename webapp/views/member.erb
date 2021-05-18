@@ -11,13 +11,13 @@
 
 <section class="row">
   <section class="column left">
-    <p><img class="avatar-large" src="<%=member.enterprise.members.nodes.first.avatar_url %>"></p>
+    <p><img class="avatar-large" src="<%=member.enterprise.members.nodes.first.user.avatar_url %>"></p>
 
-  <% unless member.enterprise.members.nodes.first.name.nil? %>
-    <h2><%=h member.enterprise.members.nodes.first.name %></h2>
-    <p id="login"><%=h member.enterprise.members.nodes.first.login %></p>
+  <% unless member.enterprise.members.nodes.first.user.name.nil? %>
+    <h2><%=h member.enterprise.members.nodes.first.user.name %></h2>
+    <p id="login"><%=h member.enterprise.members.nodes.first.user.login %></p>
   <% else %>
-    <p id="login-only"><%=h member.enterprise.members.nodes.first.login %></p>
+    <p id="login-only"><%=h member.enterprise.members.nodes.first.user.login %></p>
   <% end %> 
 
   <% unless member.enterprise.members.nodes.first.user.bio.nil? %>
@@ -54,7 +54,7 @@
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h member.enterprise.members.nodes.first.user.url %>">View on GitHub</a></p>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d member.enterprise.members.nodes.first.created_at %></p>
+      <p><span>Created:</span><%=d member.enterprise.members.nodes.first.user.created_at %></p>
       <p><span>Updated:</span><%=d member.enterprise.members.nodes.first.user.updated_at %></p>
       <p><% if member.enterprise.members.nodes.first.user.contributions_collection.has_any_contributions %>This user has contributions within the last year. <img src="/svg/tick.svg" alt="Tick"><% else %>This user doesn’t have contributions within the last year. <img src="/svg/cross.svg" alt="Cross"><% end %></p>
       <p><% if two_factor_disabled %>This user doesn’t have two-factor security enabled. <img src="/svg/cross.svg" alt="Cross"><% else %>This user has two-factor security enabled. <img src="/svg/tick.svg" alt="Tick"><% end %></p>

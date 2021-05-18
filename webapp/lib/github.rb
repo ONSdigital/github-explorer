@@ -22,12 +22,12 @@ class GitHub
           }
           nodes {
             ... on EnterpriseUserAccount {
-              avatarUrl
-              createdAt
-              login
-              name
               user {
+                avatarUrl
+                createdAt
                 email
+                login
+                name
                 updatedAt
               }
             }
@@ -125,15 +125,15 @@ class GitHub
         members(first: 1, query: $user_login) {
           nodes {
             ... on EnterpriseUserAccount {
-              avatarUrl
-              createdAt
-              login
-              name
               user {
+                avatarUrl
                 bio
                 company
+                createdAt
                 email
                 location
+                login
+                name
                 twitterUsername
                 updatedAt
                 url
