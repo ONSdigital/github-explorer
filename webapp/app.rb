@@ -87,8 +87,10 @@ get '/collaborators/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
+  two_factor_disabled = FIRESTORE.two_factor_disabled
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
-                                collaborators: all_outside_collaborators }
+                                collaborators: all_outside_collaborators,
+                                two_factor_disabled: two_factor_disabled }
 end
 
 get '/collaborators/:login' do |login|
@@ -139,8 +141,10 @@ get '/members/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
+  two_factor_disabled = FIRESTORE.two_factor_disabled
   erb :members, locals: { title: 'Members - GitHub Explorer',
-                          members: all_members }
+                          members: all_members,
+                          two_factor_disabled: two_factor_disabled }
 end
 
 get '/repositories/?' do

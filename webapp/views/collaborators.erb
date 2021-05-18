@@ -15,6 +15,7 @@
       <th>Login</th>
       <th>Name</th>
       <th>Email</th>
+      <th>Two Factor Security</th>
       <th>Access</th>
       <th class="no-wrap">Created</th>
       <th class="no-wrap">Updated</th>
@@ -26,6 +27,7 @@
       <td><img class="avatar-small" src="<%= collaborator.node.avatar_url %>" alt="<%=h collaborator.node.login %>"> <a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.login %></a></td>
       <td><% if collaborator.node.name.nil? || collaborator.node.name.empty? %>-<% else %><a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.name %><% end %></a></td>
       <td><% if collaborator.node.email.nil? || collaborator.node.email.empty? %>-<% else %><%=h collaborator.node.email %><% end %></td>
+      <td><% if two_factor_disabled.include?(collaborator.node.login) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td><%=pluralise(collaborator.repositories.total_count, 'repository', 'repositories') %></td>
       <td class="no-wrap" data-order="<%= collaborator.node.created_at %>"><%=d collaborator.node.created_at %></td>
       <td class="no-wrap" data-order="<%= collaborator.node.updated_at %><"><%=d collaborator.node.updated_at %></td>

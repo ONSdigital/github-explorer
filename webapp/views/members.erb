@@ -15,6 +15,7 @@
       <th>Login</th>
       <th>Name</th>
       <th>Email</th>
+      <th>Two Factor Security</th>
       <th class="no-wrap">Created</th>
       <th class="no-wrap">Updated</th>
     </tr>
@@ -25,6 +26,7 @@
       <td><img class="avatar-small" src="<%= member.user.avatar_url %>" alt="<%=h member.user.login %>"> <a href="/members/<%=h member.user.login %>"><%=h member.user.login %></a></td>
       <td><% if member.user.name.nil? || member.user.name.empty? %>-<% else %><a href="/members/<%=h member.user.login %>"><%=h member.user.name %><% end %></a></td>
       <td><% if member.user.email.nil? || member.user.email.empty? %>-<% else %><%=h member.user.email %><% end %></td>
+      <td><% if two_factor_disabled.include?(member.user.login) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td class="no-wrap" data-order="<%= member.user.created_at %>"><%=d member.user.created_at %></td>
       <td class="no-wrap" data-order="<%= member.user.updated_at %>"><%=d member.user.updated_at %></td>
     </tr>
