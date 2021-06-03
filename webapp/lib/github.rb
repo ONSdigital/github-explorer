@@ -575,14 +575,6 @@ class GitHub
     all_teams
   end
 
-  def outside_collaborator(login)
-    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: login },
-                                                                    context: { base_uri: @base_uri, token: @token })
-    raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
-
-    outside_collaborator
-  end
-
   def member(user_login)
     member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: user_login },
                                         context: { base_uri: @base_uri, token: @token })
@@ -597,6 +589,14 @@ class GitHub
     raise GitHubError, organisation.errors unless organisation.errors.empty?
 
     organisation
+  end
+
+  def outside_collaborator(login)
+    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: login },
+                                                                    context: { base_uri: @base_uri, token: @token })
+    raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
+
+    outside_collaborator
   end
 
   def repository(repository)
