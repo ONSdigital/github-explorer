@@ -1,0 +1,41 @@
+<nav>
+  <ul>
+    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisation</a></li>
+    <li><a href="/teams"><img src="/svg/team.svg" alt="Team"> Teams</a></li>
+    <li><a href="/members"><img src="/svg/user.svg" alt="User"> Members</a></li>
+    <li><a href="/collaborators"><img src="/svg/user.svg" alt="User"> Outside Collaborators</a></li>
+    <li><a href="/repositories"><img src="/svg/respository.svg" alt="Respository"> Repositories</a></li>
+    <li><a href="/two-factor-security"><img src="/svg/lock.svg" alt="Lock"> 2FA Security</a></li>
+    <li id="active"><img src="/svg/chart.svg" alt="Chart"> Contributions</li>
+  </ul>
+</nav>
+
+<p>Data shown is for the the past year.</p>
+<table id="data" class="contributions row-border" data-page-length="20">
+  <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Commits</th>
+      <th>Issues</th>
+      <th>Pull Requests</th>
+      <th>Account Type</th>
+      <th class="no-wrap">Created</th>
+      <th class="no-wrap">Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% contributions.each_with_index do |user, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><img class="avatar-small" src="<%= user[:avatar_url] %>" alt="<%=h user[:login] %>"> <% if user[:member] %><a href="/members/<%=h user[:login] %>"><% else %><a href="/collaborators/<%=h user[:login] %>"><% end %><%=h user[:login] %></a></td>
+      <td><% if user[:name].nil? || user[:name].empty? %>-<% else %><% if user[:member] %><a href="/members/<%=h user[:login] %>"><% else %><a href="/collaborators/<%=h user[:login] %>"><% end %><%=h user[:name] %><% end %></a></td>
+      <td data-order="<%= user[:commit_contributions] %>"><%=pluralise(user[:commit_contributions], 'commit') %></td>
+      <td data-order="<%= user[:issue_contributions] %>"><%=pluralise(user[:issue_contributions], 'issue') %></td>
+      <td data-order="<%= user[:pull_request_contributions] %>"><%=pluralise(user[:pull_request_contributions], 'pull request') %></td>
+      <td><% if user[:member] %>Member<% else %>Outside Collaborator<% end %></td>
+      <td class="no-wrap" data-order="<%= user[:created_at] %>"><%=d user[:created_at] %></td>
+      <td class="no-wrap" data-order="<%= user[:updated_at] %>"><%=d user[:updated_at] %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

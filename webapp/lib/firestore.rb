@@ -15,6 +15,10 @@ class Firestore
     read_document('all_repositories')
   end
 
+  def all_users_contributions
+    read_document('all_users_contributions')
+  end
+
   def members_teams
     read_document('all_members_teams')
   end

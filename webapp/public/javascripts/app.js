@@ -37,6 +37,11 @@ $(document).ready(function() {
     "dom": "frtp"
   });
 
+  $("#data.contributions").DataTable({
+    stateSave: true,
+    "dom": "frtp"
+  })
+
   $("#data.repositories").DataTable({
 
     // Prevent sorting the Branch Protection Rules column.

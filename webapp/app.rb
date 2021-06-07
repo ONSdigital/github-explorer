@@ -110,6 +110,12 @@ get '/collaborators/:login' do |login|
                                pagy: pagy }
 end
 
+get '/contributions/?' do
+  all_users_contributions = FIRESTORE.all_users_contributions
+  erb :contributions, locals: { title: 'Contributions - GitHub Explorer',
+                                contributions: all_users_contributions }
+end
+
 get '/health?' do
   halt 200
 end
