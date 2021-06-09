@@ -9,7 +9,7 @@ require_relative 'lib/firestore'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
-# Class that
+# Class for executing named GitHub GraphQL API queries passed on the command-line.
 class Agent
   CONFIG = Configuration.new(ENV)
   GITHUB = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
