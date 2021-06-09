@@ -64,6 +64,31 @@ class GitHub
     }
   GRAPHQL
 
+  ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query($slug: String!, $first: Int!, $after: String) {
+      enterprise(slug: $slug) {
+        members(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            ... on EnterpriseUserAccount {
+              user {
+                avatarUrl
+                createdAt
+                email
+                login
+                name
+                updatedAt
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
@@ -358,7 +383,43 @@ class GitHub
     all_users_contributions.sort_by(&:login)
   end
 
+  def teamless_members
+    teamless_members = []
+    members_with_a_team = all_members_teams
+
+    all_members.each do |member|
+      user_tuple = OpenStruct.new
+      user_tuple.avatar_url = member.user.avatar_url
+      user_tuple.created_at = member.user.created_at
+      user_tuple.email      = member.user.email
+      user_tuple.login      = member.user.login
+      user_tuple.name       = member.user.name
+      user_tuple.updated_at = member.user.updated_at
+      teamless_members << user_tuple unless members_with_a_team.key?(member.user.login)
+    end
+
+    teamless_members
+  end
+
   private
+
+  def all_members
+    after = nil
+    next_page = true
+    all_members = []
+
+    while next_page
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: after },
+                                                context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, members.errors unless members.errors.empty?
+
+      after = members.data.enterprise.members.page_info.end_cursor
+      next_page = members.data.enterprise.members.page_info.has_next_page
+      members.data.enterprise.members.nodes.each { |member| all_members << member }
+    end
+
+    all_members
+  end
 
   def logins_for_team(slug)
     after = nil
