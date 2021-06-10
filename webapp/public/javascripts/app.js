@@ -6,6 +6,21 @@ $(document).ready(function() {
     "dom": "frtp"
   });
 
+  $("#data.teamless").DataTable({
+
+    // Prevent sorting the Two Factor Security column.
+    columns: [
+      null,
+      null,
+      null,
+      { orderable: false },
+      null,
+      null
+    ],
+    stateSave: true,
+    "dom": "frtp"
+  });
+
   $("#data.members").DataTable({
 
     // Prevent sorting the Two Factor Security column.

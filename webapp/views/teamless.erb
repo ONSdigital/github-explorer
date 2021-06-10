@@ -1,0 +1,42 @@
+<nav>
+  <ul>
+    <li><a href="/"><img src="/svg/github.svg" alt="Organisation"> Organisation</a></li>
+    <li><a href="/teams"><img src="/svg/team.svg" alt="Team"> Teams</a></li>
+    <li><a href="/members"><img src="/svg/user.svg" alt="User"> Members</a></li>
+    <li><a href="/collaborators"><img src="/svg/user.svg" alt="User"> Outside Collaborators</a></li>
+    <li><a href="/repositories"><img src="/svg/respository.svg" alt="Respository"> Repositories</a></li>
+    <li><a href="/two-factor-security"><img src="/svg/lock.svg" alt="Lock"> 2FA Security</a></li>
+    <li><a href="/contributions"><img src="/svg/chart.svg" alt="Chart"> Contributions</a></li>
+  </ul>
+</nav>
+
+<% if teamless_members.size.zero? %>
+<p>There aren’t any members who don’t belong to any team.</p>
+<% else %>
+<p>The members below don’t belong to any teams.</p>
+<table id="data" class="teamless row-border" data-page-length="20">
+  <thead>
+    <tr>
+      <th>Login</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Two Factor Security</th>
+      <th class="no-wrap">Created</th>
+      <th class="no-wrap">Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% teamless_members.each_with_index do |member, i| %>
+    <tr class="<%= i.even? ? 'even' : 'odd' %>">
+      <td><img class="avatar-small" src="<%= member[:avatar_url] %>" alt="<%=h member[:login] %>"> <a href="/members/<%=h member[:login] %>"><%=h member[:login] %></a></td>
+      <td><% if member[:name].nil? || member[:name].empty? %>-<% else %><a href="/members/<%=h member[:login] %>"><%=h member[:name] %><% end %></a></td>
+      <td><% if member[:email].nil? || member[:email].empty? %>-<% else %><%=h member[:email] %><% end %></td>
+      <td><% if two_factor_disabled.include?(member[:login]) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
+      <td class="no-wrap" data-order="<%= member[:created_at] %>"><%=d member[:created_at] %></td>
+      <td class="no-wrap" data-order="<%= member[:updated_at] %>"><%=d member[:updated_at] %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<% end %>
+<p id="back-link"><a href="/teams">&lt; Teams</a></p>

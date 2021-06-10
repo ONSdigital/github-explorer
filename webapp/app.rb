@@ -188,8 +188,10 @@ get '/teams/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
+  any_teamless_members = FIRESTORE.teamless_members.size > 0
   erb :teams, locals: { title: 'Teams - GitHub Explorer',
-                        teams: all_teams }
+                        teams: all_teams,
+                        any_teamless_members: any_teamless_members }
 end
 
 get '/teams/:team' do |team|
@@ -205,6 +207,13 @@ get '/teams/:team' do |team|
                        team: team,
                        members: members,
                        pagy: pagy }
+end
+
+get '/teamless' do
+  two_factor_disabled = FIRESTORE.two_factor_disabled
+  erb :teamless, locals: { title: 'Teamless Members - GitHub Explorer',
+                           teamless_members: FIRESTORE.teamless_members,
+                           two_factor_disabled: two_factor_disabled }
 end
 
 get '/two-factor-security/?' do

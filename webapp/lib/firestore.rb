@@ -32,6 +32,10 @@ class Firestore
     read_document('all_owners')
   end
 
+  def teamless_members
+    read_document('teamless_members')
+  end
+
   def two_factor_disabled
     read_document('all_two_factor_disabled')
   end
