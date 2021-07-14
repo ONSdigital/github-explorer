@@ -7,7 +7,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
     concurrent-ruby (1.1.8)
@@ -42,6 +42,7 @@ GEM
       gapic-common (~> 0.4)
       google-cloud-errors (~> 1.0)
     google-protobuf (3.15.8-universal-darwin)
+    google-protobuf (3.15.8-x86_64-linux)
     googleapis-common-protos (1.3.11)
       google-protobuf (~> 3.14)
       googleapis-common-protos-types (>= 1.0.6, < 2.0)
@@ -60,6 +61,9 @@ GEM
       activesupport (>= 3.0)
       graphql (~> 1.8)
     grpc (1.37.1-universal-darwin)
+      google-protobuf (~> 3.15)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.37.1-x86_64-linux)
       google-protobuf (~> 3.15)
       googleapis-common-protos-types (~> 1.0)
     i18n (1.8.10)
@@ -103,6 +107,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   google-cloud-firestore
