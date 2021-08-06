@@ -329,6 +329,29 @@ td {
   flex: 50%;
 }
 
+.dt-button.buttons-html5 {
+  background: none;
+  background-color: #fff !important;
+  border-radius: 6px;
+  color: #000;
+  margin-right: 4px;
+  padding: 6px 10px;
+}
+
+.dt-button.buttons-html5:link, .dt-button.buttons-html5:visited, .dt-button.buttons-html5:link:active {
+  background: none;
+  border: 1px solid #e2e4e8 !important;
+}
+
+.dt-button.buttons-html5:hover {
+  background-color: #fff !important;
+  border: 1px solid #aaa !important;
+}
+
+.dt-buttons {
+  margin-bottom: 10px;
+}
+
 .left {
   padding-right: 25px;
   margin-left: 50px;
