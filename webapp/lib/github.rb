@@ -308,6 +308,7 @@ class GitHub
           isArchived
           isEmpty
           isPrivate
+          isTemplate
           name
           pushedAt
           stargazerCount

@@ -26,7 +26,7 @@
   <tbody>
   <% repositories.each do |repo| %>
     <tr>
-      <td><a href="/repositories/<%=h repo[:name] %>"><%=h repo[:name] %></a> <% if repo[:isPrivate] %><span class="note">Private</span><% end %> <% if repo[:isArchived] %><span class="note">Archived</span><% end %></td>
+      <td><a href="/repositories/<%=h repo[:name] %>"><%=h repo[:name] %></a> <% if repo[:isPrivate] %><span class="note">Private</span><% end %> <% if repo[:isArchived] %><span class="note">Archived</span><% end %> <% if repo[:isTemplate] %><span class="note">Template</span><% end %></td>
       <td><% if repo[:description].nil? || repo[:description].empty? %>-<% else %><%=h repo[:description] %><% end %></td>
       <td><% if repo[:primaryLanguage].nil? %>-<% else %><%=h repo[:primaryLanguage][:name] %><% end %></td>
       <td><% if repo[:branchProtectionRules][:totalCount].zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>

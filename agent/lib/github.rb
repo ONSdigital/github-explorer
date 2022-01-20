@@ -131,6 +131,7 @@ class GitHub
             description
             isArchived
             isPrivate
+            isTemplate
             name
             updatedAt
             branchProtectionRules(first: 1) {
