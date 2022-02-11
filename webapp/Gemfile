@@ -9,7 +9,7 @@ gem 'google-cloud-firestore'
 gem "google-protobuf", ">= 3.19.2"
 gem 'graphql-client'
 gem 'pagy'
-gem 'puma', "5.5.1"
+gem 'puma', "5.6.2"
 gem 'sinatra'
 gem 'sinatra-partial'
 
