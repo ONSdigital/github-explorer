@@ -6,7 +6,6 @@ Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
 gem 'google-cloud-firestore'
-gem "google-protobuf", ">= 3.19.2"
 gem 'graphql-client'
 gem 'pagy'
 gem 'puma', "5.6.2"
