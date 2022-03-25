@@ -4,9 +4,9 @@ This repository contains a [Ruby](https://ruby-lang.org/) web application that p
 ## Organisation
 This repository contains the following sub-directories:
 
-* [agent](https://github.com/ONSdigital/github-explorer/tree/master/agent) - Ruby command-line application that runs as a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/). It makes various heavyweight requests to the [GitHub GraphQL API](https://docs.github.com/en/graphql) in order to retrieve information displayed by the web application. A [Cloud Firestore](https://cloud.google.com/firestore/) database is used as persistent storage
+* [agent](https://github.com/ONSdigital/github-explorer/tree/main/agent) - Ruby command-line application that runs as a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/). It makes various heavyweight requests to the [GitHub GraphQL API](https://docs.github.com/en/graphql) in order to retrieve information displayed by the web application. A [Cloud Firestore](https://cloud.google.com/firestore/) database is used as persistent storage
 
-* [webapp](https://github.com/ONSdigital/github-explorer/tree/master/webapp) - Ruby [Sinatra](http://sinatrarb.com/) application that displays the information held in Firestore and also makes lightweight requests to the GitHub GraphQL API
+* [webapp](https://github.com/ONSdigital/github-explorer/tree/main/webapp) - Ruby [Sinatra](http://sinatrarb.com/) application that displays the information held in Firestore and also makes lightweight requests to the GitHub GraphQL API
 
 ## Building the Applications
 Dockerfiles are included for building both the agent and web application.
