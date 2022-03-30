@@ -54,7 +54,8 @@ GEM
     google-cloud-firestore-v1 (0.4.6)
       gapic-common (>= 0.7, < 2.a)
       google-cloud-errors (~> 1.0)
-    google-protobuf (3.19.4)
+    google-protobuf (3.19.4-x86_64-darwin)
+    google-protobuf (3.19.4-x86_64-linux)
     googleapis-common-protos (1.3.12)
       google-protobuf (~> 3.14)
       googleapis-common-protos-types (~> 1.2)
@@ -72,7 +73,10 @@ GEM
     graphql-client (0.17.0)
       activesupport (>= 3.0)
       graphql (~> 1.10)
-    grpc (1.43.1)
+    grpc (1.43.1-universal-darwin)
+      google-protobuf (~> 3.18)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.43.1-x86_64-linux)
       google-protobuf (~> 3.18)
       googleapis-common-protos-types (~> 1.0)
     i18n (1.9.1)
@@ -92,7 +96,7 @@ GEM
     parser (3.1.0.0)
       ast (~> 2.4.1)
     public_suffix (4.0.6)
-    puma (5.6.2)
+    puma (5.6.4)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-protection (2.1.0)
@@ -133,12 +137,13 @@ GEM
 
 PLATFORMS
   x86_64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   google-cloud-firestore
   graphql-client
   pagy
-  puma (= 5.6.2)
+  puma (= 5.6.4)
   rubocop
   sinatra
   sinatra-partial
