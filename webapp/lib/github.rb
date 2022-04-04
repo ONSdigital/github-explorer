@@ -725,7 +725,7 @@ class GitHub
           end
         end
 
-        two_factor_disabled_users << user_tuple
+        two_factor_disabled_users << user
       end
     end
 
