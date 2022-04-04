@@ -20,4 +20,21 @@ class User
     @login = login
     @name  = name
   end
+
+  def to_h
+    {
+      avatar_url: @avatar_url,
+      commit_contributions: @commit_contributions,
+      created_at: @created_at,
+      email: @email,
+      has_contributions: @has_contributions,
+      issue_contributions: @issue_contributions,
+      login: @login,
+      member: @member,
+      name: @name,
+      pull_request_contributions: @pull_request_contributions,
+      restricted_contributions: @restricted_contributions,
+      updated_at: @updated_at
+    }
+  end
 end
