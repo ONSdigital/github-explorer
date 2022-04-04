@@ -220,7 +220,7 @@ class GitHub
     all_teams = []
 
     while next_page
-      teams = CLIENT.query(ALL_TEAM_NAMES_QUERY, variables: { login: @organisation, first: 100, after: after },
+      teams = CLIENT.query(ALL_TEAM_NAMES_QUERY, variables: { login: @organisation, first: 100, after: },
                                                  context: { base_uri: @base_uri, token: @token })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
@@ -257,7 +257,7 @@ class GitHub
 
     while next_page
       members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: @organisation,
-                                                                        first: 100, after: after },
+                                                                        first: 100, after: },
                                                            context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -282,7 +282,7 @@ class GitHub
     all_repositories = []
 
     while next_page
-      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: @organisation, first: 100, after: after },
+      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: @organisation, first: 100, after: },
                                                           context: { base_uri: @base_uri, token: @token })
       raise GitHubError, repositories.errors unless repositories.errors.empty?
 
@@ -301,7 +301,7 @@ class GitHub
     all_two_factor_disabled = []
 
     while next_page
-      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: after },
+      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: },
                                                        context: { base_uri: @base_uri, token: @token })
       raise GitHubError, logins.errors unless logins.errors.empty?
 
@@ -323,7 +323,7 @@ class GitHub
 
     while next_page
       members_contributions = CLIENT.query(ALL_MEMBERS_CONTRIBUTIONS_QUERY, variables: { slug: @enterprise,
-                                                                                         first: 10, after: after },
+                                                                                         first: 10, after: },
                                                                             context: { base_uri: @base_uri,
                                                                                        token: @token })
       raise GitHubError, members_contributions.errors unless members_contributions.errors.empty?
@@ -355,7 +355,7 @@ class GitHub
 
     while next_page
       collaborators_contributions = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY,
-                                                 variables: { slug: @enterprise, first: 10, after: after },
+                                                 variables: { slug: @enterprise, first: 10, after: },
                                                  context: { base_uri: @base_uri, token: @token })
       raise GitHubError, collaborators_contributions.errors unless collaborators_contributions.errors.empty?
 
@@ -410,7 +410,7 @@ class GitHub
     all_members = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: after },
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
                                                 context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -428,8 +428,8 @@ class GitHub
     logins_for_team = []
 
     while next_page
-      team_members = CLIENT.query(TEAM_MEMBERS_QUERY, variables: { login: @organisation, slug: slug,
-                                                                   first: 100, after: after },
+      team_members = CLIENT.query(TEAM_MEMBERS_QUERY, variables: { login: @organisation, slug:,
+                                                                   first: 100, after: },
                                                       context: { base_uri: @base_uri, token: @token })
       raise GitHubError, team_members.errors unless team_members.errors.empty?
 
