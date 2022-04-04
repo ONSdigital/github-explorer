@@ -19,7 +19,7 @@ class User
                 :team_slug,
                 :updated_at
 
-  def initialize(login, name, member = false, role = nil)
+  def initialize(login, name, member: false, role: nil)
     @login  = login
     @name   = name
     @member = member

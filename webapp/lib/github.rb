@@ -632,7 +632,7 @@ class GitHub
         # user_tuple.login  = collaborator_edge.node.login
         # user_tuple.member = false
         # user_tuple.name   = collaborator_edge.node.name
-        user = User.new(collaborator_edge.node.login, collaborator_edge.node.name, false)
+        user = User.new(collaborator_edge.node.login, collaborator_edge.node.name, member: false)
 
         collaborator_edge.node.organizations.nodes.each do |org|
           if org.name.eql?(access.data.organization.name)
@@ -705,7 +705,7 @@ class GitHub
       end
 
       t.data.organization.team.members.edges.each do |member|
-        team.members << User.new(member.node.login, member.node.name, false, member.role)
+        team.members << User.new(member.node.login, member.node.name, role: member.role)
       end
     end
 
