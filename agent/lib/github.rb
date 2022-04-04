@@ -358,7 +358,7 @@ class GitHub
       next_page = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       collaborators_contributions.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        user = User.new(member.user.login, member.user.name)
+        user = User.new(collaborator.login, collaborator.name)
         user.avatar_url                 = collaborator.avatar_url
         user.created_at                 = collaborator.created_at
         user.updated_at                 = collaborator.updated_at
