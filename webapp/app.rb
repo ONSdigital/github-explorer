@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'logger'
 require 'sinatra'
 require 'sinatra/partial'
 require 'pagy'
@@ -18,6 +19,8 @@ CONFIG    = Configuration.new(ENV)
 FIRESTORE = Firestore.new(CONFIG.firestore_project)
 GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
                        CONFIG.github_api_base_uri, CONFIG.github_token)
+LOGGER    = Logger.new($stderr)
+
 ACCESS_ITEMS_COUNT = 20
 USERS_ITEMS_COUNT  = 10
 
@@ -228,6 +231,9 @@ get '/two-factor-security/?' do
 end
 
 error do
+  LOGGER.error(env['sinatra.error'].message)
+  LOGGER.error(env['sinatra.error'].backtrace.join("\n"))
+
   erb :error, locals: { title: '500 Internal Service Error - GitHub Explorer' }
 end
 
