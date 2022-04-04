@@ -191,7 +191,7 @@ get '/teams/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  any_teamless_members = FIRESTORE.teamless_members.positive?
+  any_teamless_members = FIRESTORE.teamless_members.size.positive?
   erb :teams, locals: { title: 'Teams - GitHub Explorer',
                         teams: all_teams,
                         any_teamless_members: }
