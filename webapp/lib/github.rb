@@ -627,16 +627,10 @@ class GitHub
       next_page = access.data.organization.repository.collaborators.page_info.has_next_page
 
       access.data.organization.repository.collaborators.edges.each do |collaborator_edge|
-        # user_tuple = OpenStruct.new
-        # user_tuple.id     = collaborator_edge.node.login
-        # user_tuple.login  = collaborator_edge.node.login
-        # user_tuple.member = false
-        # user_tuple.name   = collaborator_edge.node.name
         user = User.new(collaborator_edge.node.login, collaborator_edge.node.name, member: false)
 
         collaborator_edge.node.organizations.nodes.each do |org|
           if org.name.eql?(access.data.organization.name)
-            # user_tuple.member = true
             user.member = true
             break
           end
@@ -645,18 +639,11 @@ class GitHub
         collaborator_edge.permission_sources.each do |permission_source|
           case permission_source.source.__typename
           when 'Organization'
-            # user_tuple.organisation_permission = permission_source.permission
             user.organisation_permission = permission_source.permission
           when 'Repository'
-            # user_tuple.repository_name = permission_source.source.repository_name
-            # user_tuple.repository_permission = permission_source.permission
             user.repository_name       = permission_source.source.repository_name
             user.repository_permission = permission_source.permission
           when 'Team'
-            # user_tuple.team_parent     = permission_source.source.parent_team
-            # user_tuple.team_permission = permission_source.permission
-            # user_tuple.team_name = permission_source.source.team_name
-            # user_tuple.team_slug = permission_source.source.slug
             user.team_parent     = permission_source.source.parent_team
             user.team_permission = permission_source.permission
             user.team_name = permission_source.source.team_name
@@ -664,7 +651,6 @@ class GitHub
           end
         end
 
-        # repository_access << user_tuple
         repository_access << user
       end
     end
@@ -673,11 +659,9 @@ class GitHub
   end
 
   def team(slug)
-    after = nil
+    after     = nil
     next_page = true
-    # team_tuple = OpenStruct.new
-    # team_tuple.members = []
-    team = Team.new
+    team      = Team.new
 
     while next_page
       t = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug:,
