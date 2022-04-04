@@ -8,7 +8,6 @@ require_relative 'context_transport'
 require_relative 'github_error'
 require_relative 'team'
 require_relative 'user'
-require_relative 'user_summary'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
@@ -265,7 +264,7 @@ class GitHub
       next_page = members.data.organization.members_with_role.page_info.has_next_page
 
       members.data.organization.members_with_role.edges.each do |member|
-        user = UserSummary.new(member.node.login, member.node.name)
+        user = User.new(member.node.login, member.node.name)
         all_owners << user if member.role.eql?('ADMIN')
       end
     end
