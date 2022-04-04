@@ -16,4 +16,8 @@ class Team
   def initialize
     @members = []
   end
+
+  def parent_team
+    @ancestors
+  end
 end
