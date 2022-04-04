@@ -21,3 +21,6 @@ port ENV.fetch('PORT', 3000)
 # processes).
 #
 workers ENV.fetch('WORKERS', 5).to_i
+
+# Disable request logging.
+quiet
