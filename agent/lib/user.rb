@@ -35,6 +35,6 @@ class User
       pull_request_contributions: @pull_request_contributions,
       restricted_contributions: @restricted_contributions,
       updated_at: @updated_at
-    }
+    }.compact!
   end
 end
