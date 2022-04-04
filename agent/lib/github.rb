@@ -6,6 +6,8 @@ require 'graphql/client/http'
 
 require_relative 'context_transport'
 require_relative 'github_error'
+require_relative 'team'
+require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
@@ -227,19 +229,16 @@ class GitHub
       after = teams.data.organization.teams.page_info.end_cursor
       next_page = teams.data.organization.teams.page_info.has_next_page
 
-      teams.data.organization.teams.nodes.each do |team|
-        team_tuple = OpenStruct.new
-        team_tuple.name    = team.name
-        team_tuple.privacy = team.privacy
-        team_tuple.slug    = team.slug
-        all_teams << team_tuple
+      teams.data.organization.teams.nodes.each do |t|
+        team = Team.new(t.name, t.privacy, t.slug)
+        all_teams << team
 
         team_logins = logins_for_team(team.slug)
         team_logins.each do |login|
           if all_members_teams.key?(login)
-            all_members_teams[login] << team_tuple
+            all_members_teams[login] << team
           else
-            all_members_teams[login] = [team_tuple]
+            all_members_teams[login] = [team]
           end
         end
 
@@ -265,11 +264,8 @@ class GitHub
       next_page = members.data.organization.members_with_role.page_info.has_next_page
 
       members.data.organization.members_with_role.edges.each do |member|
-        user_tuple = OpenStruct.new
-        user_tuple.login = member.node.login
-        user_tuple.name  = member.node.name
-
-        all_owners << user_tuple if member.role.eql?('ADMIN')
+        user = User.new(member.node.login, member.node.name)
+        all_owners << user if member.role.eql?('ADMIN')
       end
     end
 
@@ -332,19 +328,17 @@ class GitHub
       next_page = members_contributions.data.enterprise.members.page_info.has_next_page
 
       members_contributions.data.enterprise.members.nodes.each do |member|
-        user_tuple = OpenStruct.new
-        user_tuple.avatar_url                 = member.user.avatar_url
-        user_tuple.created_at                 = member.user.created_at
-        user_tuple.login                      = member.user.login
-        user_tuple.name                       = member.user.name
-        user_tuple.updated_at                 = member.user.updated_at
-        user_tuple.has_contributions          = member.user.contributions_collection.has_any_contributions
-        user_tuple.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
-        user_tuple.commit_contributions       = member.user.contributions_collection.total_commit_contributions
-        user_tuple.issue_contributions        = member.user.contributions_collection.total_issue_contributions
-        user_tuple.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
-        user_tuple.member                     = true
-        all_users_contributions << user_tuple
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url                 = member.user.avatar_url
+        user.created_at                 = member.user.created_at
+        user.updated_at                 = member.user.updated_at
+        user.has_contributions          = member.user.contributions_collection.has_any_contributions
+        user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
+        user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
+        user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
+        user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
+        user.member                     = true
+        all_users_contributions << user
       end
 
       sleep PAUSE
@@ -363,19 +357,17 @@ class GitHub
       next_page = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       collaborators_contributions.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        user_tuple = OpenStruct.new
-        user_tuple.avatar_url                 = collaborator.avatar_url
-        user_tuple.created_at                 = collaborator.created_at
-        user_tuple.login                      = collaborator.login
-        user_tuple.name                       = collaborator.name
-        user_tuple.updated_at                 = collaborator.updated_at
-        user_tuple.has_contributions          = collaborator.contributions_collection.has_any_contributions
-        user_tuple.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
-        user_tuple.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
-        user_tuple.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
-        user_tuple.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
-        user_tuple.member                     = false
-        all_users_contributions << user_tuple
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url                 = collaborator.avatar_url
+        user.created_at                 = collaborator.created_at
+        user.updated_at                 = collaborator.updated_at
+        user.has_contributions          = collaborator.contributions_collection.has_any_contributions
+        user.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
+        user.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
+        user.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
+        user.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
+        user.member                     = false
+        all_users_contributions << user
       end
 
       sleep PAUSE
@@ -389,14 +381,12 @@ class GitHub
     members_with_a_team = all_members_teams
 
     all_members.each do |member|
-      user_tuple = OpenStruct.new
-      user_tuple.avatar_url = member.user.avatar_url
-      user_tuple.created_at = member.user.created_at
-      user_tuple.email      = member.user.email
-      user_tuple.login      = member.user.login
-      user_tuple.name       = member.user.name
-      user_tuple.updated_at = member.user.updated_at
-      teamless_members << user_tuple unless members_with_a_team.key?(member.user.login)
+      user = User.new(member.user.login, member.user.name)
+      user.avatar_url = member.user.avatar_url
+      user.created_at = member.user.created_at
+      user.email      = member.user.email
+      user.updated_at = member.user.updated_at
+      teamless_members << user unless members_with_a_team.key?(member.user.login)
     end
 
     teamless_members
