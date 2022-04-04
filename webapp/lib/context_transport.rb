@@ -18,6 +18,6 @@ class ContextTransport < GraphQL::Client::HTTP
 
   def execute(document:, operation_name: nil, variables: {}, context: {})
     @uri = context.fetch(:base_uri) + '/graphql'
-    super(document: document, operation_name: operation_name, variables: variables, context: context)
+    super(document:, operation_name:, variables:, context:)
   end
 end

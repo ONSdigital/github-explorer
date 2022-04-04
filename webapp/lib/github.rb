@@ -524,7 +524,7 @@ class GitHub
     all_members = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: after },
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
                                                 context: { base_uri: @base_uri, token: @token })
       raise GitHubError, members.errors unless members.errors.empty?
 
@@ -543,7 +543,7 @@ class GitHub
 
     while next_page
       collaborators = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_QUERY, variables: { slug: @enterprise,
-                                                                                 first: 100, after: after },
+                                                                                 first: 100, after: },
                                                                     context: { base_uri: @base_uri, token: @token })
       raise GitHubError, collaborators.errors unless collaborators.errors.empty?
 
@@ -564,7 +564,7 @@ class GitHub
     all_teams = []
 
     while next_page
-      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: after },
+      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
                                             context: { base_uri: @base_uri, token: @token })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
@@ -577,7 +577,7 @@ class GitHub
   end
 
   def member(user_login)
-    member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: user_login },
+    member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: },
                                         context: { base_uri: @base_uri, token: @token })
     raise GitHubError, member.errors unless member.errors.empty?
 
@@ -593,7 +593,7 @@ class GitHub
   end
 
   def outside_collaborator(login)
-    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: login },
+    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: },
                                                                     context: { base_uri: @base_uri, token: @token })
     raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
 
@@ -615,7 +615,7 @@ class GitHub
 
     while next_page
       access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: @organisation, name: repository,
-                                                                  first: 100, after: after },
+                                                                  first: 100, after: },
                                                      context: { base_uri: @base_uri, token: @token })
       raise GitHubError, access.errors unless access.errors.empty?
 
@@ -667,8 +667,8 @@ class GitHub
     team_tuple.members = []
 
     while next_page
-      team = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug: slug,
-                                                   first: 100, after: after },
+      team = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug:,
+                                                   first: 100, after: },
                                       context: { base_uri: @base_uri, token: @token })
       raise GitHubError, team.errors unless team.errors.empty?
 
@@ -711,7 +711,7 @@ class GitHub
 
     while next_page
       users = CLIENT.query(TWO_FACTOR_DISABLED_USERS_QUERY, variables: { login: @organisation, slug: @enterprise,
-                                                                         first: 100, after: after },
+                                                                         first: 100, after: },
                                                             context: { base_uri: @base_uri, token: @token })
       raise GitHubError, users.errors unless users.errors.empty?
 

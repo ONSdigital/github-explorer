@@ -77,10 +77,10 @@ get '/?' do
   owners = FIRESTORE.owners[pagy.offset, pagy.items]
   two_factor_disabled_count = FIRESTORE.two_factor_disabled.count
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
-                        organisation: organisation,
-                        owners: owners,
-                        two_factor_disabled_count: two_factor_disabled_count,
-                        pagy: pagy }
+                        organisation:,
+                        owners:,
+                        two_factor_disabled_count:,
+                        pagy: }
 end
 
 get '/collaborators/?' do
@@ -93,7 +93,7 @@ get '/collaborators/?' do
   two_factor_disabled = FIRESTORE.two_factor_disabled
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
                                 collaborators: all_outside_collaborators,
-                                two_factor_disabled: two_factor_disabled }
+                                two_factor_disabled: }
 end
 
 get '/collaborators/:login' do |login|
@@ -104,13 +104,13 @@ get '/collaborators/:login' do |login|
   end
 
   count = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
-  pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
+  pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   repos = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
-                               collaborator: collaborator,
+                               collaborator:,
                                two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
-                               repos: repos,
-                               pagy: pagy }
+                               repos:,
+                               pagy: }
 end
 
 get '/contributions/?' do
@@ -133,14 +133,14 @@ get '/members/:login' do |login|
   # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
   login_symbol = login.to_sym
   count = FIRESTORE.members_teams[login_symbol].nil? ? 0 : FIRESTORE.members_teams[login_symbol].count
-  pagy = Pagy.new(count: count, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
+  pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = FIRESTORE.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
-                         member: member,
+                         member:,
                          owner: FIRESTORE.owner?(login),
                          two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
-                         teams: teams,
-                         pagy: pagy }
+                         teams:,
+                         pagy: }
 end
 
 get '/members/?' do
@@ -153,7 +153,7 @@ get '/members/?' do
   two_factor_disabled = FIRESTORE.two_factor_disabled
   erb :members, locals: { title: 'Members - GitHub Explorer',
                           members: all_members,
-                          two_factor_disabled: two_factor_disabled }
+                          two_factor_disabled: }
 end
 
 get '/repositories/?' do
@@ -178,10 +178,10 @@ get '/repositories/:repository' do |repository_slug|
   end
 
   erb :repository, locals: { title: "#{repository_slug} Repository - GitHub Explorer",
-                             repository_slug: repository_slug,
-                             repo: repo,
-                             access: access,
-                             pagy: pagy }
+                             repository_slug:,
+                             repo:,
+                             access:,
+                             pagy: }
 end
 
 get '/teams/?' do
@@ -194,7 +194,7 @@ get '/teams/?' do
   any_teamless_members = FIRESTORE.teamless_members.size > 0
   erb :teams, locals: { title: 'Teams - GitHub Explorer',
                         teams: all_teams,
-                        any_teamless_members: any_teamless_members }
+                        any_teamless_members: }
 end
 
 get '/teams/:team' do |team|
@@ -207,16 +207,16 @@ get '/teams/:team' do |team|
   pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
   members = team.members[pagy.offset, pagy.items]
   erb :team, locals: { title: "#{team.name} Team - GitHub Explorer",
-                       team: team,
-                       members: members,
-                       pagy: pagy }
+                       team:,
+                       members:,
+                       pagy: }
 end
 
 get '/teamless' do
   two_factor_disabled = FIRESTORE.two_factor_disabled
   erb :teamless, locals: { title: 'Teamless Members - GitHub Explorer',
                            teamless_members: FIRESTORE.teamless_members,
-                           two_factor_disabled: two_factor_disabled }
+                           two_factor_disabled: }
 end
 
 get '/two-factor-security/?' do
