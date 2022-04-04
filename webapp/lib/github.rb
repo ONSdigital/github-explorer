@@ -6,6 +6,8 @@ require 'graphql/client/http'
 
 require_relative 'context_transport'
 require_relative 'github_error'
+require_relative 'user'
+require_relative 'team'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
@@ -625,15 +627,17 @@ class GitHub
       next_page = access.data.organization.repository.collaborators.page_info.has_next_page
 
       access.data.organization.repository.collaborators.edges.each do |collaborator_edge|
-        user_tuple = OpenStruct.new
-        user_tuple.id     = collaborator_edge.node.login
-        user_tuple.login  = collaborator_edge.node.login
-        user_tuple.member = false
-        user_tuple.name   = collaborator_edge.node.name
+        # user_tuple = OpenStruct.new
+        # user_tuple.id     = collaborator_edge.node.login
+        # user_tuple.login  = collaborator_edge.node.login
+        # user_tuple.member = false
+        # user_tuple.name   = collaborator_edge.node.name
+        user = User.new(collaborator_edge.node.login, collaborator_edge.node.name, false)
 
         collaborator_edge.node.organizations.nodes.each do |org|
           if org.name.eql?(access.data.organization.name)
-            user_tuple.member = true
+            # user_tuple.member = true
+            user.member = true
             break
           end
         end
@@ -641,19 +645,27 @@ class GitHub
         collaborator_edge.permission_sources.each do |permission_source|
           case permission_source.source.__typename
           when 'Organization'
-            user_tuple.organisation_permission = permission_source.permission
+            # user_tuple.organisation_permission = permission_source.permission
+            user.organisation_permission = permission_source.permission
           when 'Repository'
-            user_tuple.repositor_name = permission_source.source.repository_name
-            user_tuple.repository_permission = permission_source.permission
+            # user_tuple.repository_name = permission_source.source.repository_name
+            # user_tuple.repository_permission = permission_source.permission
+            user.repository_name       = permission_source.source.repository_name
+            user.repository_permission = permission_source.permission
           when 'Team'
-            user_tuple.team_parent     = permission_source.source.parent_team
-            user_tuple.team_permission = permission_source.permission
-            user_tuple.team_name = permission_source.source.team_name
-            user_tuple.team_slug = permission_source.source.slug
+            # user_tuple.team_parent     = permission_source.source.parent_team
+            # user_tuple.team_permission = permission_source.permission
+            # user_tuple.team_name = permission_source.source.team_name
+            # user_tuple.team_slug = permission_source.source.slug
+            user.team_parent     = permission_source.source.parent_team
+            user.team_permission = permission_source.permission
+            user.team_name = permission_source.source.team_name
+            user.team_slug = permission_source.source.slug
           end
         end
 
-        repository_access << user_tuple
+        # repository_access << user_tuple
+        repository_access << user
       end
     end
 
@@ -663,45 +675,42 @@ class GitHub
   def team(slug)
     after = nil
     next_page = true
-    team_tuple = OpenStruct.new
-    team_tuple.members = []
+    # team_tuple = OpenStruct.new
+    # team_tuple.members = []
+    team = Team.new
 
     while next_page
-      team = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug:,
-                                                   first: 100, after: },
-                                      context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, team.errors unless team.errors.empty?
+      t = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug:,
+                                                first: 100, after: },
+                                   context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, t.errors unless t.errors.empty?
 
-      after = team.data.organization.team.members.page_info.end_cursor
-      next_page = team.data.organization.team.members.page_info.has_next_page
+      after = t.data.organization.team.members.page_info.end_cursor
+      next_page = t.data.organization.team.members.page_info.has_next_page
 
-      team_tuple.avatar_url  = team.data.organization.team.avatar_url
-      team_tuple.created_at  = team.data.organization.team.created_at
-      team_tuple.description = team.data.organization.team.description
-      team_tuple.name        = team.data.organization.team.name
-      team_tuple.privacy     = team.data.organization.team.privacy
-      team_tuple.updated_at  = team.data.organization.team.updated_at
-      team_tuple.url         = team.data.organization.team.url
+      team.avatar_url  = t.data.organization.team.avatar_url
+      team.created_at  = t.data.organization.team.created_at
+      team.description = t.data.organization.team.description
+      team.name        = t.data.organization.team.name
+      team.privacy     = t.data.organization.team.privacy
+      team.updated_at  = t.data.organization.team.updated_at
+      team.url         = t.data.organization.team.url
 
-      unless team.data.organization.team.ancestors.nodes.nil?
-        team_tuple.ancestors = team.data.organization.team.ancestors.nodes
+      unless t.data.organization.team.ancestors.nodes.nil?
+        team.ancestors = t.data.organization.team.ancestors.nodes
       end
 
-      unless team.data.organization.team.child_teams.nodes.nil?
-        team_tuple.child_teams = team.data.organization.team.child_teams.nodes
+      unless t.data.organization.team.child_teams.nodes.nil?
+        team.child_teams = t.data.organization.team.child_teams.nodes
       end
 
-      team.data.organization.team.members.edges.each do |member|
-        user_tuple = OpenStruct.new
-        user_tuple.role  = member.role
-        user_tuple.login = member.node.login
-        user_tuple.name  = member.node.name
-        team_tuple.members << user_tuple
+      t.data.organization.team.members.edges.each do |member|
+        team.members << User.new(member.node.login, member.node.name, false, member.role)
       end
     end
 
-    team_tuple.members.sort_by!(&:login)
-    team_tuple
+    team.members.sort_by!(&:login)
+    team
   end
 
   def two_factor_disabled_users
@@ -718,19 +727,16 @@ class GitHub
       after = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
       next_page = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
 
-      users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
-        user_tuple = OpenStruct.new
-        user_tuple.avatar_url = user.avatar_url
-        user_tuple.created_at = user.created_at
-        user_tuple.email      = user.email
-        user_tuple.login      = user.login
-        user_tuple.member     = false
-        user_tuple.name       = user.name
-        user_tuple.updated_at = user.updated_at
+      users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |u|
+        user = User.new(u.login, u.name)
+        user.avatar_url = u.avatar_url
+        user.created_at = u.created_at
+        user.email      = u.email
+        user.updated_at = u.updated_at
 
-        user.organizations.nodes.each do |org|
+        u.organizations.nodes.each do |org|
           if org.name.eql?(users.data.organization.name)
-            user_tuple.member = true
+            user.member = true
             break
           end
         end
