@@ -17,7 +17,7 @@ class Team
     @members = []
   end
 
-  def has_parent_team?
+  def parent_team?
     @ancestors.size.positive?
   end
 end

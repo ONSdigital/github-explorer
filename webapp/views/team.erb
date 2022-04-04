@@ -14,7 +14,7 @@
   <section class="column left">
     <p><img class="avatar-large" src="<%=team.avatar_url %>"></p>
 
-    <h2><%=h team.name %> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %> <% if team.has_parent_team? %><span class="note">Child Team</span><% end %></h2>
+    <h2><%=h team.name %> <% if team.privacy.eql?('SECRET') %><span class="note">Secret</span><% end %> <% if team.parent_team? %><span class="note">Child Team</span><% end %></h2>
 
     <section class="profile-detail">
     <% unless team.description.nil? %>
