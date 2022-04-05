@@ -25,6 +25,7 @@ ACCESS_ITEMS_COUNT = 20
 USERS_ITEMS_COUNT  = 10
 
 set :github_organisation, CONFIG.github_organisation
+set :logging, false # Stop Sinatra logging routes to STDERR.
 
 helpers do
   include Pagy::Frontend
@@ -187,6 +188,12 @@ end
 get '/teams/?' do
   begin
     all_teams = GITHUB.all_teams
+
+    all_teams.each do |team|
+      if team.name.eql?('CATD')
+        puts team.child_teams.nodes.size
+      end
+    end
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
