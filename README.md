@@ -10,6 +10,8 @@ This repository contains the following sub-directories:
 
 * [webapp](https://github.com/ONSdigital/github-explorer/tree/main/webapp) - Ruby [Sinatra](http://sinatrarb.com/) application that displays the information held in Firestore and also makes lightweight requests to the GitHub GraphQL API
 
+* [webapp-parent-image](https://github.com/ONSdigital/github-explorer/tree/main/webapp-parent-image) - Docker parent image containing Ruby and the dependencies required by the web application. Used to speed up the Docker build
+
 ## Building the Applications
 Dockerfiles are included for building both the agent and web application.
 
