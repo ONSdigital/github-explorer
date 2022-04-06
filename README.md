@@ -6,6 +6,8 @@ This repository contains the following sub-directories:
 
 * [agent](https://github.com/ONSdigital/github-explorer/tree/main/agent) - Ruby command-line application that runs as a Kubernetes [CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/). It makes various heavyweight requests to the [GitHub GraphQL API](https://docs.github.com/en/graphql) in order to retrieve information displayed by the web application. A [Cloud Firestore](https://cloud.google.com/firestore/) database is used as persistent storage
 
+* [agent-parent-image](https://github.com/ONSdigital/github-explorer/tree/main/agent-parent-image) - Docker parent image containing Ruby and the dependencies required by the agent application. Used to speed up the Docker build
+
 * [webapp](https://github.com/ONSdigital/github-explorer/tree/main/webapp) - Ruby [Sinatra](http://sinatrarb.com/) application that displays the information held in Firestore and also makes lightweight requests to the GitHub GraphQL API
 
 ## Building the Applications
