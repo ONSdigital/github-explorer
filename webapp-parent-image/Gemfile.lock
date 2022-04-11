@@ -124,6 +124,8 @@ GEM
       rack (~> 2.2)
       rack-protection (= 2.2.0)
       tilt (~> 2.0)
+    sinatra-partial (1.0.1)
+      sinatra (>= 1.4)
     tilt (2.0.10)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -139,6 +141,7 @@ DEPENDENCIES
   puma
   rubocop
   sinatra
+  sinatra-partial
 
 BUNDLED WITH
    2.3.3
