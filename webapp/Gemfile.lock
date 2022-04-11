@@ -99,9 +99,9 @@ GEM
       rack
     rainbow (3.1.1)
     rbtree (0.4.5)
-    regexp_parser (2.2.1)
+    regexp_parser (2.3.0)
     rexml (3.2.5)
-    rubocop (1.26.1)
+    rubocop (1.27.0)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -110,7 +110,7 @@ GEM
       rubocop-ast (>= 1.16.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.16.0)
+    rubocop-ast (1.17.0)
       parser (>= 3.1.1.0)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
@@ -124,8 +124,6 @@ GEM
       rack (~> 2.2)
       rack-protection (= 2.2.0)
       tilt (~> 2.0)
-    sinatra-partial (1.0.1)
-      sinatra (>= 1.4)
     tilt (2.0.10)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -141,7 +139,6 @@ DEPENDENCIES
   puma
   rubocop
   sinatra
-  sinatra-partial
 
 BUNDLED WITH
    2.3.7

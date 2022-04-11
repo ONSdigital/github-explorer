@@ -10,7 +10,6 @@ gem 'graphql-client'
 gem 'pagy'
 gem 'puma'
 gem 'sinatra'
-gem 'sinatra-partial'
 
 group :development do
   gem 'rubocop'
