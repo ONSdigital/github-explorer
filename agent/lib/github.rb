@@ -313,9 +313,9 @@ class GitHub
     next_page = true
 
     while next_page
-      inactive_collaborators = CLIENT.query(ALL_INACTIVE_COLLABORATORS_QUERY, variables: { slug: @enterprise, from:,
-                                                                                           first: 10, after: },
-                                                                              context: { base_uri: @base_uri, token: @token })
+      inactive_collaborators = CLIENT.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
+                                            variables: { slug: @enterprise, from:, first: 10, after: },
+                                            context: { base_uri: @base_uri, token: @token })
       raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
 
       after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
