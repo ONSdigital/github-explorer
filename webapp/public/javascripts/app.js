@@ -76,6 +76,16 @@ $(document).ready(function() {
     buttons: [
       "csv", "excel", "pdf"
     ],
+
+    // Prevent sorting the Two Factor Security column.
+    columns: [
+      null,
+      null,
+      null,
+      { orderable: false },
+      null,
+      null
+    ],
     stateSave: true,
     "dom": "fBrtp"
   });
