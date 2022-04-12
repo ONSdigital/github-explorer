@@ -121,6 +121,10 @@ get '/health?' do
   halt 200
 end
 
+get '/inactive/?' do
+  erb :inactive, locals: { title: 'Inactive - GitHub Explorer' }
+end
+
 get '/members/:login' do |login|
   begin
     member = GITHUB.member(login).data
