@@ -280,7 +280,7 @@ class GitHub
   def all_inactive_users
     after = nil
     next_page = true
-    from = DateTime.prev_date(INACTIVE_MONTHS).iso8601
+    from = DateTime.now.prev_month(INACTIVE_MONTHS).iso8601
     all_inactive_users = []
 
     while next_page
