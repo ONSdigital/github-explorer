@@ -293,7 +293,7 @@ class GitHub
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
 
       inactive_members.data.enterprise.members.nodes.each do |member|
-        if member.user.contributions_collection.has_any_contributions
+        unless member.user.contributions_collection.has_any_contributions
           user = User.new(member.user.login, member.user.name)
           user.avatar_url                 = member.user.avatar_url
           user.created_at                 = member.user.created_at
@@ -323,7 +323,7 @@ class GitHub
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        if collaborator.contributions_collection.has_any_contributions
+        unless collaborator.contributions_collection.has_any_contributions
           user = User.new(collaborator.login, collaborator.name)
           user.avatar_url                 = collaborator.avatar_url
           user.created_at                 = collaborator.created_at
