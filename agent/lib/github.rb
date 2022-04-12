@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
 require 'graphql/client'
 require 'graphql/client/http'
 
