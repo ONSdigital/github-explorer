@@ -70,7 +70,15 @@ $(document).ready(function() {
     ],
     stateSave: true,
     "dom": "fBrtp"
-  })
+  });
+
+  $("#data.inactive").DataTable({
+    buttons: [
+      "csv", "excel", "pdf"
+    ],
+    stateSave: true,
+    "dom": "fBrtp"
+  });
 
   $("#data.repositories").DataTable({
     buttons: [

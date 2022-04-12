@@ -11,6 +11,10 @@ class Firestore
     @client = Google::Cloud::Firestore.new
   end
 
+  def all_inactive_users
+    read_document('all_inactive_users')
+  end
+
   def all_repositories
     read_document('all_repositories')
   end

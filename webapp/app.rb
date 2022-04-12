@@ -122,7 +122,11 @@ get '/health?' do
 end
 
 get '/inactive/?' do
-  erb :inactive, locals: { title: 'Inactive - GitHub Explorer' }
+  all_inactive_users  = FIRESTORE.all_inactive_users
+  two_factor_disabled = FIRESTORE.two_factor_disabled
+  erb :inactive, locals: { title: 'Inactive - GitHub Explorer',
+                           inactive_users: all_inactive_users,
+                           two_factor_disabled: }
 end
 
 get '/members/:login' do |login|

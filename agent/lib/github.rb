@@ -35,10 +35,6 @@ class GitHub
                 updatedAt
                 contributionsCollection(from: $from) {
                   hasAnyContributions
-                  restrictedContributionsCount
-                  totalCommitContributions
-                  totalIssueContributions
-                  totalPullRequestContributions
                 }
               }
             }
@@ -60,15 +56,12 @@ class GitHub
             nodes {
               avatarUrl
               createdAt
+              email
               login
               name
               updatedAt
               contributionsCollection(from: $from) {
                 hasAnyContributions
-                restrictedContributionsCount
-                totalCommitContributions
-                totalIssueContributions
-                totalPullRequestContributions
               }
             }
           }
@@ -295,14 +288,11 @@ class GitHub
       inactive_members.data.enterprise.members.nodes.each do |member|
         unless member.user.contributions_collection.has_any_contributions
           user = User.new(member.user.login, member.user.name)
-          user.avatar_url                 = member.user.avatar_url
-          user.created_at                 = member.user.created_at
-          user.updated_at                 = member.user.updated_at
-          user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
-          user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
-          user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
-          user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
-          user.member                     = true
+          user.avatar_url = member.user.avatar_url
+          user.created_at = member.user.created_at
+          user.email      = member.user.email
+          user.updated_at = member.user.updated_at
+          user.member     = true
           all_inactive_users << user
         end
       end
@@ -325,14 +315,11 @@ class GitHub
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
         unless collaborator.contributions_collection.has_any_contributions
           user = User.new(collaborator.login, collaborator.name)
-          user.avatar_url                 = collaborator.avatar_url
-          user.created_at                 = collaborator.created_at
-          user.updated_at                 = collaborator.updated_at
-          user.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
-          user.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
-          user.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
-          user.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
-          user.member                     = false
+          user.avatar_url = collaborator.avatar_url
+          user.created_at = collaborator.created_at
+          user.email      = collaborator.email
+          user.updated_at = collaborator.updated_at
+          user.member     = false
           all_inactive_users << user
         end
       end
