@@ -84,6 +84,7 @@ $(document).ready(function() {
       null,
       { orderable: false },
       null,
+      null,
       null
     ],
     stateSave: true,
