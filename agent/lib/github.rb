@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'graphql/client'
 require 'graphql/client/http'
 
@@ -10,9 +11,71 @@ require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
-  CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
-  PAUSE  = 0.5
+  SCHEMA          = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
+  CLIENT          = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
+  INACTIVE_MONTHS = 6
+  PAUSE           = 0.5
+
+  ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
+      enterprise(slug: $slug) {
+        members(first: $first, after: $after) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            ... on EnterpriseUserAccount {
+              user {
+                avatarUrl
+                createdAt
+                email
+                login
+                name
+                updatedAt
+                contributionsCollection(from: $from) {
+                  hasAnyContributions
+                  restrictedContributionsCount
+                  totalCommitContributions
+                  totalIssueContributions
+                  totalPullRequestContributions
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
+  ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
+      enterprise(slug: $slug) {
+        ownerInfo {
+          outsideCollaborators(first: $first, after: $after) {
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            nodes {
+              avatarUrl
+              createdAt
+              login
+              name
+              updatedAt
+              contributionsCollection(from: $from) {
+                hasAnyContributions
+                restrictedContributionsCount
+                totalCommitContributions
+                totalIssueContributions
+                totalPullRequestContributions
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
 
   ALL_MEMBERS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $first: Int!, $after: String) {
@@ -212,6 +275,70 @@ class GitHub
     @organisation = organisation
     @base_uri     = URI.parse(base_uri)
     @token        = token
+  end
+
+  def all_inactive_users
+    after = nil
+    next_page = true
+    from = DateTime.prev_date(INACTIVE_MONTHS).iso8601
+    all_inactive_users = []
+
+    while next_page
+      inactive_members = CLIENT.query(ALL_INACTIVE_MEMBERS_QUERY, variables: { slug: @enterprise, from:,
+                                                                               first: 10, after: },
+                                                                  context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
+
+      after = inactive_members.data.enterprise.members.page_info.end_cursor
+      next_page = inactive_members.data.enterprise.members.page_info.has_next_page
+
+      inactive_members.data.enterprise.members.nodes.each do |member|
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url                 = member.user.avatar_url
+        user.created_at                 = member.user.created_at
+        user.updated_at                 = member.user.updated_at
+        user.has_contributions          = member.user.contributions_collection.has_any_contributions
+        user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
+        user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
+        user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
+        user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
+        user.member                     = true
+        all_inactive_users << user
+      end
+
+      sleep PAUSE
+    end
+
+    after = nil
+    next_page = true
+
+    while next_page
+      inactive_collaborators = CLIENT.query(ALL_INACTIVE_COLLABORATORS_CONTRIBUTIONS_QUERY,
+                                            variables: { slug: @enterprise, from:, first: 10, after: },
+                                            context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
+
+      after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
+      next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
+
+      inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
+        user = User.new(collaborator.login, collaborator.name)
+        user.avatar_url                 = collaborator.avatar_url
+        user.created_at                 = collaborator.created_at
+        user.updated_at                 = collaborator.updated_at
+        user.has_contributions          = collaborator.contributions_collection.has_any_contributions
+        user.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
+        user.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
+        user.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
+        user.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
+        user.member                     = false
+        all_inactive_users << user
+      end
+
+      sleep PAUSE
+    end
+
+    all_inactive_users.sort_by(&:login)
   end
 
   def all_members_teams
