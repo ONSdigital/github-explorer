@@ -2,15 +2,12 @@
 
 require 'logger'
 require 'sinatra'
-require 'sinatra/partial'
 require 'pagy'
 
 require_relative 'lib/configuration'
 require_relative 'lib/firestore'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
-
-set :partial_template_engine, :erb
 
 include Pagy::Backend
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
