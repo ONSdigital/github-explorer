@@ -293,17 +293,18 @@ class GitHub
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
 
       inactive_members.data.enterprise.members.nodes.each do |member|
-        user = User.new(member.user.login, member.user.name)
-        user.avatar_url                 = member.user.avatar_url
-        user.created_at                 = member.user.created_at
-        user.updated_at                 = member.user.updated_at
-        user.has_contributions          = member.user.contributions_collection.has_any_contributions
-        user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
-        user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
-        user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
-        user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
-        user.member                     = true
-        all_inactive_users << user
+        if member.user.contributions_collection.has_any_contributions
+          user = User.new(member.user.login, member.user.name)
+          user.avatar_url                 = member.user.avatar_url
+          user.created_at                 = member.user.created_at
+          user.updated_at                 = member.user.updated_at
+          user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
+          user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
+          user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
+          user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
+          user.member                     = true
+          all_inactive_users << user
+        end
       end
 
       sleep PAUSE
@@ -322,17 +323,18 @@ class GitHub
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        user = User.new(collaborator.login, collaborator.name)
-        user.avatar_url                 = collaborator.avatar_url
-        user.created_at                 = collaborator.created_at
-        user.updated_at                 = collaborator.updated_at
-        user.has_contributions          = collaborator.contributions_collection.has_any_contributions
-        user.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
-        user.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
-        user.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
-        user.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
-        user.member                     = false
-        all_inactive_users << user
+        if collaborator.contributions_collection.has_any_contributions
+          user = User.new(collaborator.login, collaborator.name)
+          user.avatar_url                 = collaborator.avatar_url
+          user.created_at                 = collaborator.created_at
+          user.updated_at                 = collaborator.updated_at
+          user.restricted_contributions   = collaborator.contributions_collection.restricted_contributions_count
+          user.commit_contributions       = collaborator.contributions_collection.total_commit_contributions
+          user.issue_contributions        = collaborator.contributions_collection.total_issue_contributions
+          user.pull_request_contributions = collaborator.contributions_collection.total_pull_request_contributions
+          user.member                     = false
+          all_inactive_users << user
+        end
       end
 
       sleep PAUSE
