@@ -2,6 +2,7 @@
 
 require 'logger'
 require 'sinatra'
+require 'ons-numbers'
 require 'pagy'
 
 require_relative 'lib/configuration'
@@ -35,17 +36,16 @@ helpers do
     Rack::Utils.escape_html(text)
   end
 
-  def n(count)
-    count_groups = count.to_s.chars.to_a.reverse.each_slice(3)
-    count_groups.map(&:join).join(',').reverse
+  def n(number)
+    Numbers.grouping(number)
   end
 
   def pagination_links(pagy)
     pagy_nav(pagy) if pagy.pages > 1
   end
 
-  def percentage(num, total)
-    "#{((num.to_f / total) * 100).round(2)}%"
+  def percentage(number, total)
+    Numbers.percentage(number, total)
   end
 
   def pluralise(count, singular_noun, plural_noun = nil)
