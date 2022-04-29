@@ -37,7 +37,7 @@ helpers do
   end
 
   def n(number)
-    Numbers.grouping(number)
+    Numbers.grouped(number)
   end
 
   def pagination_links(pagy)
