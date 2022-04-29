@@ -247,7 +247,7 @@ error do
   LOGGER.error(env['sinatra.error'].message)
   LOGGER.error(env['sinatra.error'].backtrace.join("\n"))
 
-  erb :error, locals: { title: '500 Internal Service Error - GitHub Explorer' }
+  erb :error, locals: { title: '500 Internal Server Error - GitHub Explorer' }
 end
 
 not_found do
