@@ -85,6 +85,7 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.8)
+    ons-numbers (1.0.0)
     os (1.1.4)
     pagy (5.10.1)
       activesupport
@@ -135,6 +136,7 @@ PLATFORMS
 DEPENDENCIES
   google-cloud-firestore
   graphql-client
+  ons-numbers
   pagy
   puma
   rubocop

@@ -7,6 +7,7 @@ Encoding.default_internal = Encoding::UTF_8
 
 gem 'google-cloud-firestore'
 gem 'graphql-client'
+gem 'ons-numbers'
 gem 'pagy'
 gem 'puma'
 gem 'sinatra'
