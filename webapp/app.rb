@@ -81,6 +81,13 @@ get '/?' do
                         pagy: }
 end
 
+get '/about' do
+  erb :about, locals: { title: 'About - GitHub Explorer',
+                        branch: ENV.fetch('COMMIT_BRANCH', 'unknown'),
+                        commit: ENV.fetch('COMMIT_SHA', 'unknown'),
+                        repo_name: ENV.fetch('REPO_NAME') }
+end
+
 get '/collaborators/?' do
   begin
     all_outside_collaborators = GITHUB.all_outside_collaborators
