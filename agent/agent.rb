@@ -3,9 +3,9 @@
 
 require 'json'
 require 'logger'
+require 'ons-firestore'
 
 require_relative 'lib/configuration'
-require_relative 'lib/firestore'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
@@ -23,8 +23,8 @@ class Agent
     begin
       query = ARGV[0]
       query_result = GITHUB.send(query)
-      firestore = Firestore.new(CONFIG.firestore_project, logger)
-      firestore.save_document(query, query_result)
+      firestore = Firestore.new(CONFIG.firestore_project)
+      firestore.save_document('github-explorer', query, query_result)
     rescue GitHubError => e
       logger.error(%(A GitHub GraphQL API error occurred: #{e.message}\n#{e.backtrace.join("\n")}))
       exit(1)
