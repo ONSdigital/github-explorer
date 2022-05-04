@@ -2,7 +2,6 @@
 
 require 'logger'
 require 'sinatra'
-require 'ons-firestore'
 require 'ons-numbers'
 require 'pagy'
 
