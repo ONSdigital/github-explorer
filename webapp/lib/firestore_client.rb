@@ -1,30 +1,29 @@
 # frozen_string_literal: true
 
-require 'google/cloud/firestore'
+require 'ons-firestore'
 
 # Class to manage access to Firestore.
-class Firestore
+class FirestoreClient
   FIRESTORE_COLLECTION = 'github-explorer'
 
   def initialize(project)
-    Google::Cloud::Firestore.configure { |config| config.project_id = project }
-    @client = Google::Cloud::Firestore.new
+    @firestore = Firestore.new(project)
   end
 
   def all_inactive_users
-    read_document('all_inactive_users')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users')
   end
 
   def all_repositories
-    read_document('all_repositories')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories')
   end
 
   def all_users_contributions
-    read_document('all_users_contributions')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_users_contributions')
   end
 
   def members_teams
-    read_document('all_members_teams')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_members_teams')
   end
 
   def owner?(login)
@@ -33,27 +32,19 @@ class Firestore
   end
 
   def owners
-    read_document('all_owners')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_owners')
   end
 
   def teamless_members
-    read_document('teamless_members')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'teamless_members')
   end
 
   def two_factor_disabled
-    read_document('all_two_factor_disabled')
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_two_factor_disabled')
   end
 
   def two_factor_disabled?(login)
     two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
     false
-  end
-
-  private
-
-  def read_document(name)
-    document = @client.col(FIRESTORE_COLLECTION).doc(name)
-    snapshot = document.get
-    snapshot[:data]
   end
 end

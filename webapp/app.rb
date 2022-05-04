@@ -2,11 +2,12 @@
 
 require 'logger'
 require 'sinatra'
+require 'ons-firestore'
 require 'ons-numbers'
 require 'pagy'
 
 require_relative 'lib/configuration'
-require_relative 'lib/firestore'
+require_relative 'lib/firestore_client'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
@@ -14,7 +15,7 @@ include Pagy::Backend
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
 CONFIG    = Configuration.new(ENV)
-FIRESTORE = Firestore.new(CONFIG.firestore_project)
+FIRESTORE = FirestoreClient.new(CONFIG.firestore_project)
 GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
                        CONFIG.github_api_base_uri, CONFIG.github_token)
 LOGGER    = Logger.new($stderr)
