@@ -11,8 +11,8 @@
   </ul>
 </nav>
 
-<% if any_teamless_members %>
-<p><img src="/svg/exclamation.svg" alt="Notice" style="vertical-align: middle;"> <a href="/teamless">There are members who don’t belong to any team. Click to view them</a>.</p>
+<% if teamless_members.positive? %>
+<p><img src="/svg/exclamation.svg" alt="Notice" style="vertical-align: middle;"> <a href="/teamless">There are <%=pluralise(teamless_members, 'member') %> who don’t belong to any team. Click to view them</a>.</p>
 <% end %>
 <table id="data" class="teams row-border" data-page-length="20">
   <thead>
