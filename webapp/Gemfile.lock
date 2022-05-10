@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.2.4)
+    activesupport (7.0.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -85,7 +85,7 @@ GEM
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.8)
-    ons-firestore (1.1.1)
+    ons-firestore (1.2.1)
       google-cloud-firestore (~> 2.6)
     ons-numbers (1.0.0)
     os (1.1.4)
@@ -102,14 +102,14 @@ GEM
       rack
     rainbow (3.1.1)
     rbtree (0.4.5)
-    regexp_parser (2.3.1)
+    regexp_parser (2.4.0)
     rexml (3.2.5)
-    rubocop (1.28.2)
+    rubocop (1.29.0)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
-      rexml
+      rexml (>= 3.2.5, < 4.0)
       rubocop-ast (>= 1.17.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
