@@ -21,7 +21,7 @@
       <th>Security Vulnerability Alerts</th>
       <th>Access</th>
       <th class="no-wrap">Created</th>
-      <th class="no-wrap">Updated</th>
+      <th class="no-wrap">Pushed</th>
     </tr>
   </thead>
   <tbody>
@@ -34,7 +34,7 @@
       <td><%=n repo[:vulnerabilityAlerts][:totalCount] %></td>
       <td><% if repo[:collaborators].nil? %>0 members<% else %><a href="/repositories/<%=h repo[:name] %>"><%=pluralise(repo[:collaborators][:totalCount], 'member') %></a><% end %></td>
       <td class="no-wrap" data-order="<%= repo[:createdAt] %>"><%=d repo[:createdAt] %></td>
-      <td class="no-wrap" data-order="<%= repo[:updatedAt] %>"><%=d repo[:updatedAt] %></td>
+      <td class="no-wrap" data-order="<%= repo[:pushedAt] %>"><%=d repo[:pushedAt] %></td>
     </tr>
   <% end %>
   </tbody>
