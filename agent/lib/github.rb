@@ -190,6 +190,7 @@ class GitHub
             isPrivate
             isTemplate
             name
+            pushedAt
             updatedAt
             branchProtectionRules(first: 1) {
               totalCount
