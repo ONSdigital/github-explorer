@@ -51,6 +51,10 @@ class FirestoreClient
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_owners')
   end
 
+  def private_repositories
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isPrivate] }
+  end
+
   def teamless_members
     @firestore.read_document(FIRESTORE_COLLECTION, 'teamless_members')
   end
