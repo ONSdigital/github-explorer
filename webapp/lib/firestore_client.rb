@@ -26,8 +26,7 @@ class FirestoreClient
     archived_count = 0
     template_count = 0
 
-    repositories = @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories')
-    repositories.each do |repository|
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').each do |repository|
       archived_count += 1 if repository[:isArchived]
       template_count += 1 if repository[:isTemplate]
     end
