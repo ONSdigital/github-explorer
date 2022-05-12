@@ -73,10 +73,13 @@ get '/?' do
 
   pagy = Pagy.new(count: FIRESTORE.owners.count, page: (params[:page] || 1))
   owners = FIRESTORE.owners[pagy.offset, pagy.items]
+  archived_repositories_count, template_repositories_count = FIRESTORE.archived_template_repositories_count
   two_factor_disabled_count = FIRESTORE.two_factor_disabled.count
   erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
                         organisation:,
                         owners:,
+                        archived_repositories_count:,
+                        template_repositories_count:,
                         two_factor_disabled_count:,
                         pagy: }
 end

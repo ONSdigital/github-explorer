@@ -37,7 +37,7 @@
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.organization.website_url) %>"><%=h organisation.organization.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%=pluralise(organisation.organization.repositories.total_count, 'repository', 'repositories') %></a> (<%=n organisation.organization.public_repositories.total_count %> public, <%=n organisation.organization.private_repositories.total_count %> private or internal)</p>
+      <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%=pluralise(organisation.organization.repositories.total_count, 'repository', 'repositories') %></a> (<%=n organisation.organization.public_repositories.total_count %> public, <%=n organisation.organization.private_repositories.total_count %> private/internal, <%=n archived_repositories_count %> archived, <%=n template_repositories_count %> template)</p>
       <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%=pluralise(organisation.organization.teams.total_count, 'team') %></a> (<%=n organisation.organization.visible_teams.total_count %> visible, <%=n organisation.organization.secret_teams.total_count %> secret)</p>
     </section>
     <section class="profile-dates">
