@@ -178,6 +178,24 @@ get '/repositories/?' do
                                repositories: all_repositories }
 end
 
+get '/repositories/archived' do
+  archived_repositories = FIRESTORE.archived_repositories
+  erb :repositories, locals: { title: 'Archived Repositories - GitHub Explorer',
+                               repositories: archived_repositories }
+end
+
+get '/repositories/private' do
+  private_repositories = FIRESTORE.private_repositories
+  erb :repositories, locals: { title: 'Private/Internal Repositories - GitHub Explorer',
+                               repositories: private_repositories }
+end
+
+get '/repositories/template' do
+  template_repositories = FIRESTORE.template_repositories
+  erb :repositories, locals: { title: 'Template Repositories - GitHub Explorer',
+                               repositories: template_repositories }
+end
+
 get '/repositories/:repository' do |repository_slug|
   begin
     repository = GITHUB.repository(repository_slug).data
