@@ -22,6 +22,10 @@ class FirestoreClient
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_users_contributions')
   end
 
+  def archived_repositories
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isArchived] }
+  end
+
   def archived_template_repositories_count
     archived_count = 0
     template_count = 0
