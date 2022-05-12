@@ -55,6 +55,10 @@ class FirestoreClient
     @firestore.read_document(FIRESTORE_COLLECTION, 'teamless_members')
   end
 
+  def template_repositories
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isTemplate] }
+  end
+
   def two_factor_disabled
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_two_factor_disabled')
   end
