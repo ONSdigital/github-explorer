@@ -22,6 +22,19 @@ class FirestoreClient
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_users_contributions')
   end
 
+  def archived_template_repositories_count
+    archived_count = 0
+    template_count = 0
+
+    repositories = @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories')
+    repositories.each do |repository|
+      archived_count += 1 if repository[:isArchived]
+      template_count += 1 if repository[:isTemplate]
+    end
+
+    [archived_count, template_count]
+  end
+
   def members_teams
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_members_teams')
   end
