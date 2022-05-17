@@ -435,3 +435,11 @@ h2 .note:first-of-type {
 .swatch {
   margin-right: 6px;
 }
+
+.topic {
+  background-color: #f6f8fa;
+  border: 1px solid #e2e4e8;
+  border-radius: 6px;
+  margin-right: 6px;
+  padding: 2px 6px;
+}
