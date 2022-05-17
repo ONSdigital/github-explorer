@@ -350,6 +350,13 @@ class GitHub
           licenseInfo {
             name
           }
+          repositoryTopics(first: 20) {
+            nodes {
+              topic {
+                name
+              }
+            }
+          }
           vulnerabilityAlerts(first: 1) {
             totalCount
           }
