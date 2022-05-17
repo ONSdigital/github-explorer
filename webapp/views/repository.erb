@@ -28,6 +28,10 @@
 
       <p><img src="/svg/branch.svg" alt="Branch"> Default branch: <strong><%=h repo.default_branch_ref.name %></strong></p>
     
+    <% if repo.repository_topics.nodes.any? %>
+      <p><img src="/svg/book.svg" alt="Topics"> Topics: <% repo.repository_topics.nodes.each do |repo_topic| %><span class="topic"><%=h repo_topic.topic.name %></span><% end %></p>
+    <% end %>
+    
     <% unless repo.license_info.nil? %>
       <p><img src="/svg/licence.svg" alt="Licence"> <%=h repo.license_info.name %></p>
     <% end %>
