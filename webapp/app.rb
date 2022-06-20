@@ -85,8 +85,10 @@ get '/?' do
 end
 
 get '/about' do
+  branch = ENV.fetch('COMMIT_BRANCH', 'unknown')
+  branch = 'main' if branch.empty?
   erb :about, locals: { title: 'About - GitHub Explorer',
-                        branch: ENV.fetch('COMMIT_BRANCH', 'unknown'),
+                        branch:,
                         commit: ENV.fetch('COMMIT_SHA', 'unknown'),
                         repo_name: ENV.fetch('REPO_NAME') }
 end
