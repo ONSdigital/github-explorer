@@ -413,6 +413,60 @@ class GitHub
     }
   GRAPHQL
 
+  SECRET_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        teams(first: $first, after: $after, privacy: SECRET, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            avatarUrl
+            createdAt
+            description
+            name
+            privacy
+            slug
+            updatedAt
+            members(first: 1, membership: IMMEDIATE) {
+              totalCount
+            }
+            childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
+              nodes {
+                avatarUrl
+                createdAt
+                description
+                name
+                privacy
+                slug
+                updatedAt
+                members(first: 1, membership: IMMEDIATE) {
+                  totalCount
+                }
+                childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
+                  totalCount
+                  nodes {
+                    avatarUrl
+                    createdAt
+                    description
+                    name
+                    privacy
+                    slug
+                    updatedAt
+                    members(first: 1, membership: IMMEDIATE) {
+                      totalCount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  GRAPHQL
+
   TEAM_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($login: String!, $first: Int!, $after: String, $slug: String!) {
       organization(login: $login) {
@@ -515,6 +569,60 @@ class GitHub
       }
       organization(login: $login) {
         name
+      }
+    }
+  GRAPHQL
+
+  VISIBLE_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
+    query ($login: String!, $first: Int!, $after: String) {
+      organization(login: $login) {
+        teams(first: $first, after: $after, privacy: VISIBLE, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            avatarUrl
+            createdAt
+            description
+            name
+            privacy
+            slug
+            updatedAt
+            members(first: 1, membership: IMMEDIATE) {
+              totalCount
+            }
+            childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
+              nodes {
+                avatarUrl
+                createdAt
+                description
+                name
+                privacy
+                slug
+                updatedAt
+                members(first: 1, membership: IMMEDIATE) {
+                  totalCount
+                }
+                childTeams(first: 5, orderBy: {field: NAME, direction: ASC}) {
+                  totalCount
+                  nodes {
+                    avatarUrl
+                    createdAt
+                    description
+                    name
+                    privacy
+                    slug
+                    updatedAt
+                    members(first: 1, membership: IMMEDIATE) {
+                      totalCount
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   GRAPHQL
@@ -664,6 +772,24 @@ class GitHub
     repository_access.sort_by(&:login)
   end
 
+  def secret_teams
+    after = nil
+    next_page = true
+    secret_teams = []
+
+    while next_page
+      teams = CLIENT.query(SECRET_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
+                                               context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, teams.errors unless teams.errors.empty?
+
+      after = teams.data.organization.teams.page_info.end_cursor
+      next_page = teams.data.organization.teams.page_info.has_next_page
+      teams.data.organization.teams.nodes.each { |team| secret_teams << team }
+    end
+
+    secret_teams
+  end
+
   def team(slug)
     after     = nil
     next_page = true
@@ -736,5 +862,23 @@ class GitHub
     end
 
     two_factor_disabled_users
+  end
+
+  def visible_teams
+    after = nil
+    next_page = true
+    visible_teams = []
+
+    while next_page
+      teams = CLIENT.query(VISIBLE_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
+                                                context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, teams.errors unless teams.errors.empty?
+
+      after = teams.data.organization.teams.page_info.end_cursor
+      next_page = teams.data.organization.teams.page_info.has_next_page
+      teams.data.organization.teams.nodes.each { |team| visible_teams << team }
+    end
+
+    visible_teams
   end
 end

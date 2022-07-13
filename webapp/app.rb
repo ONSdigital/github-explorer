@@ -239,6 +239,32 @@ get '/teams/?' do
                         teamless_members: }
 end
 
+get '/teams/secret' do
+  begin
+    secret_teams = GITHUB.secret_teams
+  rescue GitHubError => e
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  teamless_members = FIRESTORE.teamless_members.size
+  erb :teams, locals: { title: 'Secret Teams - GitHub Explorer',
+                        teams: secret_teams,
+                        teamless_members: }
+end
+
+get '/teams/visible' do
+  begin
+    visible_teams = GITHUB.visible_teams
+  rescue GitHubError => e
+    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
+  end
+
+  teamless_members = FIRESTORE.teamless_members.size
+  erb :teams, locals: { title: 'Visible Teams - GitHub Explorer',
+                        teams: visible_teams,
+                        teamless_members: }
+end
+
 get '/teams/:team' do |team|
   begin
     team = GITHUB.team(team)

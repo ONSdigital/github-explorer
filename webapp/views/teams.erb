@@ -11,6 +11,14 @@
   </ul>
 </nav>
 
+<nav>
+  <ul>
+<% if request.path_info.end_with?('teams') %><li id="active-filter">All</li><% else %><li><a href="/teams">All</a></li><% end %>
+<% if request.path_info.end_with?('secret') %><li id="active-filter">Secret</li><% else %><li><a href="/teams/secret">Secret</a></li><% end %>
+<% if request.path_info.end_with?('visible') %><li id="active-filter">Visible</li><% else %><li><a href="/teams/visible">Visible</a></li><% end %>
+  </ul>
+</nav>
+
 <% if teamless_members.positive? %>
 <p><img src="/svg/exclamation.svg" alt="Notice" style="vertical-align: middle;"> <a href="/teamless">There are <%=pluralise(teamless_members, 'member') %> who don’t belong to any team. Click to view them</a>.</p>
 <% end %>
