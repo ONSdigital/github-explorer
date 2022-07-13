@@ -192,6 +192,12 @@ get '/repositories/private' do
                                repositories: private_repositories }
 end
 
+get '/repositories/public' do
+  public_repositories = FIRESTORE.public_repositories
+  erb :repositories, locals: { title: 'Public Repositories - GitHub Explorer',
+                               repositories: public_repositories }
+end
+
 get '/repositories/template' do
   template_repositories = FIRESTORE.template_repositories
   erb :repositories, locals: { title: 'Template Repositories - GitHub Explorer',

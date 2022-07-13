@@ -16,6 +16,7 @@
 <% if request.path_info.end_with?('repositories') %><li id="active-filter">All</li><% else %><li><a href="/repositories">All</a></li><% end %>
 <% if request.path_info.end_with?('archived') %><li id="active-filter">Archived</li><% else %><li><a href="/repositories/archived">Archived</a></li><% end %>
 <% if request.path_info.end_with?('private') %><li id="active-filter">Private/Internal</li><% else %><li><a href="/repositories/private">Private/Internal</a></li><% end %>
+<% if request.path_info.end_with?('public') %><li id="active-filter">Public</li><% else %><li><a href="/repositories/public">Public</a></li><% end %>
 <% if request.path_info.end_with?('template') %><li id="active-filter">Template</li><% else %><li><a href="/repositories/template">Template</a></li><% end %>
   </ul>
 </nav>
