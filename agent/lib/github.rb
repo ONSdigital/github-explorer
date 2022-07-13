@@ -11,12 +11,13 @@ require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  SCHEMA              = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
-  CLIENT              = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
-  INACTIVE_SIX_MONTHS = 6
-  INACTIVE_ONE_YEAR   = 12
-  INACTIVE_TWO_YEARS  = 24
-  PAUSE               = 0.5
+  SCHEMA               = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
+  CLIENT               = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
+  INACTIVE_SIX_MONTHS  = 6
+  INACTIVE_ONE_YEAR    = 12
+  INACTIVE_TWO_YEARS   = 24
+  INACTIVE_THREE_YEARS = 36
+  PAUSE                = 0.5
 
   ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
@@ -273,6 +274,10 @@ class GitHub
     @token        = token
   end
 
+  def all_inactive_users_six_months
+    all_inactive_users(INACTIVE_SIX_MONTHS)
+  end
+
   def all_inactive_users_one_year
     all_inactive_users(INACTIVE_ONE_YEAR)
   end
@@ -281,8 +286,8 @@ class GitHub
     all_inactive_users(INACTIVE_TWO_YEARS)
   end
 
-  def all_inactive_users_six_months
-    all_inactive_users(INACTIVE_SIX_MONTHS)
+  def all_inactive_users_three_years
+    all_inactive_users(INACTIVE_THREE_YEARS)
   end
 
   def all_members_teams
@@ -480,15 +485,15 @@ class GitHub
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
 
       inactive_members.data.enterprise.members.nodes.each do |member|
-        unless member.user.contributions_collection.has_any_contributions
-          user = User.new(member.user.login, member.user.name)
-          user.avatar_url = member.user.avatar_url
-          user.created_at = member.user.created_at
-          user.email      = member.user.email
-          user.updated_at = member.user.updated_at
-          user.member     = true
-          all_inactive_users << user
-        end
+        next if member.user.contributions_collection.has_any_contributions == true
+
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url = member.user.avatar_url
+        user.created_at = member.user.created_at
+        user.email      = member.user.email
+        user.updated_at = member.user.updated_at
+        user.member     = true
+        all_inactive_users << user
       end
 
       sleep PAUSE
@@ -507,15 +512,15 @@ class GitHub
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        unless collaborator.contributions_collection.has_any_contributions
-          user = User.new(collaborator.login, collaborator.name)
-          user.avatar_url = collaborator.avatar_url
-          user.created_at = collaborator.created_at
-          user.email      = collaborator.email
-          user.updated_at = collaborator.updated_at
-          user.member     = false
-          all_inactive_users << user
-        end
+        next if collaborator.contributions_collection.has_any_contributions == true
+
+        user = User.new(collaborator.login, collaborator.name)
+        user.avatar_url = collaborator.avatar_url
+        user.created_at = collaborator.created_at
+        user.email      = collaborator.email
+        user.updated_at = collaborator.updated_at
+        user.member     = false
+        all_inactive_users << user
       end
 
       sleep PAUSE
