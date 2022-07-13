@@ -38,7 +38,7 @@
     <% end %>
 
       <p><img src="/svg/respository.svg" alt="Respository"> <a href="/repositories"><%=pluralise(organisation.organization.repositories.total_count, 'repository', 'repositories') %></a> <a href="/repositories/public">(<%=n organisation.organization.public_repositories.total_count %> public</a>, <a href="/repositories/private"><%=n organisation.organization.private_repositories.total_count %> private/internal</a>, <a href="/repositories/archived"><%=n archived_repositories_count %> archived</a>, <a href="/repositories/template"><%=n template_repositories_count %> template</a>)</p>
-      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%=pluralise(organisation.organization.teams.total_count, 'team') %></a> (<%=n organisation.organization.visible_teams.total_count %> visible, <%=n organisation.organization.secret_teams.total_count %> secret)</p>
+      <p><img src="/svg/team.svg" alt="Team"> <a href="/teams"><%=pluralise(organisation.organization.teams.total_count, 'team') %></a> <a href="/teams/visible">(<%=n organisation.organization.visible_teams.total_count %> visible</a>, <a href="/teams/secret"><%=n organisation.organization.secret_teams.total_count %> secret)</a></p>
     </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d organisation.organization.created_at %></p>
