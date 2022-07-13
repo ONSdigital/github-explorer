@@ -11,10 +11,12 @@ require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  SCHEMA          = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
-  CLIENT          = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
-  INACTIVE_MONTHS = 6
-  PAUSE           = 0.5
+  SCHEMA              = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
+  CLIENT              = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
+  INACTIVE_SIX_MONTHS = 6
+  INACTIVE_ONE_YEAR   = 12
+  INACTIVE_TWO_YEARS  = 24
+  PAUSE               = 0.5
 
   ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
@@ -271,64 +273,16 @@ class GitHub
     @token        = token
   end
 
-  def all_inactive_users
-    after = nil
-    next_page = true
-    from = DateTime.now.prev_month(INACTIVE_MONTHS).iso8601
-    all_inactive_users = []
+  def all_inactive_users_one_year
+    all_inactive_users(INACTIVE_ONE_YEAR)
+  end
 
-    while next_page
-      inactive_members = CLIENT.query(ALL_INACTIVE_MEMBERS_QUERY, variables: { slug: @enterprise, from:,
-                                                                               first: 10, after: },
-                                                                  context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
+  def all_inactive_users_two_years
+    all_inactive_users(INACTIVE_TWO_YEARS)
+  end
 
-      after = inactive_members.data.enterprise.members.page_info.end_cursor
-      next_page = inactive_members.data.enterprise.members.page_info.has_next_page
-
-      inactive_members.data.enterprise.members.nodes.each do |member|
-        unless member.user.contributions_collection.has_any_contributions
-          user = User.new(member.user.login, member.user.name)
-          user.avatar_url = member.user.avatar_url
-          user.created_at = member.user.created_at
-          user.email      = member.user.email
-          user.updated_at = member.user.updated_at
-          user.member     = true
-          all_inactive_users << user
-        end
-      end
-
-      sleep PAUSE
-    end
-
-    after = nil
-    next_page = true
-
-    while next_page
-      inactive_collaborators = CLIENT.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
-                                            variables: { slug: @enterprise, from:, first: 10, after: },
-                                            context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
-
-      after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
-      next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
-
-      inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
-        unless collaborator.contributions_collection.has_any_contributions
-          user = User.new(collaborator.login, collaborator.name)
-          user.avatar_url = collaborator.avatar_url
-          user.created_at = collaborator.created_at
-          user.email      = collaborator.email
-          user.updated_at = collaborator.updated_at
-          user.member     = false
-          all_inactive_users << user
-        end
-      end
-
-      sleep PAUSE
-    end
-
-    all_inactive_users.sort_by(&:login)
+  def all_inactive_users_six_months
+    all_inactive_users(INACTIVE_SIX_MONTHS)
   end
 
   def all_members_teams
@@ -509,6 +463,66 @@ class GitHub
   end
 
   private
+
+  def all_inactive_users(inactive_months)
+    after = nil
+    next_page = true
+    from = DateTime.now.prev_month(inactive_months).iso8601
+    all_inactive_users = []
+
+    while next_page
+      inactive_members = CLIENT.query(ALL_INACTIVE_MEMBERS_QUERY, variables: { slug: @enterprise, from:,
+                                                                               first: 10, after: },
+                                                                  context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
+
+      after = inactive_members.data.enterprise.members.page_info.end_cursor
+      next_page = inactive_members.data.enterprise.members.page_info.has_next_page
+
+      inactive_members.data.enterprise.members.nodes.each do |member|
+        unless member.user.contributions_collection.has_any_contributions
+          user = User.new(member.user.login, member.user.name)
+          user.avatar_url = member.user.avatar_url
+          user.created_at = member.user.created_at
+          user.email      = member.user.email
+          user.updated_at = member.user.updated_at
+          user.member     = true
+          all_inactive_users << user
+        end
+      end
+
+      sleep PAUSE
+    end
+
+    after = nil
+    next_page = true
+
+    while next_page
+      inactive_collaborators = CLIENT.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
+                                            variables: { slug: @enterprise, from:, first: 10, after: },
+                                            context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
+
+      after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
+      next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
+
+      inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
+        unless collaborator.contributions_collection.has_any_contributions
+          user = User.new(collaborator.login, collaborator.name)
+          user.avatar_url = collaborator.avatar_url
+          user.created_at = collaborator.created_at
+          user.email      = collaborator.email
+          user.updated_at = collaborator.updated_at
+          user.member     = false
+          all_inactive_users << user
+        end
+      end
+
+      sleep PAUSE
+    end
+
+    all_inactive_users.sort_by(&:login)
+  end
 
   def all_members
     after = nil
