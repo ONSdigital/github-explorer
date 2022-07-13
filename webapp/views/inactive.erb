@@ -11,7 +11,16 @@
   </ul>
 </nav>
 
-<p>The users below have no contributions within the past six months.</p>
+<nav>
+  <ul>
+<% if request.path_info.end_with?('inactive') %><li id="active-filter">6 Months</li><% else %><li><a href="/inactive">6 Months</a></li><% end %>
+<% if request.path_info.end_with?('one-year') %><li id="active-filter">1 Year</li><% else %><li><a href="/inactive/one-year">1 Year</a></li><% end %>
+<% if request.path_info.end_with?('two-years') %><li id="active-filter">2 Years</li><% else %><li><a href="/inactive/two-years">2 Years</a></li><% end %>
+<% if request.path_info.end_with?('three-years') %><li id="active-filter">3 Years</li><% else %><li><a href="/inactive/three-years">3 Years</a></li><% end %>
+  </ul>
+</nav>
+
+<p>The users below have no contributions within the past <% if request.path_info.end_with?('inactive') %>six months<% elsif request.path_info.end_with?('one-year') %>year<% elsif request.path_info.end_with?('two-years') %>two years<% elsif request.path_info.end_with?('three-years') %>three years<% end %>.</p>
 <table id="data" class="inactive row-border" data-page-length="20">
   <thead>
     <tr>
