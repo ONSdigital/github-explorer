@@ -10,6 +10,10 @@ class FirestoreClient
     @firestore = Firestore.new(project)
   end
 
+  def all_inactive_users
+    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users')
+  end
+
   def all_repositories
     @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories')
   end
@@ -32,22 +36,6 @@ class FirestoreClient
     end
 
     [archived_count, template_count]
-  end
-
-  def inactive_six_months_users
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users_six_months')
-  end
-
-  def inactive_one_year_users
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users_one_year')
-  end
-
-  def inactive_two_years_users
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users_two_years')
-  end
-
-  def inactive_three_years_users
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users_three_years')
   end
 
   def members_teams
