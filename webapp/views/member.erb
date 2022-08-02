@@ -12,8 +12,17 @@
 </nav>
 
 <section class="row">
+<% if member.enterprise.members.nodes.empty? %>
   <section class="column left">
-    <p><img class="avatar-large" src="<%=member.enterprise.members.nodes.first.user.avatar_url %>"></p>
+    <h2><%=h login %></h2>
+    <section class="profile-detail">
+      <p>This member doesn’t exist or isn’t within the GitHub organisation.</p>
+    </section>
+    <p id="back-link"><a href="/members">&lt; Members</a></p>
+  </section>
+<% else %>
+  <section class="column left">
+    <p><img class="avatar-large" src="<%= member.enterprise.members.nodes.first.user.avatar_url %>"></p>
 
   <% unless member.enterprise.members.nodes.first.user.name.nil? %>
     <h2><%=h member.enterprise.members.nodes.first.user.name %></h2>
@@ -101,4 +110,5 @@
     <% end %>
     </section>
   </section>
+<% end %>
 </section>

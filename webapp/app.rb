@@ -154,6 +154,7 @@ get '/members/:login' do |login|
   pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   teams = FIRESTORE.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
+                         login:,
                          member:,
                          owner: FIRESTORE.owner?(login),
                          two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
