@@ -134,34 +134,10 @@ get '/health?' do
 end
 
 get '/inactive/?' do
-  inactive_six_months_users = FIRESTORE.inactive_six_months_users
+  all_inactive_users  = FIRESTORE.all_inactive_users
   two_factor_disabled = FIRESTORE.two_factor_disabled
-  erb :inactive, locals: { title: 'Inactive 6 Months - GitHub Explorer',
-                           inactive_users: inactive_six_months_users,
-                           two_factor_disabled: }
-end
-
-get '/inactive/one-year' do
-  inactive_one_year_users = FIRESTORE.inactive_one_year_users
-  two_factor_disabled = FIRESTORE.two_factor_disabled
-  erb :inactive, locals: { title: 'Inactive 1 Year - GitHub Explorer',
-                           inactive_users: inactive_one_year_users,
-                           two_factor_disabled: }
-end
-
-get '/inactive/two-years' do
-  inactive_two_years_users = FIRESTORE.inactive_two_years_users
-  two_factor_disabled = FIRESTORE.two_factor_disabled
-  erb :inactive, locals: { title: 'Inactive 2 Years - GitHub Explorer',
-                           inactive_users: inactive_two_years_users,
-                           two_factor_disabled: }
-end
-
-get '/inactive/three-years' do
-  inactive_three_years_users = FIRESTORE.inactive_three_years_users
-  two_factor_disabled = FIRESTORE.two_factor_disabled
-  erb :inactive, locals: { title: 'Inactive 3 Years - GitHub Explorer',
-                           inactive_users: inactive_three_years_users,
+  erb :inactive, locals: { title: 'Inactive - GitHub Explorer',
+                           inactive_users: all_inactive_users,
                            two_factor_disabled: }
 end
 
