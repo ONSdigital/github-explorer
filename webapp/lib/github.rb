@@ -197,7 +197,7 @@ class GitHub
           totalCount
         }
         ownerInfo {
-          admins(first: 1) {
+          admins(first: 10) {
             nodes {
               login
               name
