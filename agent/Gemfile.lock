@@ -54,7 +54,8 @@ GEM
     google-cloud-firestore-v1 (0.5.0)
       gapic-common (>= 0.7, < 2.a)
       google-cloud-errors (~> 1.0)
-    google-protobuf (3.20.1-x86_64-darwin)
+    google-protobuf (3.21.7-x86_64-darwin)
+    google-protobuf (3.21.7-x86_64-linux)
     googleapis-common-protos (1.3.12)
       google-protobuf (~> 3.14)
       googleapis-common-protos-types (~> 1.2)
@@ -72,7 +73,10 @@ GEM
     graphql-client (0.18.0)
       activesupport (>= 3.0)
       graphql
-    grpc (1.45.0)
+    grpc (1.45.0-universal-darwin)
+      google-protobuf (~> 3.19)
+      googleapis-common-protos-types (~> 1.0)
+    grpc (1.45.0-x86_64-linux)
       google-protobuf (~> 3.19)
       googleapis-common-protos-types (~> 1.0)
     i18n (1.10.0)
@@ -118,6 +122,7 @@ GEM
 PLATFORMS
   x86_64-darwin-20
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   graphql-client
