@@ -12,6 +12,15 @@
 </nav>
 
 <section class="row">
+<% if collaborator.enterprise.owner_info.outside_collaborators.edges.empty? %>
+  <section class="column left">
+    <h2><%=h login %></h2>
+    <section class="profile-detail">
+      <p>This outside collaborator doesn’t exist or isn’t within the GitHub organisation.</p>
+    </section>
+    <p id="back-link"><a href="/collaborators">&lt; Outside Collaborators</a></p>
+  </section>
+<% else %>
   <section class="column left">
     <p><img class="avatar-large" src="<%= collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.avatar_url %>"></p>
 
@@ -101,4 +110,5 @@
     <% end %>
     </section>
   </section>
+<% end %>
 </section>

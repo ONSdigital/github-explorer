@@ -113,11 +113,17 @@ get '/collaborators/:login' do |login|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  count = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes.count
-  pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
-  repos = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
+  count = collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
+  pagy  = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
+  repos = []
+
+  unless collaborator.enterprise.owner_info.outside_collaborators.edges.empty?
+    repos = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
+  end
+
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
                                collaborator:,
+                               login:,
                                two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
                                repos:,
                                pagy: }
