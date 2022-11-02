@@ -11,6 +11,15 @@
   </ul>
 </nav>
 
+<% if repositories.empty? %>
+<section class="row">
+  <section class="column left">
+    <section id="no-repositories">
+      <p>This GitHub organisation doesn’t have any repositories.</p>
+    </section>
+  </section>
+</section>
+<% else %>
 <nav>
   <ul>
 <% if request.path_info.end_with?('repositories') %><li id="active-filter">All</li><% else %><li><a href="/repositories">All</a></li><% end %>
@@ -20,7 +29,6 @@
 <% if request.path_info.end_with?('template') %><li id="active-filter">Template</li><% else %><li><a href="/repositories/template">Template</a></li><% end %>
   </ul>
 </nav>
-
 <table id="data" class="repositories row-border" data-page-length="20">
   <thead>
     <tr>
@@ -49,3 +57,4 @@
   <% end %>
   </tbody>
 </table>
+<% end %>
