@@ -26,9 +26,9 @@
 
   <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.name.nil? %>
     <h2><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.name %></h2>
-    <p id="login"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
+    <p id="login"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %> (<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.database_id %>)</p>
   <% else %>
-    <p id="login-only"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %></p>
+    <p id="login-only"><%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.login %> (<%=h collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.database_id %>)</p>
   <% end %> 
 
   <% unless collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.bio.nil? %>
