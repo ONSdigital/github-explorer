@@ -26,9 +26,9 @@
 
   <% unless member.enterprise.members.nodes.first.user.name.nil? %>
     <h2><%=h member.enterprise.members.nodes.first.user.name %></h2>
-    <p id="login"><%=h member.enterprise.members.nodes.first.user.login %></p>
+    <p id="login"><%=h member.enterprise.members.nodes.first.user.login %> (<%=h member.enterprise.members.nodes.first.user.database_id %>)</p>
   <% else %>
-    <p id="login-only"><%=h member.enterprise.members.nodes.first.user.login %></p>
+    <p id="login-only"><%=h member.enterprise.members.nodes.first.user.login %> (<%=h member.enterprise.members.nodes.first.user.database_id %>)</p>
   <% end %> 
 
   <% unless member.enterprise.members.nodes.first.user.bio.nil? %>
