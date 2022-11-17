@@ -131,6 +131,7 @@ class GitHub
                 bio
                 company
                 createdAt
+                databaseId
                 email
                 location
                 login
