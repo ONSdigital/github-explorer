@@ -29,7 +29,7 @@
     <p id="login"><%=h member.enterprise.members.nodes.first.user.login %> (<%=h member.enterprise.members.nodes.first.user.database_id %>)</p>
   <% else %>
     <p id="login-only"><%=h member.enterprise.members.nodes.first.user.login %> (<%=h member.enterprise.members.nodes.first.user.database_id %>)</p>
-  <% end %> 
+  <% end %>
 
   <% unless member.enterprise.members.nodes.first.user.bio.nil? %>
     <p id="bio"><%=h member.enterprise.members.nodes.first.user.bio %></p>
@@ -60,6 +60,10 @@
 
     <% unless member.enterprise.members.nodes.first.user.website_url.nil? || member.enterprise.members.nodes.first.user.website_url.empty? %>
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(member.enterprise.members.nodes.first.user.website_url) %>"><%=h member.enterprise.members.nodes.first.user.website_url %></a></p>
+    <% end %>
+
+    <% unless member.organization.saml_identity_provider.nil? %>
+      <p><img src="/svg/lock.svg" alt="SSO identity"> SSO identity: <%=h member.organization.saml_identity_provider.external_identities.nodes.first.saml_identity.name_id %></p>
     <% end %>
 
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h member.enterprise.members.nodes.first.user.url %>">View on GitHub</a></p>
