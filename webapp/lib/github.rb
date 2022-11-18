@@ -171,6 +171,15 @@ class GitHub
       }
       organization(login: $login) {
         name
+        samlIdentityProvider {
+          externalIdentities(first: 1, login: $user_login) {
+            nodes {
+              samlIdentity {
+                nameId
+              }
+            }
+          }
+        }
       }
     }
   GRAPHQL
@@ -238,6 +247,12 @@ class GitHub
         }
         visibleTeams: teams(first: 1, privacy: VISIBLE) {
           totalCount
+        }
+        samlIdentityProvider {
+          ssoUrl
+          externalIdentities(first: 1) {
+            totalCount
+          }
         }
       }
     }
