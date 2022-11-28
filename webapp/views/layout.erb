@@ -13,6 +13,13 @@
   </head>
   <body>
     <h1><%= title %></h1>
+    <section id="organisation">Organisation 
+      <select>
+      <% @organisations.each do |organisation| %>
+        <option><%=h organisation %></option>
+      <% end %>
+      </select>
+    </section>
     <%= yield %>
   </body>
 </html>

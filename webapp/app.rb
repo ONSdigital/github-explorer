@@ -61,6 +61,7 @@ end
 
 before do
   headers 'Content-Type' => 'text/html; charset=utf-8'
+  @organisations = CONFIG.github_organisations
   @debug = true if params[:debug]
 end
 
