@@ -29,6 +29,7 @@ The environment variables below are required:
 |           | `GITHUB_API_BASE_URI`      | URI of GitHub's GraphQL API host.                                           |
 |           | `GITHUB_ENTERPRISE_NAME`   | Name of the GitHub Enterprise.                                              |
 |           | `GITHUB_ORGANISATION_NAME` | Name of the GitHub Organisation.                                            |
+|           | `GITHUB_ORGANISATIONS`     | Comma-separated list of GitHub organisation names.                          |
 |           | `GITHUB_TOKEN`             | GitHub personal access token. See below for details of the required scopes. |
 
 ## GitHub Personal Access Token Scopes
