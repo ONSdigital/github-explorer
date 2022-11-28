@@ -264,6 +264,20 @@ td {
   margin-top: 0;
 }
 
+#organisation {
+  background-color: #000;
+  border-radius: 6px;
+  color: #fff;
+  float: right;
+  font-size: 100%;
+  padding: 6px 10px;
+}
+
+#organisation select {
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
 #organisations img {
   vertical-align: middle;
 }
