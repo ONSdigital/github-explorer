@@ -2,6 +2,7 @@
 
 require 'logger'
 require 'sinatra'
+require "sinatra/cookies"
 require 'ons-numbers'
 require 'pagy'
 
@@ -15,14 +16,11 @@ Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
 CONFIG    = Configuration.new(ENV)
 FIRESTORE = FirestoreClient.new(CONFIG.firestore_project)
-GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
-                       CONFIG.github_api_base_uri, CONFIG.github_token)
 LOGGER    = Logger.new($stderr)
 
 ACCESS_ITEMS_COUNT = 20
 USERS_ITEMS_COUNT  = 10
 
-set :github_organisation, CONFIG.github_organisation
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
 helpers do
@@ -67,7 +65,10 @@ end
 
 get '/?' do
   begin
-    organisation = GITHUB.organisation.data
+    selected_organisation = cookies['github-explorer-organisation'] || @organisations.first
+    github = GitHub.new(CONFIG.github_enterprise, selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+    organisation = github.organisation.data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -76,7 +77,8 @@ get '/?' do
   owners = FIRESTORE.owners[pagy.offset, pagy.items]
   archived_repositories_count, template_repositories_count = FIRESTORE.archived_template_repositories_count
   two_factor_disabled_count = FIRESTORE.two_factor_disabled.count
-  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
+  erb :index, locals: { title: "#{selected_organisation} - GitHub Explorer",
+                        selected_organisation:,
                         organisation:,
                         owners:,
                         archived_repositories_count:,

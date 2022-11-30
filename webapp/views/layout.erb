@@ -21,9 +21,13 @@
     <h1><%= title %></h1>
     <section id="organisation">Organisation 
       <select id="selected-organisation">
-      <% @organisations.each do |organisation| %>
+    <% @organisations.each do |organisation| %>
+      <% if selected_organisation.eql?(organisation) %>
+        <option selected><%=h organisation %></option>
+      <% else %>
         <option><%=h organisation %></option>
       <% end %>
+    <% end %>
       </select>
     </section>
     <%= yield %>
