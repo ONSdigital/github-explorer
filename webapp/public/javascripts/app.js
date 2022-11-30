@@ -1,4 +1,8 @@
 $(document).ready(function() {
+  $("#selected-organisation").change(function() {
+    Cookies.set('github-explorer-organisation', $(this).val());
+  });
+
   $("#data.teams").DataTable({
     buttons: [
       "csv", "excel", "pdf"
