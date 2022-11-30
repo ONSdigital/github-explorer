@@ -11,6 +11,7 @@ gem 'ons-numbers'
 gem 'pagy'
 gem 'puma'
 gem 'sinatra'
+gem 'sinatra-contrib'
 
 group :development do
   gem 'rubocop'
