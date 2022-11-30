@@ -116,6 +116,12 @@ GEM
       rack (~> 2.2, >= 2.2.4)
       rack-protection (= 3.0.3)
       tilt (~> 2.0)
+    sinatra-contrib (3.0.3)
+      multi_json
+      mustermann (~> 3.0)
+      rack-protection (= 3.0.3)
+      sinatra (= 3.0.3)
+      tilt (~> 2.0)
     tilt (2.0.11)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
@@ -132,6 +138,7 @@ DEPENDENCIES
   puma
   rubocop
   sinatra
+  sinatra-contrib
 
 BUNDLED WITH
    2.3.7
