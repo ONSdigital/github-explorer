@@ -2,6 +2,7 @@
 
 require 'logger'
 require 'sinatra'
+require "sinatra/cookies"
 require 'ons-numbers'
 require 'pagy'
 
@@ -13,16 +14,12 @@ require_relative 'lib/github_error'
 include Pagy::Backend
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
-CONFIG    = Configuration.new(ENV)
-FIRESTORE = FirestoreClient.new(CONFIG.firestore_project)
-GITHUB    = GitHub.new(CONFIG.github_enterprise, CONFIG.github_organisation,
-                       CONFIG.github_api_base_uri, CONFIG.github_token)
-LOGGER    = Logger.new($stderr)
+CONFIG = Configuration.new(ENV)
+LOGGER = Logger.new($stderr)
 
 ACCESS_ITEMS_COUNT = 20
 USERS_ITEMS_COUNT  = 10
 
-set :github_organisation, CONFIG.github_organisation
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
 helpers do
@@ -61,21 +58,27 @@ end
 
 before do
   headers 'Content-Type' => 'text/html; charset=utf-8'
+  @organisations = CONFIG.github_organisations.split(',')
+  @selected_organisation = cookies['github-explorer-organisation'] || @organisations.first
+  @firestore = FirestoreClient.new(CONFIG.firestore_project, @selected_organisation)
   @debug = true if params[:debug]
 end
 
 get '/?' do
   begin
-    organisation = GITHUB.organisation.data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    organisation = github.organisation.data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: FIRESTORE.owners.count, page: (params[:page] || 1))
-  owners = FIRESTORE.owners[pagy.offset, pagy.items]
-  archived_repositories_count, template_repositories_count = FIRESTORE.archived_template_repositories_count
-  two_factor_disabled_count = FIRESTORE.two_factor_disabled.count
-  erb :index, locals: { title: "#{settings.github_organisation} - GitHub Explorer",
+  pagy = Pagy.new(count: @firestore.owners.count, page: (params[:page] || 1))
+  owners = @firestore.owners[pagy.offset, pagy.items]
+  archived_repositories_count, template_repositories_count = @firestore.archived_template_repositories_count
+  two_factor_disabled_count = @firestore.two_factor_disabled.count
+  erb :index, locals: { title: "#{@selected_organisation} - GitHub Explorer",
                         organisation:,
                         owners:,
                         archived_repositories_count:,
@@ -95,12 +98,15 @@ end
 
 get '/collaborators/?' do
   begin
-    all_outside_collaborators = GITHUB.all_outside_collaborators
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_outside_collaborators = github.all_outside_collaborators
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  two_factor_disabled = FIRESTORE.two_factor_disabled
+  two_factor_disabled = @firestore.two_factor_disabled
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
                                 collaborators: all_outside_collaborators,
                                 two_factor_disabled: }
@@ -108,7 +114,10 @@ end
 
 get '/collaborators/:login' do |login|
   begin
-    collaborator = GITHUB.outside_collaborator(login).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    collaborator = github.outside_collaborator(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -124,13 +133,13 @@ get '/collaborators/:login' do |login|
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
                                collaborator:,
                                login:,
-                               two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
+                               two_factor_disabled: @firestore.two_factor_disabled?(login),
                                repos:,
                                pagy: }
 end
 
 get '/contributions/?' do
-  all_users_contributions = FIRESTORE.all_users_contributions
+  all_users_contributions = @firestore.all_users_contributions
   erb :contributions, locals: { title: 'Contributions - GitHub Explorer',
                                 contributions: all_users_contributions }
 end
@@ -140,8 +149,8 @@ get '/health?' do
 end
 
 get '/inactive/?' do
-  all_inactive_users  = FIRESTORE.all_inactive_users
-  two_factor_disabled = FIRESTORE.two_factor_disabled
+  all_inactive_users  = @firestore.all_inactive_users
+  two_factor_disabled = @firestore.two_factor_disabled
   erb :inactive, locals: { title: 'Inactive - GitHub Explorer',
                            inactive_users: all_inactive_users,
                            two_factor_disabled: }
@@ -149,74 +158,83 @@ end
 
 get '/members/:login' do |login|
   begin
-    member = GITHUB.member(login).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    member = github.member(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
   # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
   login_symbol = login.to_sym
-  count = FIRESTORE.members_teams[login_symbol].nil? ? 0 : FIRESTORE.members_teams[login_symbol].count
+  count = @firestore.members_teams[login_symbol].nil? ? 0 : @firestore.members_teams[login_symbol].count
   pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
-  teams = FIRESTORE.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
+  teams = @firestore.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          login:,
                          member:,
-                         owner: FIRESTORE.owner?(login),
-                         two_factor_disabled: FIRESTORE.two_factor_disabled?(login),
+                         owner: @firestore.owner?(login),
+                         two_factor_disabled: @firestore.two_factor_disabled?(login),
                          teams:,
                          pagy: }
 end
 
 get '/members/?' do
   begin
-    all_members = GITHUB.all_members
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_members = github.all_members
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  two_factor_disabled = FIRESTORE.two_factor_disabled
+  two_factor_disabled = @firestore.two_factor_disabled
   erb :members, locals: { title: 'Members - GitHub Explorer',
                           members: all_members,
                           two_factor_disabled: }
 end
 
 get '/repositories/?' do
-  all_repositories = FIRESTORE.all_repositories
+  all_repositories = @firestore.all_repositories
   erb :repositories, locals: { title: 'Repositories - GitHub Explorer',
                                repositories: all_repositories }
 end
 
 get '/repositories/archived' do
-  archived_repositories = FIRESTORE.archived_repositories
+  archived_repositories = @firestore.archived_repositories
   erb :repositories, locals: { title: 'Archived Repositories - GitHub Explorer',
                                repositories: archived_repositories }
 end
 
 get '/repositories/private' do
-  private_repositories = FIRESTORE.private_repositories
+  private_repositories = @firestore.private_repositories
   erb :repositories, locals: { title: 'Private/Internal Repositories - GitHub Explorer',
                                repositories: private_repositories }
 end
 
 get '/repositories/public' do
-  public_repositories = FIRESTORE.public_repositories
+  public_repositories = @firestore.public_repositories
   erb :repositories, locals: { title: 'Public Repositories - GitHub Explorer',
                                repositories: public_repositories }
 end
 
 get '/repositories/template' do
-  template_repositories = FIRESTORE.template_repositories
+  template_repositories = @firestore.template_repositories
   erb :repositories, locals: { title: 'Template Repositories - GitHub Explorer',
                                repositories: template_repositories }
 end
 
 get '/repositories/:repository' do |repository_slug|
   begin
-    repository = GITHUB.repository(repository_slug).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    repository = github.repository(repository_slug).data
 
     unless repository.organization.repository.nil? || repository.organization.repository.is_archived
-      repository_access = GITHUB.repository_access(repository_slug)
+      repository_access = github.repository_access(repository_slug)
       pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
       access = repository_access[pagy.offset, pagy.items]
     end
@@ -235,12 +253,15 @@ end
 
 get '/teams/?' do
   begin
-    all_teams = GITHUB.all_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_teams = github.all_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  teamless_members = FIRESTORE.teamless_members.size
+  teamless_members = @firestore.teamless_members.size
   erb :teams, locals: { title: 'Teams - GitHub Explorer',
                         teams: all_teams,
                         teamless_members: }
@@ -248,12 +269,15 @@ end
 
 get '/teams/secret' do
   begin
-    secret_teams = GITHUB.secret_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    secret_teams = github.secret_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  teamless_members = FIRESTORE.teamless_members.size
+  teamless_members = @firestore.teamless_members.size
   erb :teams, locals: { title: 'Secret Teams - GitHub Explorer',
                         teams: secret_teams,
                         teamless_members: }
@@ -261,12 +285,15 @@ end
 
 get '/teams/visible' do
   begin
-    visible_teams = GITHUB.visible_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    visible_teams = github.visible_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  teamless_members = FIRESTORE.teamless_members.size
+  teamless_members = @firestore.teamless_members.size
   erb :teams, locals: { title: 'Visible Teams - GitHub Explorer',
                         teams: visible_teams,
                         teamless_members: }
@@ -274,7 +301,10 @@ end
 
 get '/teams/:team' do |team|
   begin
-    team = GITHUB.team(team)
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    team = github.team(team)
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -288,15 +318,18 @@ get '/teams/:team' do |team|
 end
 
 get '/teamless' do
-  two_factor_disabled = FIRESTORE.two_factor_disabled
+  two_factor_disabled = @firestore.two_factor_disabled
   erb :teamless, locals: { title: 'Teamless Members - GitHub Explorer',
-                           teamless_members: FIRESTORE.teamless_members,
+                           teamless_members: @firestore.teamless_members,
                            two_factor_disabled: }
 end
 
 get '/two-factor-security/?' do
   begin
-    two_factor_disabled_users = GITHUB.two_factor_disabled_users
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    two_factor_disabled_users = github.two_factor_disabled_users
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end

@@ -11,6 +11,15 @@
   </ul>
 </nav>
 
+<% if teams.empty? %>
+<section class="row">
+  <section class="column left">
+    <section id="no-teams">
+      <p>This GitHub organisation doesn’t have any teams.</p>
+    </section>
+  </section>
+</section>
+<% else %>
 <nav>
   <ul>
 <% if request.path_info.end_with?('teams') %><li id="active-filter">All</li><% else %><li><a href="/teams">All</a></li><% end %>
@@ -63,3 +72,4 @@
   <% end %> <%# teams.each_with_index do |team, i| %>
   </tbody>
 </table>
+<% end %>

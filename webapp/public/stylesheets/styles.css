@@ -176,7 +176,7 @@ td {
   font-size: 100%;
 }
 
-#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #teams {
+#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
   border-bottom: 1px solid #e2e4e8;
 }
 
@@ -247,7 +247,7 @@ td {
   columns: 2;
 }
 
-#licensing p, #no-repositories p {
+#licensing p, #no-repositories p, #no-teams p {
   font-size: 100%;
 }
 
@@ -262,6 +262,20 @@ td {
 
 #login-only {
   margin-top: 0;
+}
+
+#organisation {
+  background-color: #000;
+  border-radius: 6px;
+  color: #fff;
+  float: right;
+  font-size: 100%;
+  padding: 6px 10px;
+}
+
+#organisation select {
+  border-radius: 6px;
+  margin-left: 10px;
 }
 
 #organisations img {

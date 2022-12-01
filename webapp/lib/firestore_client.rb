@@ -6,31 +6,33 @@ require 'ons-firestore'
 class FirestoreClient
   FIRESTORE_COLLECTION = 'github-explorer'
 
-  def initialize(project)
-    @firestore = Firestore.new(project)
+  def initialize(project, organisation)
+    @firestore    = Firestore.new(project)
+    @organisation = organisation
   end
 
   def all_inactive_users
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_inactive_users')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_inactive_users')
   end
 
   def all_repositories
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories')
   end
 
   def all_users_contributions
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_users_contributions')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_users_contributions')
   end
 
   def archived_repositories
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isArchived] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isArchived] }
   end
 
   def archived_template_repositories_count
     archived_count = 0
     template_count = 0
 
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').each do |repository|
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').each do |repository|
       archived_count += 1 if repository[:isArchived]
       template_count += 1 if repository[:isTemplate]
     end
@@ -39,7 +41,7 @@ class FirestoreClient
   end
 
   def members_teams
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_members_teams')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members_teams')
   end
 
   def owner?(login)
@@ -48,29 +50,31 @@ class FirestoreClient
   end
 
   def owners
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_owners')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_owners')
   end
 
   def private_repositories
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isPrivate] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isPrivate] }
   end
 
   def public_repositories
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter do |repo|
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').filter do |repo|
       !repo[:isArchived] && !repo[:isPrivate] && !repo[:isTemplate]
     end
   end
 
   def teamless_members
-    @firestore.read_document(FIRESTORE_COLLECTION, 'teamless_members')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'teamless_members')
   end
 
   def template_repositories
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_repositories').filter { |repo| repo[:isTemplate] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isTemplate] }
   end
 
   def two_factor_disabled
-    @firestore.read_document(FIRESTORE_COLLECTION, 'all_two_factor_disabled')
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_two_factor_disabled')
   end
 
   def two_factor_disabled?(login)
