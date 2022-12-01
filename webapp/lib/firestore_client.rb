@@ -24,7 +24,8 @@ class FirestoreClient
   end
 
   def archived_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').filter { |repo| repo[:isArchived] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isArchived] }
   end
 
   def archived_template_repositories_count
@@ -53,7 +54,8 @@ class FirestoreClient
   end
 
   def private_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').filter { |repo| repo[:isPrivate] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isPrivate] }
   end
 
   def public_repositories
@@ -67,7 +69,8 @@ class FirestoreClient
   end
 
   def template_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').filter { |repo| repo[:isTemplate] }
+    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                             'all_repositories').filter { |repo| repo[:isTemplate] }
   end
 
   def two_factor_disabled
