@@ -68,6 +68,7 @@ get '/?' do
   begin
     github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
                         CONFIG.github_api_base_uri, CONFIG.github_token)
+
     organisation = github.organisation.data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
@@ -97,7 +98,10 @@ end
 
 get '/collaborators/?' do
   begin
-    all_outside_collaborators = GITHUB.all_outside_collaborators
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_outside_collaborators = github.all_outside_collaborators
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -110,7 +114,10 @@ end
 
 get '/collaborators/:login' do |login|
   begin
-    collaborator = GITHUB.outside_collaborator(login).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    collaborator = github.outside_collaborator(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -151,7 +158,10 @@ end
 
 get '/members/:login' do |login|
   begin
-    member = GITHUB.member(login).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    member = github.member(login).data
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -172,7 +182,10 @@ end
 
 get '/members/?' do
   begin
-    all_members = GITHUB.all_members
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_members = github.all_members
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -215,10 +228,13 @@ end
 
 get '/repositories/:repository' do |repository_slug|
   begin
-    repository = GITHUB.repository(repository_slug).data
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    repository = github.repository(repository_slug).data
 
     unless repository.organization.repository.nil? || repository.organization.repository.is_archived
-      repository_access = GITHUB.repository_access(repository_slug)
+      repository_access = github.repository_access(repository_slug)
       pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
       access = repository_access[pagy.offset, pagy.items]
     end
@@ -237,7 +253,10 @@ end
 
 get '/teams/?' do
   begin
-    all_teams = GITHUB.all_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    all_teams = github.all_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -250,7 +269,10 @@ end
 
 get '/teams/secret' do
   begin
-    secret_teams = GITHUB.secret_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    secret_teams = github.secret_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -263,7 +285,10 @@ end
 
 get '/teams/visible' do
   begin
-    visible_teams = GITHUB.visible_teams
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    visible_teams = github.visible_teams
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -276,7 +301,10 @@ end
 
 get '/teams/:team' do |team|
   begin
-    team = GITHUB.team(team)
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    team = github.team(team)
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
@@ -298,7 +326,10 @@ end
 
 get '/two-factor-security/?' do
   begin
-    two_factor_disabled_users = GITHUB.two_factor_disabled_users
+    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                        CONFIG.github_api_base_uri, CONFIG.github_token)
+
+    two_factor_disabled_users = github.two_factor_disabled_users
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
