@@ -176,7 +176,7 @@ td {
   font-size: 100%;
 }
 
-#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #teams {
+#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
   border-bottom: 1px solid #e2e4e8;
 }
 
@@ -247,7 +247,7 @@ td {
   columns: 2;
 }
 
-#licensing p, #no-repositories p {
+#licensing p, #no-repositories p, #no-teams p {
   font-size: 100%;
 }
 
