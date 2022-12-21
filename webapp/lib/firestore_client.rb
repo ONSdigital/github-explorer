@@ -24,7 +24,7 @@ class FirestoreClient
     members = @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members')
 
     members.each do |member|
-      member.organisations.each do |organisation|
+      member[:organisations].each do |organisation|
         if organisation.eql?(@organisation)
           organisation_members << member
           break
