@@ -12,6 +12,7 @@ class User
                 :has_contributions,
                 :issue_contributions,
                 :member,
+                :organisations,
                 :pull_request_contributions,
                 :restricted_contributions,
                 :updated_at
@@ -32,6 +33,7 @@ class User
       login: @login,
       member: @member,
       name: @name,
+      organisations: @organisations,
       pull_request_contributions: @pull_request_contributions,
       restricted_contributions: @restricted_contributions,
       updated_at: @updated_at
