@@ -348,7 +348,20 @@ class GitHub
 
       after = members.data.enterprise.members.page_info.end_cursor
       next_page = members.data.enterprise.members.page_info.has_next_page
-      members.data.enterprise.members.nodes.each { |node| all_members << node.user }
+
+      members.data.enterprise.members.nodes.each do |member|
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url    = member.user.avatar_url
+        user.created_at    = member.user.created_at
+        user.email         = member.user.email
+        user.updated_at    = member.user.updated_at
+
+        organisations = []
+        member.user.organizations.nodes.each { |node| organisations << node.resource_path[1..].downcase }
+        user.organisations = organisations
+
+        all_members << user
+      end
     end
 
     all_members
