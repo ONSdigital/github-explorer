@@ -138,6 +138,11 @@ class GitHub
                 login
                 name
                 updatedAt
+                organizations(first: 10) {
+                  nodes {
+                    resourcePath
+                  }
+                }
               }
             }
           }
@@ -331,6 +336,24 @@ class GitHub
     all_inactive_users.sort_by(&:login)
   end
 
+  def all_members
+    after = nil
+    next_page = true
+    all_members = []
+
+    while next_page
+      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
+                                                context: { base_uri: @base_uri, token: @token })
+      raise GitHubError, members.errors unless members.errors.empty?
+
+      after = members.data.enterprise.members.page_info.end_cursor
+      next_page = members.data.enterprise.members.page_info.has_next_page
+      members.data.enterprise.members.nodes.each { |node| all_members << node.user }
+    end
+
+    all_members
+  end
+
   def all_members_teams
     after = nil
     next_page = true
@@ -497,36 +520,19 @@ class GitHub
     members_with_a_team = all_members_teams
 
     all_members.each do |member|
-      user = User.new(member.user.login, member.user.name)
-      user.avatar_url = member.user.avatar_url
-      user.created_at = member.user.created_at
-      user.email      = member.user.email
-      user.updated_at = member.user.updated_at
-      teamless_members << user unless members_with_a_team.key?(member.user.login)
+      user = User.new(member.login, member.name)
+      user.avatar_url = member.avatar_url
+      user.created_at = member.created_at
+      user.email      = member.email
+      user.updated_at = member.updated_at
+      puts "member.login = #{member.login}, members_with_a_team.key?(#{member.login}) returns #{members_with_a_team.key?(member.login)}"
+      teamless_members << user unless members_with_a_team.key?(member.login)
     end
 
     teamless_members
   end
 
   private
-
-  def all_members
-    after = nil
-    next_page = true
-    all_members = []
-
-    while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
-                                                context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, members.errors unless members.errors.empty?
-
-      after = members.data.enterprise.members.page_info.end_cursor
-      next_page = members.data.enterprise.members.page_info.has_next_page
-      members.data.enterprise.members.nodes.each { |member| all_members << member }
-    end
-
-    all_members
-  end
 
   def logins_for_team(slug)
     after = nil
