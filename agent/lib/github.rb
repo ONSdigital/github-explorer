@@ -525,7 +525,6 @@ class GitHub
       user.created_at = member.created_at
       user.email      = member.email
       user.updated_at = member.updated_at
-      puts "member.login = #{member.login}, members_with_a_team.key?(#{member.login}) returns #{members_with_a_team.key?(member.login)}"
       teamless_members << user unless members_with_a_team.key?(member.login)
     end
 
