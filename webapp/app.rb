@@ -156,6 +156,13 @@ get '/inactive/?' do
                            two_factor_disabled: }
 end
 
+# Note that this route has to appear above /members/:login to prevent "organisation" getting matched as a login name.
+get '/members/organisation' do
+  erb :members, locals: { title: 'Organisation Members - GitHub Explorer',
+                          members: @firestore.all_organisation_members,
+                          two_factor_disabled: @firestore.two_factor_disabled }
+end
+
 get '/members/:login' do |login|
   begin
     github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
@@ -181,19 +188,9 @@ get '/members/:login' do |login|
 end
 
 get '/members/?' do
-  begin
-    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
-                        CONFIG.github_api_base_uri, CONFIG.github_token)
-
-    all_members = github.all_members
-  rescue GitHubError => e
-    return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
-  end
-
-  two_factor_disabled = @firestore.two_factor_disabled
   erb :members, locals: { title: 'Members - GitHub Explorer',
-                          members: all_members,
-                          two_factor_disabled: }
+                          members: @firestore.all_members,
+                          two_factor_disabled: @firestore.two_factor_disabled }
 end
 
 get '/repositories/?' do
