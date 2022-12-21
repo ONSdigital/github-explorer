@@ -46,7 +46,8 @@ The agent command line application supports the cron jobs detailed below. The qu
 | Name                      | Purpose
 |---------------------------|-------------------------------------------------------------------------------|
 | `all_inactive_users`      | Retrieves a list of users within no contributions within the past six months. |
-| `all_members_teams`       | Retrieves a list of all organisation members and the teams they belong to.    |
+| `all_members`             | Retrieves a list of all organisation members.                                 |
+| `all_members_teams`       | Retrieves a list of all the teams each organisation member belongs to.        |
 | `all_owners`              | Retrieves a list of all organisation owners.                                  |
 | `all_repositories`        | Retrieves a list of all repositories                                          |
 | `all_two_factor_disabled` | Retrieves a list of all users without two-factor authentication enabled.      |
