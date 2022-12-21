@@ -13,31 +13,6 @@ class GitHub
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
-  ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
-    query($slug: String!, $first: Int!, $after: String) {
-      enterprise(slug: $slug) {
-        members(first: $first, after: $after) {
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-          nodes {
-            ... on EnterpriseUserAccount {
-              user {
-                avatarUrl
-                createdAt
-                email
-                login
-                name
-                updatedAt
-              }
-            }
-          }
-        }
-      }
-    }
-  GRAPHQL
-
   ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
@@ -649,24 +624,6 @@ class GitHub
     @organisation = organisation
     @base_uri     = URI.parse(base_uri)
     @token        = token
-  end
-
-  def all_members
-    after = nil
-    next_page = true
-    all_members = []
-
-    while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
-                                                context: { base_uri: @base_uri, token: @token })
-      raise GitHubError, members.errors unless members.errors.empty?
-
-      after = members.data.enterprise.members.page_info.end_cursor
-      next_page = members.data.enterprise.members.page_info.has_next_page
-      members.data.enterprise.members.nodes.each { |member| all_members << member }
-    end
-
-    all_members
   end
 
   def all_outside_collaborators
