@@ -57,7 +57,15 @@ helpers do
 end
 
 before do
+  headers 'Cache-Control' => 'no-cache'
+  headers 'Content-Security-Policy' => "default-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com https://cdn.datatables.net; script-src 'unsafe-eval' 'self' https://ajax.googleapis.com https://cdn.datatables.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.datatables.net;"
   headers 'Content-Type' => 'text/html; charset=utf-8'
+  headers 'Permissions-Policy' => 'fullscreen=(self)'
+  headers 'Referrer-Policy' => 'strict-origin-when-cross-origin'
+  headers 'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload'
+  headers 'X-Content-Type-Options' => 'nosniff'
+  headers 'X-Frame-Options' => 'deny'
+  headers 'X-XSS-Protection' => '1; mode=block'
   @organisations = CONFIG.github_organisations.split(',')
   @selected_organisation = cookies['github-explorer-organisation'] || @organisations.first
   @firestore = FirestoreClient.new(CONFIG.firestore_project, @selected_organisation)
