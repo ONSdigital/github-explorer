@@ -184,6 +184,10 @@ td {
   font-size: 75%;
 }
 
+#contributions-key {
+  font-size: 80%;
+}
+
 #data_filter {
   float: none;
   margin: 40px 0 10px;
@@ -427,6 +431,10 @@ h2 .note:first-of-type {
   font-size: 80%;
   font-weight: normal;
   padding: 1px 6px;
+}
+
+.notice {
+  vertical-align: middle;
 }
 
 .profile-dates span {
