@@ -132,6 +132,7 @@ get '/collaborators/:login' do |login|
 
   count = collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
   pagy  = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
+  contributions = @firestore.user_contributions(login).first
   repos = []
 
   unless collaborator.enterprise.owner_info.outside_collaborators.edges.empty?
@@ -140,6 +141,7 @@ get '/collaborators/:login' do |login|
 
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
                                collaborator:,
+                               contributions:,
                                login:,
                                two_factor_disabled: @firestore.two_factor_disabled?(login),
                                repos:,
@@ -185,8 +187,10 @@ get '/members/:login' do |login|
   login_symbol = login.to_sym
   count = @firestore.members_teams[login_symbol].nil? ? 0 : @firestore.members_teams[login_symbol].count
   pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
+  contributions = @firestore.user_contributions(login).first
   teams = @firestore.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
+                         contributions:,
                          login:,
                          member:,
                          owner: @firestore.owner?(login),
