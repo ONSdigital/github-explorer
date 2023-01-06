@@ -68,6 +68,13 @@
 
       <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%=h member.enterprise.members.nodes.first.user.url %>">View on GitHub</a></p>
     </section>
+    <section id="contributions">
+      <ul class="no-bullets">
+        <li><%=pluralise(contributions[:commit_contributions], 'commit', 'commits') %></li>
+        <li><%=pluralise(contributions[:issue_contributions], 'issue', 'issues') %></li>
+        <li><%=pluralise(contributions[:pull_request_contributions], 'pull request', 'pull requests') %></li>
+      </ul>
+    </section>
     <section class="profile-dates">
       <p><span>Created:</span><%=d member.enterprise.members.nodes.first.user.created_at %></p>
       <p><span>Updated:</span><%=d member.enterprise.members.nodes.first.user.updated_at %></p>
