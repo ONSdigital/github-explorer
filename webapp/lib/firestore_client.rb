@@ -101,4 +101,8 @@ class FirestoreClient
     two_factor_disabled.each { |user_login| return true if user_login.eql?(login) }
     false
   end
+
+  def user_contributions(login)
+    all_users_contributions.filter { |user| user[:login].eql?(login) }
+  end
 end
