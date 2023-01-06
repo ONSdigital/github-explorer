@@ -176,12 +176,16 @@ td {
   font-size: 100%;
 }
 
-#branch-protection-rules, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
+#branch-protection-rules, #contributions, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
   border-bottom: 1px solid #e2e4e8;
 }
 
 #branch-protection-rules table, #repository-access table {
   font-size: 75%;
+}
+
+#contributions ul {
+  columns: 3;
 }
 
 #contributions-key {
