@@ -99,9 +99,9 @@
       <p><span>Created:</span><%=d organisation.enterprise.created_at %></p>
     </section>
     <section id="licensing">
-      <h3>Licensing</h3>
-      <p><%=n organisation.enterprise.billing_info.total_available_licenses %> available licenses</p>
-      <p><%=n organisation.enterprise.billing_info.total_licenses %> total licenses</p>
+      <h3>Licencing</h3>
+      <p><%=pluralise(organisation.enterprise.billing_info.total_available_licenses, 'available licence', 'available licences') %></p>
+      <p><%=pluralise(organisation.enterprise.billing_info.total_licenses, 'total licence', 'total licences') %></p>
     </section>
     <section id="administrators">
       <h3>Enterprise Administrators (<%= organisation.enterprise.owner_info.admins.nodes.count %>)</h3>
