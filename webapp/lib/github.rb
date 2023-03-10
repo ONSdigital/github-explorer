@@ -715,6 +715,8 @@ class GitHub
       next_page = access.data.organization.repository.collaborators.page_info.has_next_page
 
       access.data.organization.repository.collaborators.edges.each do |collaborator_edge|
+        next if collaborator_edge.node.nil?
+
         user = User.new(collaborator_edge.node.login, collaborator_edge.node.name, member: false)
 
         collaborator_edge.node.organizations.nodes.each do |org|
@@ -818,6 +820,8 @@ class GitHub
       next_page = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
 
       users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |u|
+        next if u.nil?
+
         user = User.new(u.login, u.name)
         user.avatar_url = u.avatar_url
         user.created_at = u.created_at
