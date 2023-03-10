@@ -16,7 +16,7 @@ class GitHub
   INACTIVE_MONTHS = 6
   PAUSE           = 0.5
 
-  ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -44,7 +44,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -70,7 +70,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_MEMBERS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -101,7 +101,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-GRAPHQL
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         membersWithRole(first: $first, after: $after) {
@@ -121,7 +121,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
     query($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -151,7 +151,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -180,7 +180,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_REPOSITORIES_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_REPOSITORIES_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         repositories(first: $first, after: $after, orderBy: {field: NAME, direction: ASC}) {
@@ -215,7 +215,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_TEAM_NAMES_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_TEAM_NAMES_QUERY = CLIENT.parse <<-GRAPHQL
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after) {
@@ -233,7 +233,7 @@ class GitHub
     }
   GRAPHQL
 
-  TEAM_MEMBERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  TEAM_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $slug: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         team(slug: $slug) {
@@ -251,7 +251,7 @@ class GitHub
     }
   GRAPHQL
 
-  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-'GRAPHQL'
+  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
