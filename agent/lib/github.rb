@@ -292,6 +292,8 @@ class GitHub
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
 
       inactive_members.data.enterprise.members.nodes.each do |member|
+        next if member.user.nil?
+
         unless member.user.contributions_collection.has_any_contributions
           user = User.new(member.user.login, member.user.name)
           user.avatar_url = member.user.avatar_url
@@ -319,6 +321,8 @@ class GitHub
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
+        next if collaborator.nil?
+
         unless collaborator.contributions_collection.has_any_contributions
           user = User.new(collaborator.login, collaborator.name)
           user.avatar_url = collaborator.avatar_url
@@ -350,6 +354,8 @@ class GitHub
       next_page = members.data.enterprise.members.page_info.has_next_page
 
       members.data.enterprise.members.nodes.each do |member|
+        next if member.user.nil?
+
         user = User.new(member.user.login, member.user.name)
         user.avatar_url    = member.user.avatar_url
         user.created_at    = member.user.created_at
@@ -416,6 +422,8 @@ class GitHub
       next_page = members.data.organization.members_with_role.page_info.has_next_page
 
       members.data.organization.members_with_role.edges.each do |member|
+        next if member.node.nil?
+
         user = User.new(member.node.login, member.node.name)
         all_owners << user if member.role.eql?('ADMIN')
       end
@@ -457,6 +465,8 @@ class GitHub
       next_page = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
 
       logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.nodes.each do |user|
+        next if user.nil?
+
         all_two_factor_disabled << user.login
       end
     end
@@ -480,6 +490,8 @@ class GitHub
       next_page = members_contributions.data.enterprise.members.page_info.has_next_page
 
       members_contributions.data.enterprise.members.nodes.each do |member|
+        next if member.user.nil?
+
         user = User.new(member.user.login, member.user.name)
         user.avatar_url                 = member.user.avatar_url
         user.created_at                 = member.user.created_at
@@ -509,6 +521,8 @@ class GitHub
       next_page = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
 
       collaborators_contributions.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
+        next if collaborator.nil?
+
         user = User.new(collaborator.login, collaborator.name)
         user.avatar_url                 = collaborator.avatar_url
         user.created_at                 = collaborator.created_at
@@ -533,6 +547,8 @@ class GitHub
     members_with_a_team = all_members_teams
 
     all_members.each do |member|
+      next if member.nil?
+
       user = User.new(member.login, member.name)
       user.avatar_url = member.avatar_url
       user.created_at = member.created_at
