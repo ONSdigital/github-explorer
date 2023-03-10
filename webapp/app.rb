@@ -98,10 +98,27 @@ end
 get '/about' do
   branch = ENV.fetch('COMMIT_BRANCH', 'unknown')
   branch = 'main' if branch.empty?
+  all_inactive_users_updated      = @firestore.all_inactive_users_updated
+  all_members_updated             = @firestore.all_members_updated
+  members_teams_updated           = @firestore.members_teams_updated
+  owners_updated                  = @firestore.owners_updated
+  all_repositories_updated        = @firestore.all_repositories_updated
+  two_factor_disabled_updated     = @firestore.two_factor_disabled_updated
+  all_users_contributions_updated = @firestore.all_users_contributions_updated
+  teamless_members_updated        = @firestore.teamless_members_updated
+
   erb :about, locals: { title: 'About - GitHub Explorer',
                         branch:,
                         commit: ENV.fetch('COMMIT_SHA', 'unknown'),
-                        repo_name: ENV.fetch('REPO_NAME') }
+                        repo_name: ENV.fetch('REPO_NAME'),
+                        all_inactive_users_updated:,
+                        all_members_updated:,
+                        members_teams_updated:,
+                        owners_updated:,
+                        all_repositories_updated:,
+                        two_factor_disabled_updated:,
+                        all_users_contributions_updated:,
+                        teamless_members_updated: }
 end
 
 get '/collaborators/?' do

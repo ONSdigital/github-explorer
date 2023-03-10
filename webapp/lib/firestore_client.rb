@@ -15,8 +15,16 @@ class FirestoreClient
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_inactive_users')
   end
 
+  def all_inactive_users_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_inactive_users')
+  end
+
   def all_members
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members')
+  end
+
+  def all_members_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members')
   end
 
   def all_organisation_members
@@ -39,8 +47,16 @@ class FirestoreClient
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories')
   end
 
+  def all_repositories_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories')
+  end
+
   def all_users_contributions
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_users_contributions')
+  end
+
+  def all_users_contributions_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_users_contributions')
   end
 
   def archived_repositories
@@ -64,6 +80,10 @@ class FirestoreClient
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members_teams')
   end
 
+  def members_teams_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members_teams')
+  end
+
   def owner?(login)
     owners.each { |owner| return true if owner[:login].eql?(login) }
     false
@@ -71,6 +91,10 @@ class FirestoreClient
 
   def owners
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_owners')
+  end
+
+  def owners_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_owners')
   end
 
   def private_repositories
@@ -88,6 +112,10 @@ class FirestoreClient
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'teamless_members')
   end
 
+  def teamless_members_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'teamless_members')
+  end
+
   def template_repositories
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
                              'all_repositories').filter { |repo| repo[:isTemplate] }
@@ -95,6 +123,10 @@ class FirestoreClient
 
   def two_factor_disabled
     @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_two_factor_disabled')
+  end
+
+  def two_factor_disabled_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_two_factor_disabled')
   end
 
   def two_factor_disabled?(login)
