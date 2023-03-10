@@ -575,7 +575,11 @@ class GitHub
 
       after = team_members.data.organization.team.members.page_info.end_cursor
       next_page = team_members.data.organization.team.members.page_info.has_next_page
-      team_members.data.organization.team.members.nodes.each { |member| logins_for_team << member.login }
+      team_members.data.organization.team.members.nodes.each do |member|
+        next if member.nil?
+
+        logins_for_team << member.login
+      end
     end
 
     logins_for_team
