@@ -13,7 +13,7 @@ class GitHub
   SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
   CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
 
-  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -41,7 +41,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ALL_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
@@ -95,7 +95,7 @@ class GitHub
     }
   GRAPHQL
 
-  MEMBER_QUERY = CLIENT.parse <<-'GRAPHQL'
+  MEMBER_QUERY = CLIENT.parse <<-GRAPHQL
     query($slug: String!, $login: String!, $user_login: String!) {
       enterprise(slug: $slug) {
         members(first: 1, query: $user_login) {
@@ -159,7 +159,7 @@ class GitHub
     }
   GRAPHQL
 
-  ORGANISATION_QUERY = CLIENT.parse <<-'GRAPHQL'
+  ORGANISATION_QUERY = CLIENT.parse <<-GRAPHQL
     query($login: String!, $slug: String!) {
       rateLimit {
         limit
@@ -233,7 +233,7 @@ class GitHub
     }
   GRAPHQL
 
-  OUTSIDE_COLLABORATOR_QUERY = CLIENT.parse <<-'GRAPHQL'
+  OUTSIDE_COLLABORATOR_QUERY = CLIENT.parse <<-GRAPHQL
     query ($slug: String!, $login: String!) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -291,7 +291,7 @@ class GitHub
     }
   GRAPHQL
 
-  REPOSITORY_QUERY = CLIENT.parse <<-'GRAPHQL'
+  REPOSITORY_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $name: String!) {
       organization(login: $login) {
         repository(name: $name) {
@@ -360,7 +360,7 @@ class GitHub
     }
   GRAPHQL
 
-  REPOSITORY_ACCESS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  REPOSITORY_ACCESS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $name: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         name
@@ -405,7 +405,7 @@ class GitHub
     }
   GRAPHQL
 
-  SECRET_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  SECRET_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, privacy: SECRET, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
@@ -459,7 +459,7 @@ class GitHub
     }
   GRAPHQL
 
-  TEAM_QUERY = CLIENT.parse <<-'GRAPHQL'
+  TEAM_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String, $slug: String!) {
       organization(login: $login) {
         team(slug: $slug) {
@@ -534,7 +534,7 @@ class GitHub
     }
   GRAPHQL
 
-  TWO_FACTOR_DISABLED_USERS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  TWO_FACTOR_DISABLED_USERS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -565,7 +565,7 @@ class GitHub
     }
   GRAPHQL
 
-  VISIBLE_TEAMS_QUERY = CLIENT.parse <<-'GRAPHQL'
+  VISIBLE_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, privacy: VISIBLE, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
