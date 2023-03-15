@@ -176,7 +176,7 @@ td {
   font-size: 100%;
 }
 
-#branch-protection-rules, #contributions, #languages, #licensing, #organisations, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
+#branch-protection-rules, #contributions, #languages, #licensing, #organisations, #rate-limit, #version-info, .profile-dates, .profile-detail, #no-repositories, #no-teams, #teams {
   border-bottom: 1px solid #e2e4e8;
 }
 
@@ -211,13 +211,8 @@ td {
   text-align: center;
 }
 
-#debug {
-  background-color: #e2e4e8;
-  border-radius: 6px;
-  float: right;
-  font-size: 90%;
-  margin-top: -50px;
-  padding: 0 6px;
+#data-updates table {
+  width: auto;
 }
 
 #error {
@@ -301,6 +296,10 @@ td {
 
 #profile-stats img {
   vertical-align: middle;
+}
+
+#rate-limit p, #version-info p, .profile-detail p {
+  font-size: 100%;
 }
 
 #repository-access-key {
@@ -444,10 +443,6 @@ h2 .note:first-of-type {
 .profile-dates span {
   display: inline-block;
   width: 5em;
-}
-
-.profile-detail p {
-  font-size: 100%;
 }
 
 .repositories {
