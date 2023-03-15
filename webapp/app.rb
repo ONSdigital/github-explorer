@@ -96,6 +96,9 @@ get '/?' do
 end
 
 get '/about' do
+  github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                      CONFIG.github_api_base_uri, CONFIG.github_token)
+
   branch = ENV.fetch('COMMIT_BRANCH', 'unknown')
   branch = 'main' if branch.empty?
   all_inactive_users_updated      = @firestore.all_inactive_users_updated
@@ -108,6 +111,7 @@ get '/about' do
   teamless_members_updated        = @firestore.teamless_members_updated
 
   erb :about, locals: { title: 'About - GitHub Explorer',
+                        rate_limit: github.rate_limit.data.rate_limit,
                         branch:,
                         commit: ENV.fetch('COMMIT_SHA', 'unknown'),
                         repo_name: ENV.fetch('REPO_NAME'),
