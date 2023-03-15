@@ -11,12 +11,6 @@
   </ul>
 </nav>
 
-<% if @debug %>
-<section id="debug">
-  <p>GitHub GraphQL query: <%=n organisation.rate_limit.remaining %>/<%=n organisation.rate_limit.limit %> rate limit points remaining. Resets <%=d organisation.rate_limit.reset_at %> UTC.</p>
-</section>
-<% end %>
-
 <section class="row">
   <section class="column left">
     <h2><%=h organisation.organization.name %> GitHub Organisation</h2>
