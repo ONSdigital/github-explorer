@@ -69,7 +69,6 @@ before do
   @organisations = CONFIG.github_organisations.split(',')
   @selected_organisation = cookies['github-explorer-organisation'] || @organisations.first
   @firestore = FirestoreClient.new(CONFIG.firestore_project, @selected_organisation)
-  @debug = true if params[:debug]
 end
 
 get '/?' do
