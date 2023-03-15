@@ -11,5 +11,62 @@
   </ul>
 </nav>
 
-<p>Branch: <a href="https://github.com/ONSdigital/<%=h repo_name%>/tree/<%=h branch %>"><%=h branch %></a></p>
-<p>Commit: <a href="https://github.com/ONSdigital/<%=h repo_name%>/commit/<%=h commit %>"><%=h commit %></a></p>
+<section id="rate-limit">
+  <h3>GitHub GraphQL API Rate Limit</h3>
+  <p><%=pluralise(rate_limit.remaining, 'point', 'points') %> remaining out of <%=pluralise(rate_limit.limit, 'point', 'points') %> limit</p>
+  <p>Resets at <%=d rate_limit.reset_at %></p>
+</section>
+<section id="version-information">
+  <h3>Version Information</h3>
+  <p>Branch: <a href="https://github.com/ONSdigital/<%=h repo_name%>/tree/<%=h branch %>"><%=h branch %></a></p>
+  <p>Commit: <a href="https://github.com/ONSdigital/<%=h repo_name%>/commit/<%=h commit %>"><%=h commit %></a></p>
+</section>
+<section id="data-updates">
+  <h3>Data Freshness</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Cron Job</th>
+        <th>Data Last Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="odd">
+        <td>all-inactive-users</td>
+        <td><%=d all_inactive_users_updated %></td>
+      </tr>
+      <tr class="even">
+        <td>all-members</td>
+        <td><%=d all_members_updated %></td>
+      </tr>
+      <tr class="odd">
+        <td>all-members-teams</td>
+        <td><%=d all_members_teams_updated %></td>
+      </tr>
+      <tr class="even">
+        <td>all-owners</td>
+        <td><%=d all_inactive_users_updated %></td>
+      </tr>
+      <tr class="odd">
+        <td>all-inactive-users</td>
+        <td><%=d all_owners_updated %></td>
+      </tr>
+      <tr class="even">
+        <td>all-repositories</td>
+        <td><%=d all_repositories_updated %></td>
+      </tr>
+      <tr class="odd">
+        <td>all-two-factor-disabled</td>
+        <td><%=d all_two_factor_disabled_updated %></td>
+      </tr>
+      <tr class="even">
+        <td>all-users-contributions</td>
+        <td><%=d all_users_contributions_updated %></td>
+      </tr>
+      <tr class="odd">
+        <td>teamless-members</td>
+        <td><%=d teamless_members_updated %></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
