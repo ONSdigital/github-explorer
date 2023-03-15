@@ -82,10 +82,10 @@ get '/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: @firestore.owners.count, page: (params[:page] || 1))
-  owners = @firestore.owners[pagy.offset, pagy.items]
+  pagy = Pagy.new(count: @firestore.all_owners.count, page: (params[:page] || 1))
+  owners = @firestore.all_owners[pagy.offset, pagy.items]
   archived_repositories_count, template_repositories_count = @firestore.archived_template_repositories_count
-  two_factor_disabled_count = @firestore.two_factor_disabled.count
+  two_factor_disabled_count = @firestore.all_two_factor_disabled.count
   erb :index, locals: { title: "#{@selected_organisation} - GitHub Explorer",
                         organisation:,
                         owners:,
@@ -99,11 +99,11 @@ get '/about' do
   branch = ENV.fetch('COMMIT_BRANCH', 'unknown')
   branch = 'main' if branch.empty?
   all_inactive_users_updated      = @firestore.all_inactive_users_updated
+  all_members_teams_updated       = @firestore.all_members_teams_updated
   all_members_updated             = @firestore.all_members_updated
-  members_teams_updated           = @firestore.members_teams_updated
-  owners_updated                  = @firestore.owners_updated
+  all_owners_updated              = @firestore.owners_updated
   all_repositories_updated        = @firestore.all_repositories_updated
-  two_factor_disabled_updated     = @firestore.two_factor_disabled_updated
+  all_two_factor_disabled_updated = @firestore.two_factor_disabled_updated
   all_users_contributions_updated = @firestore.all_users_contributions_updated
   teamless_members_updated        = @firestore.teamless_members_updated
 
@@ -112,11 +112,11 @@ get '/about' do
                         commit: ENV.fetch('COMMIT_SHA', 'unknown'),
                         repo_name: ENV.fetch('REPO_NAME'),
                         all_inactive_users_updated:,
+                        all_members_teams_updated:,
                         all_members_updated:,
-                        members_teams_updated:,
-                        owners_updated:,
+                        all_owners_updated:,
                         all_repositories_updated:,
-                        two_factor_disabled_updated:,
+                        all_two_factor_disabled_updated:,
                         all_users_contributions_updated:,
                         teamless_members_updated: }
 end
@@ -131,7 +131,7 @@ get '/collaborators/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  two_factor_disabled = @firestore.two_factor_disabled
+  two_factor_disabled = @firestore.all_two_factor_disabled
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
                                 collaborators: all_outside_collaborators,
                                 two_factor_disabled: }
@@ -177,7 +177,7 @@ end
 
 get '/inactive/?' do
   all_inactive_users  = @firestore.all_inactive_users
-  two_factor_disabled = @firestore.two_factor_disabled
+  two_factor_disabled = @firestore.all_two_factor_disabled
   erb :inactive, locals: { title: 'Inactive - GitHub Explorer',
                            inactive_users: all_inactive_users,
                            two_factor_disabled: }
@@ -187,7 +187,7 @@ end
 get '/members/organisation' do
   erb :members, locals: { title: 'Organisation Members - GitHub Explorer',
                           members: @firestore.all_organisation_members,
-                          two_factor_disabled: @firestore.two_factor_disabled }
+                          two_factor_disabled: @firestore.all_two_factor_disabled }
 end
 
 get '/members/:login' do |login|
@@ -202,10 +202,10 @@ get '/members/:login' do |login|
 
   # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
   login_symbol = login.to_sym
-  count = @firestore.members_teams[login_symbol].nil? ? 0 : @firestore.members_teams[login_symbol].count
+  count = @firestore.all_members_teams[login_symbol].nil? ? 0 : @firestore.all_members_teams[login_symbol].count
   pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   contributions = @firestore.user_contributions(login).first
-  teams = @firestore.members_teams[login_symbol].to_a[pagy.offset, pagy.items]
+  teams = @firestore.all_members_teams[login_symbol].to_a[pagy.offset, pagy.items]
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          contributions:,
                          login:,
@@ -219,7 +219,7 @@ end
 get '/members/?' do
   erb :members, locals: { title: 'Members - GitHub Explorer',
                           members: @firestore.all_members,
-                          two_factor_disabled: @firestore.two_factor_disabled }
+                          two_factor_disabled: @firestore.all_two_factor_disabled }
 end
 
 get '/repositories/?' do
@@ -344,7 +344,7 @@ get '/teams/:team' do |team|
 end
 
 get '/teamless' do
-  two_factor_disabled = @firestore.two_factor_disabled
+  two_factor_disabled = @firestore.all_two_factor_disabled
   erb :teamless, locals: { title: 'Teamless Members - GitHub Explorer',
                            teamless_members: @firestore.teamless_members,
                            two_factor_disabled: }
