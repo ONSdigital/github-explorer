@@ -101,9 +101,9 @@ get '/about' do
   all_inactive_users_updated      = @firestore.all_inactive_users_updated
   all_members_teams_updated       = @firestore.all_members_teams_updated
   all_members_updated             = @firestore.all_members_updated
-  all_owners_updated              = @firestore.owners_updated
+  all_owners_updated              = @firestore.all_owners_updated
   all_repositories_updated        = @firestore.all_repositories_updated
-  all_two_factor_disabled_updated = @firestore.two_factor_disabled_updated
+  all_two_factor_disabled_updated = @firestore.all_two_factor_disabled_updated
   all_users_contributions_updated = @firestore.all_users_contributions_updated
   teamless_members_updated        = @firestore.teamless_members_updated
 
