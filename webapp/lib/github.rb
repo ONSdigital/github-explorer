@@ -291,6 +291,16 @@ class GitHub
     }
   GRAPHQL
 
+  RATE_LIMIT_QUERY = CLIENT.parse <<-GRAPHQL
+    {
+      rateLimit {
+        limit
+        remaining
+        resetAt
+      }
+    }
+  GRAPHQL
+
   REPOSITORY_QUERY = CLIENT.parse <<-GRAPHQL
     query ($login: String!, $name: String!) {
       organization(login: $login) {
@@ -688,6 +698,10 @@ class GitHub
     raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
 
     outside_collaborator
+  end
+
+  def rate_limit
+    CLIENT.query(RATE_LIMIT_QUERY, context: { base_uri: @base_uri, token: @token })
   end
 
   def repository(repository)
