@@ -14,7 +14,7 @@
 <section id="rate-limit">
   <h3>GitHub GraphQL API Rate Limit</h3>
   <p><%=pluralise(rate_limit.remaining, 'point', 'points') %> remaining out of <%=pluralise(rate_limit.limit, 'point', 'points') %> limit</p>
-  <p>Resets at <%=d rate_limit.reset_at %></p>
+  <p>Resets <%=d rate_limit.reset_at %></p>
 </section>
 <section id="version-info">
   <h3>Version Information</h3>
@@ -27,7 +27,7 @@
     <thead>
       <tr>
         <th>Cron Job</th>
-        <th>Data Last Updated</th>
+        <th>Last Updated</th>
       </tr>
     </thead>
     <tbody>
