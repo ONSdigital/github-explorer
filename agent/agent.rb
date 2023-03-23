@@ -30,7 +30,7 @@ class Agent
         firestore.save_document("github-explorer-#{organisation}", query, query_result)
       end
     rescue GitHubError => e
-      logger.error(%(A GitHub GraphQL API error occurred: #{e.message}\n#{e.backtrace.join("\n")}))
+      logger.error(%(A GitHub GraphQL API error occurred: #{e.message} (line #{e.location_line}, column #{e.location_column}, path '#{e.path}')\n#{e.backtrace.join("\n")}))
       exit(1)
     rescue StandardError => e
       logger.error(%(An error occurred: #{e.message}\n#{e.backtrace.join("\n")}))
