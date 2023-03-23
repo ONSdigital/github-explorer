@@ -14,7 +14,7 @@ class Agent
   CONFIG = Configuration.new(ENV)
 
   def initialize
-    raise 'Missing GraphQL query command-line argument' if ARGV.length.zero?
+    raise 'Missing GraphQL query command-line argument' if ARGV.empty?
 
     logger = Logger.new($stdout)
 
