@@ -20,6 +20,7 @@ class Agent
 
     begin
       query = ARGV[0]
+      logger.info("GitHub PAT ends with #{CONFIG.github_token[-4..-1]}")
 
       CONFIG.github_organisations.split(',').each do |organisation|
         github = GitHub.new(CONFIG.github_enterprise, organisation,
