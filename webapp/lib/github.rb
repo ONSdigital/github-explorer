@@ -1,19 +1,14 @@
 # frozen_string_literal: true
 
-require 'graphql/client'
-require 'graphql/client/http'
+require 'graphlient'
 
-require_relative 'context_transport'
 require_relative 'github_error'
 require_relative 'user'
 require_relative 'team'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  SCHEMA = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
-  CLIENT = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
-
-  ALL_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -41,7 +36,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_TEAMS_QUERY = <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
@@ -95,49 +90,47 @@ class GitHub
     }
   GRAPHQL
 
-  MEMBER_QUERY = CLIENT.parse <<-GRAPHQL
+  MEMBER_QUERY = <<-GRAPHQL
     query($slug: String!, $login: String!, $user_login: String!) {
       enterprise(slug: $slug) {
         members(first: 1, query: $user_login) {
           nodes {
-            ... on EnterpriseUserAccount {
-              user {
-                avatarUrl
-                bio
-                company
-                createdAt
-                databaseId
-                email
-                location
-                login
-                name
-                twitterUsername
-                updatedAt
-                url
-                websiteUrl
-                contributionsCollection {
-                  hasAnyContributions
+            ... on User {
+              avatarUrl
+              bio
+              company
+              createdAt
+              databaseId
+              email
+              location
+              login
+              name
+              twitterUsername
+              updatedAt
+              url
+              websiteUrl
+              contributionsCollection {
+                hasAnyContributions
+              }
+              followers(first: 1) {
+                totalCount
+              }
+              following(first: 1) {
+                totalCount
+              }
+              organizations(first: 10) {
+                nodes {
+                  avatarUrl
+                  name
                 }
-                followers(first: 1) {
-                  totalCount
-                }
-                following(first: 1) {
-                  totalCount
-                }
-                organizations(first: 10) {
-                  nodes {
-                    avatarUrl
-                    name
-                  }
-                }
-                starredRepositories(first: 1) {
-                  totalCount
-                }
-                topRepositories(first: 10, orderBy: { field: NAME, direction: ASC }) {
-                  nodes {
-                    isPrivate
-                    name
-                  }
+              }
+              starredRepositories(first: 1) {
+                totalCount
+              }
+              topRepositories(first: 10, orderBy: { field: NAME, direction: ASC }) {
+                nodes {
+                  isPrivate
+                  name
                 }
               }
             }
@@ -159,7 +152,7 @@ class GitHub
     }
   GRAPHQL
 
-  ORGANISATION_QUERY = CLIENT.parse <<-GRAPHQL
+  ORGANISATION_QUERY = <<-GRAPHQL
     query($login: String!, $slug: String!) {
       rateLimit {
         limit
@@ -233,7 +226,7 @@ class GitHub
     }
   GRAPHQL
 
-  OUTSIDE_COLLABORATOR_QUERY = CLIENT.parse <<-GRAPHQL
+  OUTSIDE_COLLABORATOR_QUERY = <<-GRAPHQL
     query ($slug: String!, $login: String!) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -291,7 +284,7 @@ class GitHub
     }
   GRAPHQL
 
-  RATE_LIMIT_QUERY = CLIENT.parse <<-GRAPHQL
+  RATE_LIMIT_QUERY = <<-GRAPHQL
     {
       rateLimit {
         limit
@@ -301,7 +294,7 @@ class GitHub
     }
   GRAPHQL
 
-  REPOSITORY_QUERY = CLIENT.parse <<-GRAPHQL
+  REPOSITORY_QUERY = <<-GRAPHQL
     query ($login: String!, $name: String!) {
       organization(login: $login) {
         repository(name: $name) {
@@ -370,7 +363,7 @@ class GitHub
     }
   GRAPHQL
 
-  REPOSITORY_ACCESS_QUERY = CLIENT.parse <<-GRAPHQL
+  REPOSITORY_ACCESS_QUERY = <<-GRAPHQL
     query ($login: String!, $name: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         name
@@ -415,7 +408,7 @@ class GitHub
     }
   GRAPHQL
 
-  SECRET_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
+  SECRET_TEAMS_QUERY = <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, privacy: SECRET, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
@@ -469,7 +462,7 @@ class GitHub
     }
   GRAPHQL
 
-  TEAM_QUERY = CLIENT.parse <<-GRAPHQL
+  TEAM_QUERY = <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String, $slug: String!) {
       organization(login: $login) {
         team(slug: $slug) {
@@ -544,7 +537,7 @@ class GitHub
     }
   GRAPHQL
 
-  TWO_FACTOR_DISABLED_USERS_QUERY = CLIENT.parse <<-GRAPHQL
+  TWO_FACTOR_DISABLED_USERS_QUERY = <<-GRAPHQL
     query ($login: String!, $slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -575,7 +568,7 @@ class GitHub
     }
   GRAPHQL
 
-  VISIBLE_TEAMS_QUERY = CLIENT.parse <<-GRAPHQL
+  VISIBLE_TEAMS_QUERY = <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after, privacy: VISIBLE, rootTeamsOnly: true, orderBy: {field: NAME, direction: ASC}) {
@@ -632,8 +625,10 @@ class GitHub
   def initialize(enterprise, organisation, base_uri, token)
     @enterprise   = enterprise
     @organisation = organisation
-    @base_uri     = URI.parse(base_uri)
-    @token        = token
+    @client       = Graphlient::Client.new("#{base_uri}/graphql",
+                                           headers: { 'Authorization' => "Bearer #{token}" },
+                                           http_options: { read_timeout: 20 },
+                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))    
   end
 
   def all_outside_collaborators
@@ -642,9 +637,7 @@ class GitHub
     all_outside_collaborators = []
 
     while next_page
-      collaborators = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_QUERY, variables: { slug: @enterprise,
-                                                                                 first: 100, after: },
-                                                                    context: { base_uri: @base_uri, token: @token })
+      collaborators = @client.query(ALL_OUTSIDE_COLLABORATORS_QUERY, { slug: @enterprise, first: 100, after: })
       raise GitHubError, collaborators.errors unless collaborators.errors.empty?
 
       after = collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
@@ -664,8 +657,7 @@ class GitHub
     all_teams = []
 
     while next_page
-      teams = CLIENT.query(ALL_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
-                                            context: { base_uri: @base_uri, token: @token })
+      teams = @client.query(ALL_TEAMS_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
@@ -677,36 +669,32 @@ class GitHub
   end
 
   def member(user_login)
-    member = CLIENT.query(MEMBER_QUERY, variables: { slug: @enterprise, login: @organisation, user_login: },
-                                        context: { base_uri: @base_uri, token: @token })
+    member = @client.query(MEMBER_QUERY, { slug: @enterprise, login: @organisation, user_login: })
     raise GitHubError, member.errors unless member.errors.empty?
 
     member
   end
 
   def organisation
-    organisation = CLIENT.query(ORGANISATION_QUERY, variables: { login: @organisation, slug: @enterprise },
-                                                    context: { base_uri: @base_uri, token: @token })
+    organisation = @client.query(ORGANISATION_QUERY, { login: @organisation, slug: @enterprise })
     raise GitHubError, organisation.errors unless organisation.errors.empty?
 
     organisation
   end
 
   def outside_collaborator(login)
-    outside_collaborator = CLIENT.query(OUTSIDE_COLLABORATOR_QUERY, variables: { slug: @enterprise, login: },
-                                                                    context: { base_uri: @base_uri, token: @token })
+    outside_collaborator = @client.query(OUTSIDE_COLLABORATOR_QUERY, { slug: @enterprise, login: })
     raise GitHubError, outside_collaborator.errors unless outside_collaborator.errors.empty?
 
     outside_collaborator
   end
 
   def rate_limit
-    CLIENT.query(RATE_LIMIT_QUERY, context: { base_uri: @base_uri, token: @token })
+    @client.query(RATE_LIMIT_QUERY, context: { base_uri: @base_uri, token: @token })
   end
 
   def repository(repository)
-    repository = CLIENT.query(REPOSITORY_QUERY, variables: { login: @organisation, name: repository },
-                                                context: { base_uri: @base_uri, token: @token })
+    repository = @client.query(REPOSITORY_QUERY, { login: @organisation, name: repository })
     raise GitHubError, repository.errors unless repository.errors.empty?
 
     repository
@@ -718,9 +706,7 @@ class GitHub
     repository_access = Set[]
 
     while next_page
-      access = CLIENT.query(REPOSITORY_ACCESS_QUERY, variables: { login: @organisation, name: repository,
-                                                                  first: 100, after: },
-                                                     context: { base_uri: @base_uri, token: @token })
+      access = @client.query(REPOSITORY_ACCESS_QUERY, { login: @organisation, name: repository, first: 100, after: })
       raise GitHubError, access.errors unless access.errors.empty?
 
       break if access.data.organization.repository.nil?
@@ -768,8 +754,7 @@ class GitHub
     secret_teams = []
 
     while next_page
-      teams = CLIENT.query(SECRET_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
-                                               context: { base_uri: @base_uri, token: @token })
+      teams = @client.query(SECRET_TEAMS_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
@@ -786,9 +771,7 @@ class GitHub
     team      = Team.new
 
     while next_page
-      t = CLIENT.query(TEAM_QUERY, variables: { login: @organisation, slug:,
-                                                first: 100, after: },
-                                   context: { base_uri: @base_uri, token: @token })
+      t = @client.query(TEAM_QUERY, { login: @organisation, slug:, first: 100, after: })
       raise GitHubError, t.errors unless t.errors.empty?
 
       after = t.data.organization.team.members.page_info.end_cursor
@@ -825,9 +808,7 @@ class GitHub
     two_factor_disabled_users = []
 
     while next_page
-      users = CLIENT.query(TWO_FACTOR_DISABLED_USERS_QUERY, variables: { login: @organisation, slug: @enterprise,
-                                                                         first: 100, after: },
-                                                            context: { base_uri: @base_uri, token: @token })
+      users = @client.query(TWO_FACTOR_DISABLED_USERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
       raise GitHubError, users.errors unless users.errors.empty?
 
       after = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
@@ -862,8 +843,7 @@ class GitHub
     visible_teams = []
 
     while next_page
-      teams = CLIENT.query(VISIBLE_TEAMS_QUERY, variables: { login: @organisation, first: 100, after: },
-                                                context: { base_uri: @base_uri, token: @token })
+      teams = @client.query(VISIBLE_TEAMS_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
