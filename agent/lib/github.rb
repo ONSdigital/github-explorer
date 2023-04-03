@@ -21,9 +21,8 @@ class GitHub
             hasNextPage
           }
           nodes {
-            ... on EnterpriseUserAccount {
-              user {
-                avatarUrl
+            ... on User {
+              avatarUrl
                 createdAt
                 email
                 login
@@ -31,7 +30,6 @@ class GitHub
                 updatedAt
                 contributionsCollection(from: $from) {
                   hasAnyContributions
-                }
               }
             }
           }
@@ -75,20 +73,18 @@ class GitHub
             hasNextPage
           }
           nodes {
-            ... on EnterpriseUserAccount {
-              user {
-                avatarUrl
-                createdAt
-                login
-                name
-                updatedAt
-                contributionsCollection {
-                  hasAnyContributions
-                  restrictedContributionsCount
-                  totalCommitContributions
-                  totalIssueContributions
-                  totalPullRequestContributions
-                }
+            ... on User {
+              avatarUrl
+              createdAt
+              login
+              name
+              updatedAt
+              contributionsCollection {
+                hasAnyContributions
+                restrictedContributionsCount
+                totalCommitContributions
+                totalIssueContributions
+                totalPullRequestContributions
               }
             }
           }
@@ -126,18 +122,16 @@ class GitHub
             hasNextPage
           }
           nodes {
-            ... on EnterpriseUserAccount {
-              user {
-                avatarUrl
-                createdAt
-                email
-                login
-                name
-                updatedAt
-                organizations(first: 10) {
-                  nodes {
-                    resourcePath
-                  }
+            ... on User {
+              avatarUrl
+              createdAt
+              email
+              login
+              name
+              updatedAt
+              organizations(first: 10) {
+                nodes {
+                  resourcePath
                 }
               }
             }
@@ -288,14 +282,14 @@ class GitHub
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
 
       inactive_members.data.enterprise.members.nodes.each do |member|
-        next if member.user.nil?
+        next if member.nil?
 
-        unless member.user.contributions_collection.has_any_contributions
-          user = User.new(member.user.login, member.user.name)
-          user.avatar_url = member.user.avatar_url
-          user.created_at = member.user.created_at
-          user.email      = member.user.email
-          user.updated_at = member.user.updated_at
+        unless member.contributions_collection.has_any_contributions
+          user = User.new(member.login, member.name)
+          user.avatar_url = member.avatar_url
+          user.created_at = member.created_at
+          user.email      = member.email
+          user.updated_at = member.updated_at
           user.member     = true
           all_inactive_users << user
         end
@@ -476,17 +470,17 @@ class GitHub
       next_page = members_contributions.data.enterprise.members.page_info.has_next_page
 
       members_contributions.data.enterprise.members.nodes.each do |member|
-        next if member.user.nil?
+        next if member.nil?
 
-        user = User.new(member.user.login, member.user.name)
-        user.avatar_url                 = member.user.avatar_url
-        user.created_at                 = member.user.created_at
-        user.updated_at                 = member.user.updated_at
-        user.has_contributions          = member.user.contributions_collection.has_any_contributions
-        user.restricted_contributions   = member.user.contributions_collection.restricted_contributions_count
-        user.commit_contributions       = member.user.contributions_collection.total_commit_contributions
-        user.issue_contributions        = member.user.contributions_collection.total_issue_contributions
-        user.pull_request_contributions = member.user.contributions_collection.total_pull_request_contributions
+        user = User.new(member.login, member.name)
+        user.avatar_url                 = member.avatar_url
+        user.created_at                 = member.created_at
+        user.updated_at                 = member.updated_at
+        user.has_contributions          = member.contributions_collection.has_any_contributions
+        user.restricted_contributions   = member.contributions_collection.restricted_contributions_count
+        user.commit_contributions       = member.contributions_collection.total_commit_contributions
+        user.issue_contributions        = member.contributions_collection.total_issue_contributions
+        user.pull_request_contributions = member.contributions_collection.total_pull_request_contributions
         user.member                     = true
         all_users_contributions << user
       end
