@@ -351,7 +351,7 @@ class GitHub
         user.updated_at    = member.updated_at
 
         organisations = []
-        member.user.organizations.nodes.each { |node| organisations << node.resource_path[1..].downcase }
+        member.organizations.nodes.each { |node| organisations << node.resource_path[1..].downcase }
         user.organisations = organisations
 
         all_members << user
