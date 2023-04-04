@@ -60,12 +60,15 @@ helpers do
       html << '<a href="/repositories/public">' if public.positive?
       html << "#{n(public)} public"
       html << '</a>, ' if public.positive?
+      html << ', ' if public.zero?
       html << '<a href="/repositories/private">' if private.positive?
       html << "#{n(private)} private"
       html << '</a>, ' if private.positive?
+      html << ', ' if private.zero?
       html << '<a href="/repositories/archived">' if archived.positive?
       html << "#{n(archived)} archived"
       html << '</a>, ' if archived.positive?
+      html << ', ' if archived.zero?
       html << '<a href="/repositories/template">' if template.positive?
       html << "#{n(template)} template"
       html << '</a>' if template.positive?
@@ -86,6 +89,7 @@ helpers do
       html << '<a href="/teams/visible">' if visible.positive?
       html << "#{n(visible)} visible"
       html << '</a>, ' if visible.positive?
+      html << ', ' if visible.zero?
       html << '<a href="/teams/secret">' if secret.positive?
       html << "#{n(secret)} secret"
       html << '</a>' if secret.positive?
