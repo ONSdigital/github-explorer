@@ -59,16 +59,36 @@ helpers do
       html << ' ('
       html << '<a href="/repositories/public">' if public.positive?
       html << "#{n(public)} public"
-      html << '</a>' if public.positive?
+      html << '</a>, ' if public.positive?
       html << '<a href="/repositories/private">' if private.positive?
-      html << ", #{n(private)} private"
-      html << '</a>' if private.positive?
+      html << "#{n(private)} private"
+      html << '</a>, ' if private.positive?
       html << '<a href="/repositories/archived">' if archived.positive?
-      html << ", #{n(archived)} archived"
-      html << '</a>' if archived.positive?
+      html << "#{n(archived)} archived"
+      html << '</a>, ' if archived.positive?
       html << '<a href="/repositories/template">' if template.positive?
-      html << ", #{n(template)} template"
+      html << "#{n(template)} template"
       html << '</a>' if template.positive?
+      html << ')'
+    end
+
+    html.join
+  end
+
+  def team_links(total, visible, secret)
+    html = []
+    html << '<a href="/teams">' if total.positive?
+    html << pluralise(total, 'team')
+    html << '</a>' if total.positive?
+
+    if total.positive?
+      html << ' ('
+      html << '<a href="/teams/visible">' if visible.positive?
+      html << "#{n(visible)} visible"
+      html << '</a>, ' if visible.positive?
+      html << '<a href="/teams/secret">' if secret.positive?
+      html << "#{n(secret)} secret"
+      html << '</a>' if secret.positive?
       html << ')'
     end
 
