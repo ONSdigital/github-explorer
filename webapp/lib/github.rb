@@ -628,7 +628,7 @@ class GitHub
     @client       = Graphlient::Client.new("#{base_uri}/graphql",
                                            headers: { 'Authorization' => "Bearer #{token}" },
                                            http_options: { read_timeout: 20 },
-                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))    
+                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
   def all_outside_collaborators
@@ -808,7 +808,8 @@ class GitHub
     two_factor_disabled_users = []
 
     while next_page
-      users = @client.query(TWO_FACTOR_DISABLED_USERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
+      users = @client.query(TWO_FACTOR_DISABLED_USERS_QUERY,
+                            { login: @organisation, slug: @enterprise, first: 100, after: })
       raise GitHubError, users.errors unless users.errors.empty?
 
       after = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
