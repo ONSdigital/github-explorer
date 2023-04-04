@@ -57,8 +57,11 @@ helpers do
 end
 
 before do
+  image_sources  = CONFIG.content_security_policy_image_sources
+  script_sources = CONFIG.content_security_policy_script_sources
+  style_sources  = CONFIG.content_security_policy_style_sources
   headers 'Cache-Control' => 'no-cache'
-  headers 'Content-Security-Policy' => "default-src 'self'; img-src 'self' data: https://avatars.githubusercontent.com https://cdn.datatables.net; https://githubdev-explorer.integrateddataservice.gov.uk; script-src 'unsafe-eval' 'self' https://ajax.googleapis.com https://cdn.datatables.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.datatables.net;"
+  headers 'Content-Security-Policy' => "default-src 'self'; img-src #{image_sources}; script-src #{script_sources}; style-src #{style_sources};"
   headers 'Content-Type' => 'text/html; charset=utf-8'
   headers 'Permissions-Policy' => 'fullscreen=(self)'
   headers 'Referrer-Policy' => 'strict-origin-when-cross-origin'
