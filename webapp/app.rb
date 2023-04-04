@@ -49,6 +49,32 @@ helpers do
     count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
   end
 
+  def repository_links(total, public, private, archived, template)
+    html = []
+    html << '<a href="/repositories">' if total.positive?
+    html << pluralise(total, 'repository', 'repositories')
+    html << '</a>' if total.positive?
+
+    if total.positive?
+      html << '('
+      html << '<a href="/repositories/public">' if public.positive?
+      html << "#{n(public)} public"
+      html << '</a>' if public.positive?
+      html << '<a href="/repositories/private">' if private.positive?
+      html << ", #{n(private)} private"
+      html << '</a>' if private.positive?
+      html << '<a href="/repositories/archived">' if archived.positive?
+      html << ", #{n(archived)} archived"
+      html << '</a>' if archived.positive?
+      html << '<a href="/repositories/template">' if template.positive?
+      html << ", #{n(template)} template"
+      html << '</a>' if template.positive?
+      html << ')'
+    end
+
+    html.join
+  end
+
   def website_link(url)
     link = url
     link = "http://#{url}" unless url.start_with?('http')
