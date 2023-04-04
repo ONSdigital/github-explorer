@@ -33,7 +33,7 @@
 
       <p>
         <img src="/svg/respository.svg" alt="Respository">
-        <%= repository_links(organisation.repositories.total_count,
+        <%= repository_links(organisation.organization.repositories.total_count,
                              organisation.organization.public_repositories.total_count,
                              organisation.organization.private_repositories.total_count,
                              archived_repositories_count,
