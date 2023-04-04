@@ -9,16 +9,34 @@ class Configuration
               :github_token
 
   def initialize(env)
-    @firestore_project    = env['FIRESTORE_PROJECT']
-    @github_api_base_uri  = env['GITHUB_API_BASE_URI']
-    @github_enterprise    = env['GITHUB_ENTERPRISE_NAME']
-    @github_organisations = env['GITHUB_ORGANISATIONS']
-    @github_token         = env['GITHUB_TOKEN']
+    @content_security_policy_image_sources  = env['CONTENT_SECURITY_POLICY_IMAGE_SOURCES']
+    @content_security_policy_script_sources = env['CONTENT_SECURITY_POLICY_SCRIPT_SOURCES']
+    @content_security_policy_style_sources  = env['CONTENT_SECURITY_POLICY_STYLE_SOURCES']
+    @firestore_project                      = env['FIRESTORE_PROJECT']
+    @github_api_base_uri                    = env['GITHUB_API_BASE_URI']
+    @github_enterprise                      = env['GITHUB_ENTERPRISE_NAME']
+    @github_organisations                   = env['GITHUB_ORGANISATIONS']
+    @github_token                           = env['GITHUB_TOKEN']
 
+    raise 'Missing CONTENT_SECURITY_POLICY_IMAGE_SOURCES environment variable' unless @content_security_policy_image_sources
+    raise 'Missing CONTENT_SECURITY_POLICY_SCRIPT_SOURCES environment variable' unless @content_security_policy_script_sources
+    raise 'Missing CONTENT_SECURITY_POLICY_STYLE_SOURCES environment variable' unless @content_security_policy_style_sources
     raise 'Missing FIRESTORE_PROJECT environment variable' unless @firestore_project
     raise 'Missing GITHUB_API_BASE_URI environment variable' unless @github_api_base_uri
     raise 'Missing GITHUB_ENTERPRISE_NAME environment variable' unless @github_enterprise
     raise 'Missing GITHUB_ORGANISATIONS environment variable' unless @github_organisations
     raise 'Missing GITHUB_TOKEN environment variable' unless @github_token
+  end
+
+  def content_security_policy_image_sources
+    @content_security_policy_image_sources.split(',').join(' ')
+  end
+
+  def content_security_policy_script_sources
+    @content_security_policy_script_sources.split(',').join(' ')
+  end
+
+  def content_security_policy_style_sources
+    @content_security_policy_style_sources.split(',').join(' ')
   end
 end
