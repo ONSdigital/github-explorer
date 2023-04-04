@@ -56,7 +56,7 @@ helpers do
     html << '</a>' if total.positive?
 
     if total.positive?
-      html << '('
+      html << ' ('
       html << '<a href="/repositories/public">' if public.positive?
       html << "#{n(public)} public"
       html << '</a>' if public.positive?
