@@ -94,7 +94,7 @@
     </section>
     <section id="licensing">
       <h3>Licencing</h3>
-      <p><%=pluralise(organisation.enterprise.billing_info.total_available_licenses, 'available licence', 'available licences') %></p>
+      <p><%=pluralise(organisation.enterprise.billing_info.total_licenses.to_i - organisation.enterprise.billing_info.total_available_licenses.to_i, 'Licence', 'Licences') %> in use</p>
       <p><%=pluralise(organisation.enterprise.billing_info.total_licenses, 'total licence', 'total licences') %></p>
     </section>
     <section id="administrators">
