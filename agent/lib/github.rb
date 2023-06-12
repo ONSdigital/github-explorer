@@ -1,22 +1,18 @@
 # frozen_string_literal: true
 
 require 'date'
-require 'graphql/client'
-require 'graphql/client/http'
+require 'graphlient'
 
-require_relative 'context_transport'
 require_relative 'github_error'
 require_relative 'team'
 require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 class GitHub
-  SCHEMA          = GraphQL::Client.load_schema(File.join(__dir__, 'graphql', 'schema.json'))
-  CLIENT          = GraphQL::Client.new(schema: SCHEMA, execute: ContextTransport.new)
   INACTIVE_MONTHS = 6
   PAUSE           = 0.5
 
-  ALL_INACTIVE_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_INACTIVE_MEMBERS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -44,7 +40,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -70,7 +66,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_MEMBERS_CONTRIBUTIONS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -101,7 +97,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_WITH_ROLES_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_MEMBERS_WITH_ROLES_QUERY = <<-GRAPHQL
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         membersWithRole(first: $first, after: $after) {
@@ -121,7 +117,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_MEMBERS_QUERY = <<-GRAPHQL
     query($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
@@ -151,7 +147,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -180,7 +176,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_REPOSITORIES_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_REPOSITORIES_QUERY = <<-GRAPHQL
     query ($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         repositories(first: $first, after: $after, orderBy: {field: NAME, direction: ASC}) {
@@ -215,7 +211,7 @@ class GitHub
     }
   GRAPHQL
 
-  ALL_TEAM_NAMES_QUERY = CLIENT.parse <<-GRAPHQL
+  ALL_TEAM_NAMES_QUERY = <<-GRAPHQL
     query($login: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         teams(first: $first, after: $after) {
@@ -233,7 +229,7 @@ class GitHub
     }
   GRAPHQL
 
-  TEAM_MEMBERS_QUERY = CLIENT.parse <<-GRAPHQL
+  TEAM_MEMBERS_QUERY = <<-GRAPHQL
     query ($login: String!, $slug: String!, $first: Int!, $after: String) {
       organization(login: $login) {
         team(slug: $slug) {
@@ -251,7 +247,7 @@ class GitHub
     }
   GRAPHQL
 
-  TWO_FACTOR_DISABLED_QUERY = CLIENT.parse <<-GRAPHQL
+  TWO_FACTOR_DISABLED_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
@@ -272,8 +268,10 @@ class GitHub
   def initialize(enterprise, organisation, base_uri, token)
     @enterprise   = enterprise
     @organisation = organisation
-    @base_uri     = URI.parse(base_uri)
-    @token        = token
+    @client       = Graphlient::Client.new("#{base_uri}/graphql",
+                                           headers: { 'Authorization' => "Bearer #{token}" },
+                                           http_options: { read_timeout: 20 },
+                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
   def all_inactive_users
@@ -283,9 +281,7 @@ class GitHub
     all_inactive_users = []
 
     while next_page
-      inactive_members = CLIENT.query(ALL_INACTIVE_MEMBERS_QUERY, variables: { slug: @enterprise, from:,
-                                                                               first: 10, after: },
-                                                                  context: { base_uri: @base_uri, token: @token })
+      inactive_members = @client.query(ALL_INACTIVE_MEMBERS_QUERY, { slug: @enterprise, from:, first: 10, after: })
       raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
 
       after = inactive_members.data.enterprise.members.page_info.end_cursor
@@ -312,9 +308,8 @@ class GitHub
     next_page = true
 
     while next_page
-      inactive_collaborators = CLIENT.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
-                                            variables: { slug: @enterprise, from:, first: 10, after: },
-                                            context: { base_uri: @base_uri, token: @token })
+      inactive_collaborators = @client.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
+                                             { slug: @enterprise, from:, first: 10, after: })
       raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
 
       after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
@@ -346,8 +341,7 @@ class GitHub
     all_members = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_QUERY, variables: { slug: @enterprise, first: 100, after: },
-                                                context: { base_uri: @base_uri, token: @token })
+      members = @client.query(ALL_MEMBERS_QUERY, { slug: @enterprise, first: 100, after: })
       raise GitHubError, members.errors unless members.errors.empty?
 
       after = members.data.enterprise.members.page_info.end_cursor
@@ -380,8 +374,7 @@ class GitHub
     all_teams = []
 
     while next_page
-      teams = CLIENT.query(ALL_TEAM_NAMES_QUERY, variables: { login: @organisation, first: 100, after: },
-                                                 context: { base_uri: @base_uri, token: @token })
+      teams = @client.query(ALL_TEAM_NAMES_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
@@ -413,9 +406,7 @@ class GitHub
     all_owners = []
 
     while next_page
-      members = CLIENT.query(ALL_MEMBERS_WITH_ROLES_QUERY, variables: { login: @organisation,
-                                                                        first: 100, after: },
-                                                           context: { base_uri: @base_uri, token: @token })
+      members = @client.query(ALL_MEMBERS_WITH_ROLES_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, members.errors unless members.errors.empty?
 
       after = members.data.organization.members_with_role.page_info.end_cursor
@@ -438,8 +429,7 @@ class GitHub
     all_repositories = []
 
     while next_page
-      repositories = CLIENT.query(ALL_REPOSITORIES_QUERY, variables: { login: @organisation, first: 100, after: },
-                                                          context: { base_uri: @base_uri, token: @token })
+      repositories = @client.query(ALL_REPOSITORIES_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, repositories.errors unless repositories.errors.empty?
 
       after = repositories.data.organization.repositories.page_info.end_cursor
@@ -457,8 +447,7 @@ class GitHub
     all_two_factor_disabled = []
 
     while next_page
-      logins = CLIENT.query(TWO_FACTOR_DISABLED_QUERY, variables: { slug: @enterprise, first: 100, after: },
-                                                       context: { base_uri: @base_uri, token: @token })
+      logins = @client.query(TWO_FACTOR_DISABLED_QUERY, { slug: @enterprise, first: 100, after: })
       raise GitHubError, logins.errors unless logins.errors.empty?
 
       after = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
@@ -480,10 +469,7 @@ class GitHub
     all_users_contributions = []
 
     while next_page
-      members_contributions = CLIENT.query(ALL_MEMBERS_CONTRIBUTIONS_QUERY, variables: { slug: @enterprise,
-                                                                                         first: 10, after: },
-                                                                            context: { base_uri: @base_uri,
-                                                                                       token: @token })
+      members_contributions = @client.query(ALL_MEMBERS_CONTRIBUTIONS_QUERY, { slug: @enterprise, first: 10, after: })
       raise GitHubError, members_contributions.errors unless members_contributions.errors.empty?
 
       after = members_contributions.data.enterprise.members.page_info.end_cursor
@@ -512,9 +498,8 @@ class GitHub
     next_page = true
 
     while next_page
-      collaborators_contributions = CLIENT.query(ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY,
-                                                 variables: { slug: @enterprise, first: 10, after: },
-                                                 context: { base_uri: @base_uri, token: @token })
+      collaborators_contributions = @client.query(ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY,
+                                                  { slug: @enterprise, first: 10, after: })
       raise GitHubError, collaborators_contributions.errors unless collaborators_contributions.errors.empty?
 
       after = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
@@ -568,9 +553,7 @@ class GitHub
     logins_for_team = []
 
     while next_page
-      team_members = CLIENT.query(TEAM_MEMBERS_QUERY, variables: { login: @organisation, slug:,
-                                                                   first: 100, after: },
-                                                      context: { base_uri: @base_uri, token: @token })
+      team_members = @client.query(TEAM_MEMBERS_QUERY, { login: @organisation, slug:, first: 100, after: })
       raise GitHubError, team_members.errors unless team_members.errors.empty?
 
       after = team_members.data.organization.team.members.page_info.end_cursor
