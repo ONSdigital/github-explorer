@@ -756,7 +756,7 @@ class GitHub
     secret_teams = []
 
     while next_page
-      teams = @client.query(SECRET_TEAMS_QUERY, { login: @organisation, first: 100, after:
+      teams = @client.query(SECRET_TEAMS_QUERY, { login: @organisation, first: 100, after: })
       raise GitHubError, teams.errors unless teams.errors.empty?
 
       after = teams.data.organization.teams.page_info.end_cursor
