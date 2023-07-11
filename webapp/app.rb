@@ -2,7 +2,7 @@
 
 require 'logger'
 require 'sinatra'
-require "sinatra/cookies"
+require 'sinatra/cookies'
 require 'ons-numbers'
 require 'pagy'
 
