@@ -694,8 +694,12 @@ class GitHub
   end
 
   def repository(repository)
-    repository = @client.query(REPOSITORY_QUERY, { login: @organisation, name: repository })
-    raise GitHubError, repository.errors unless repository.errors.empty?
+    begin
+      repository = @client.query(REPOSITORY_QUERY, { login: @organisation, name: repository })
+      raise GitHubError, repository.errors unless repository.errors.empty?
+    rescue Graphlient::Errors::ExecutionError # Occurs when the repository doesn't exist.
+      repository = nil
+    end
 
     repository
   end
