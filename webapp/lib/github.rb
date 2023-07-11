@@ -630,7 +630,7 @@ class GitHub
     @client       = Graphlient::Client.new("#{base_uri}/graphql",
                                            headers: { 'Authorization' => "Bearer #{token}" },
                                            http_options: { read_timeout: 20 },
-                                           schema_path: File.join(__dir__, 'graphql', 'schema.json')) 
+                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
   def all_outside_collaborators
