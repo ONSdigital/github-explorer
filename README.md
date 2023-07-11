@@ -18,18 +18,21 @@ Dockerfiles are included for building both the agent and web application.
 ## Environment Variables
 The environment variables below are required:
 
-| Component | Variable                   | Purpose                                                                     |
-|-----------|----------------------------|-----------------------------------------------------------------------------|
-| agent     | `FIRESTORE_PROJECT`        | Name of the GCP project containing the Firestore database.                  |
-|           | `GITHUB_API_BASE_URI`      | URI of GitHub's GraphQL API host.                                           |
-|           | `GITHUB_ENTERPRISE_NAME`   | Name of the GitHub Enterprise.                                              |
-|           | `GITHUB_ORGANISATIONS`     | Comma-separated list of GitHub organisation names.                          |
-|           | `GITHUB_TOKEN`             | GitHub personal access token. See below for details of the required scopes. |
-| webapp    | `FIRESTORE_PROJECT`        | Name of the GCP project containing the Firestore database.                  |
-|           | `GITHUB_API_BASE_URI`      | URI of GitHub's GraphQL API host.                                           |
-|           | `GITHUB_ENTERPRISE_NAME`   | Name of the GitHub Enterprise.                                              |
-|           | `GITHUB_ORGANISATIONS`     | Comma-separated list of GitHub organisation names.                          |
-|           | `GITHUB_TOKEN`             | GitHub personal access token. See below for details of the required scopes. |
+| Component | Variable                                 | Purpose                                                                     |
+|-----------|------------------------------------------|-----------------------------------------------------------------------------|
+| agent     | `FIRESTORE_PROJECT`                      | Name of the GCP project containing the Firestore database.                  |
+|           | `GITHUB_API_BASE_URI`                    | URI of GitHub's GraphQL API host.                                           |
+|           | `GITHUB_ENTERPRISE_NAME`                 | Name of the GitHub Enterprise.                                              |
+|           | `GITHUB_ORGANISATIONS`                   | Comma-separated list of GitHub organisation names.                          |
+|           | `GITHUB_TOKEN`                           | GitHub personal access token. See below for details of the required scopes. |
+| webapp    | `CONTENT_SECURITY_POLICY_IMAGE_SOURCES`  | Comma-separated list of Content Security Policy image sources.              |
+|           | `CONTENT_SECURITY_POLICY_SCRIPT_SOURCES` | Comma-separated list of Content Security Policy JavaScript sources.         |
+|           | `CONTENT_SECURITY_POLICY_STYLE_SOURCES`  | Comma-separated list of Content Security Policy CSS sources.                |
+|           | `FIRESTORE_PROJECT`                      | Name of the GCP project containing the Firestore database.                  |
+|           | `GITHUB_API_BASE_URI`                    | URI of GitHub's GraphQL API host.                                           |
+|           | `GITHUB_ENTERPRISE_NAME`                 | Name of the GitHub Enterprise.                                              |
+|           | `GITHUB_ORGANISATIONS`                   | Comma-separated list of GitHub organisation names.                          |
+|           | `GITHUB_TOKEN`                           | GitHub personal access token. See below for details of the required scopes. |
 
 ## GitHub Personal Access Token Scopes
 The GitHub personal access token for using this application requires the following scopes:
