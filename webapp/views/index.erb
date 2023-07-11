@@ -31,21 +31,21 @@
       <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.organization.website_url) %>"><%=h organisation.organization.website_url %></a></p>
     <% end %>
 
-      <p><img src="/svg/respository.svg" alt="Respository">
-<% if organisation.organization.repositories.total_count.positive? %><a href="/repositories"><% end %><%=pluralise(organisation.organization.repositories.total_count, 'repository', 'repositories') %><% if organisation.organization.repositories.total_count.positive? %></a><% end %> 
-<% if organisation.organization.repositories.total_count.positive? %>
-<% if organisation.organization.public_repositories.total_count.positive? %><a href="/repositories/public">(<%=n organisation.organization.public_repositories.total_count %> public</a><% end %><% if organisation.organization.private_repositories.total_count.positive? %>, <% end %>
-<% if organisation.organization.private_repositories.total_count.positive? %><a href="/repositories/private"><%=n organisation.organization.private_repositories.total_count %> private/internal</a><% end %><% if archived_repositories_count.positive? %>, <% end %>
-<% if archived_repositories_count.positive? %><a href="/repositories/archived"><%=n archived_repositories_count %> archived</a><% end %><% if template_repositories_count.positive? %>, <% end %>
-<% if template_repositories_count.positive? %><a href="/repositories/template"><%=n template_repositories_count %> template</a><% end %>)
-      <% end %></p>
+      <p>
+        <img src="/svg/respository.svg" alt="Respository">
+        <%= repository_links(organisation.organization.repositories.total_count,
+                             organisation.organization.public_repositories.total_count,
+                             organisation.organization.private_repositories.total_count,
+                             archived_repositories_count,
+                             template_repositories_count) %>
+      </p>
 
-      <p><img src="/svg/team.svg" alt="Team">
-<% if organisation.organization.teams.total_count.positive? %><a href="/teams"><% end %><%=pluralise(organisation.organization.teams.total_count, 'team') %><% if organisation.organization.teams.total_count.positive? %></a><% end %> 
-<% if organisation.organization.teams.total_count.positive? %>
-<% if organisation.organization.visible_teams.total_count.positive? %><a href="/teams/visible">(<%=n organisation.organization.visible_teams.total_count %> visible</a><% end %><% if organisation.organization.secret_teams.total_count.positive? %>, <% end %>
-<% if organisation.organization.secret_teams.total_count.positive? %><a href="/teams/secret"><%=n organisation.organization.secret_teams.total_count %> secret)</a><% end %>
-      <% end %></p>
+      <p>
+        <img src="/svg/team.svg" alt="Team">
+        <%= team_links(organisation.organization.teams.total_count,
+                       organisation.organization.visible_teams.total_count,
+                       organisation.organization.secret_teams.total_count) %>
+      </p>
 
     <% unless organisation.organization.saml_identity_provider.nil? %>
       <p><img src="/svg/lock.svg" alt="SSO identity provider"> SSO SAML identity provider: <%=h URI.parse(organisation.organization.saml_identity_provider.sso_url).host %></p>
