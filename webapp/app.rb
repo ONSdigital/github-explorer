@@ -260,15 +260,16 @@ get '/repositories/:repository' do |repository_slug|
     github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
                         CONFIG.github_api_base_uri, CONFIG.github_token)
 
-    repository = github.repository(repository_slug).data
+    unless github.repository(repository_slug).nil?
+      repository = github.repository(repository_slug).data
+      repo = repository.organization.repository
 
-    unless repository.organization.repository.nil? || repository.organization.repository.is_archived
-      repository_access = github.repository_access(repository_slug)
-      pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
-      access = repository_access[pagy.offset, pagy.items]
+      unless repository.organization.repository.nil? || repository.organization.repository.is_archived
+        repository_access = github.repository_access(repository_slug)
+        pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
+        access = repository_access[pagy.offset, pagy.items]
+      end
     end
-
-    repo = repository.organization.repository
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
