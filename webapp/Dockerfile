@@ -1,4 +1,4 @@
-FROM europe-west2-docker.pkg.dev/ons-ci/ons-ci/github-explorer-webapp-parent-image:latest
+FROM europe-west2-docker.pkg.dev/ons-ci/ons-ci/github-explorer-webapp-parent-image-ghes:latest
 
 ARG BRANCH="main"
 ARG COMMIT=""
