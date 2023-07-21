@@ -11,13 +11,7 @@
   </ul>
 </nav>
 
-<% unless rate_limit.nil? %>
-<section id="rate-limit">
-  <h3>GitHub GraphQL API Rate Limit</h3>
-  <p><%=pluralise(rate_limit.remaining, 'point', 'points') %> remaining out of <%=pluralise(rate_limit.limit, 'point', 'points') %> limit</p>
-  <p>Resets <%=d rate_limit.reset_at %></p>
-</section>
-<% end %>
+<p><%= rate_limit.class %></p>
 <section id="version-info">
   <h3>Version Information</h3>
   <p>Branch: <a href="https://github.com/ONSdigital/<%=h repo_name%>/tree/<%=h branch %>"><%=h branch %></a></p>
