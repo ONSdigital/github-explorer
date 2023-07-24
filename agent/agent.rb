@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'json'
 require 'logger'
 require 'ons-firestore'
 
