@@ -4,7 +4,7 @@
     <li><a href="/teams"><img src="/svg/team.svg" alt="Team"> Teams</a></li>
     <li><a href="/members"><img src="/svg/user.svg" alt="User"> Members</a></li>
     <li id="active"><img src="/svg/user.svg" alt="User"> Outside Collaborators</li>
-    <li><a href="/repositories"><img src="/svg/respository.svg" alt="Respository"> Repositories</a></li>
+    <li><a href="/repositories"><img src="/svg/repository.svg" alt="Repository"> Repositories</a></li>
     <li><a href="/two-factor-security"><img src="/svg/lock.svg" alt="Lock"> 2FA Security</a></li>
     <li><a href="/contributions"><img src="/svg/chart.svg" alt="Chart"> Contributions</a></li>
     <li><a href="/inactive"><img src="/svg/clock.svg" alt="Clock"> Inactive</a></li>
@@ -96,7 +96,7 @@
     <% if repos && repos.any? %>
       <ul class="no-bullets">
       <% repos.each do |repo| %>
-        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/repository.svg" alt="Repository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
       <%= pagination_links(pagy) %>
@@ -109,7 +109,7 @@
     <% if collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.any? %>
       <ul class="no-bullets">
       <% collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.top_repositories.nodes.each do |repo| %>
-        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/respository.svg" alt="Respository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
+        <li><a href="/repositories/<%=h repo.name %>"><img src="/svg/repository.svg" alt="Repository"> <%=h repo.name %></a> <% if repo.is_private %><span class="note">Private</span><% end %></li>
       <% end %>
       </ul>
     <% else %>
