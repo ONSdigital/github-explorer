@@ -1,6 +1,7 @@
 .git
 .gitignore
 .rubocop.yml
+.ruby-version
 kubernetes
 Dockerfile
 README.md
