@@ -43,6 +43,7 @@ GEM
       gapic-common (>= 0.19.1, < 2.a)
       google-cloud-errors (~> 1.0)
     google-protobuf (3.23.4-x86_64-darwin)
+    google-protobuf (3.23.4-x86_64-linux)
     googleapis-common-protos (1.4.0)
       google-protobuf (~> 3.14)
       googleapis-common-protos-types (~> 1.2)
@@ -66,6 +67,9 @@ GEM
     grpc (1.56.0-x86_64-darwin)
       google-protobuf (~> 3.23)
       googleapis-common-protos-types (~> 1.0)
+    grpc (1.56.0-x86_64-linux)
+      google-protobuf (~> 3.23)
+      googleapis-common-protos-types (~> 1.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     json (2.6.3)
@@ -87,7 +91,7 @@ GEM
       ast (~> 2.4.1)
       racc
     public_suffix (5.0.3)
-    puma (6.3.0)
+    puma (6.3.1)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.7)
@@ -135,6 +139,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   graphlient
