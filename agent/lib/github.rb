@@ -297,7 +297,7 @@ class GitHub
           user = User.new(member.user.login, member.user.name)
           user.avatar_url    = member.user.avatar_url
           user.created_at    = member.user.created_at
-          user.domain_emails = member.user.organizationVerifiedDomainEmails
+          user.domain_emails = member.user.organization_verified_domain_emails
           user.email         = member.user.email
           user.updated_at    = member.user.updated_at
           user.member        = true
@@ -357,7 +357,7 @@ class GitHub
         user = User.new(member.user.login, member.user.name)
         user.avatar_url    = member.user.avatar_url
         user.created_at    = member.user.created_at
-        user.domain_emails = member.user.organizationVerifiedDomainEmails
+        user.domain_emails = member.user.organization_verified_domain_emails
         user.email         = member.user.email
         user.updated_at    = member.user.updated_at
 
