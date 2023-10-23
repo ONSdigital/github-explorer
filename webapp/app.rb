@@ -45,7 +45,7 @@ helpers do
       '<img src="/svg/company.svg" alt="Verified domain"> ' + email
     end
 
-    primary_email_html = primary_email_address ? ['<img src="/svg/world.svg" alt="Public"> ' + primary_email] : []
+    primary_email_html = primary_email_address ? ['<img src="/svg/world.svg" alt="Public"> ' + primary_email_address] : []
 
     all_emails_html = domain_emails_html + primary_email_html
     all_emails_html.empty? ? '-' : all_emails_html.join('<br>')
