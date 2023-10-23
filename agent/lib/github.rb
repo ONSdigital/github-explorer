@@ -13,7 +13,7 @@ class GitHub
   PAUSE           = 0.5
 
   ALL_INACTIVE_MEMBERS_QUERY = <<-GRAPHQL
-    query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
+    query ($login: String!, $slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
           pageInfo {
@@ -28,6 +28,7 @@ class GitHub
                 email
                 login
                 name
+                organizationVerifiedDomainEmails(login: $login)
                 updatedAt
                 contributionsCollection(from: $from) {
                   hasAnyContributions
@@ -118,7 +119,7 @@ class GitHub
   GRAPHQL
 
   ALL_MEMBERS_QUERY = <<-GRAPHQL
-    query($slug: String!, $first: Int!, $after: String) {
+    query($login: String!, $slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
         members(first: $first, after: $after) {
           pageInfo {
@@ -133,6 +134,7 @@ class GitHub
                 email
                 login
                 name
+                organizationVerifiedDomainEmails(login: $login)
                 updatedAt
                 organizations(first: 10) {
                   nodes {
@@ -281,7 +283,8 @@ class GitHub
     all_inactive_users = []
 
     while next_page
-      inactive_members = @client.query(ALL_INACTIVE_MEMBERS_QUERY, { slug: @enterprise, from:, first: 10, after: })
+      inactive_members = @client.query(ALL_INACTIVE_MEMBERS_QUERY,
+                                       { login: @organisation, slug: @enterprise, from:, first: 10, after: })
       raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
 
       after = inactive_members.data.enterprise.members.page_info.end_cursor
@@ -292,11 +295,12 @@ class GitHub
 
         unless member.user.contributions_collection.has_any_contributions
           user = User.new(member.user.login, member.user.name)
-          user.avatar_url = member.user.avatar_url
-          user.created_at = member.user.created_at
-          user.email      = member.user.email
-          user.updated_at = member.user.updated_at
-          user.member     = true
+          user.avatar_url    = member.user.avatar_url
+          user.created_at    = member.user.created_at
+          user.domain_emails = member.user.organizationVerifiedDomainEmails
+          user.email         = member.user.email
+          user.updated_at    = member.user.updated_at
+          user.member        = true
           all_inactive_users << user
         end
       end
@@ -341,7 +345,7 @@ class GitHub
     all_members = []
 
     while next_page
-      members = @client.query(ALL_MEMBERS_QUERY, { slug: @enterprise, first: 100, after: })
+      members = @client.query(ALL_MEMBERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
       raise GitHubError, members.errors unless members.errors.empty?
 
       after = members.data.enterprise.members.page_info.end_cursor
@@ -353,6 +357,7 @@ class GitHub
         user = User.new(member.user.login, member.user.name)
         user.avatar_url    = member.user.avatar_url
         user.created_at    = member.user.created_at
+        user.domain_emails = member.user.organizationVerifiedDomainEmails
         user.email         = member.user.email
         user.updated_at    = member.user.updated_at
 
