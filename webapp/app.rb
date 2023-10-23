@@ -37,6 +37,14 @@ helpers do
     Numbers.grouped(number)
   end
 
+  def email_addresses(user)
+    domain_email_addresses = user[:domain_emails] || []
+    primary_email_address  = user[:email] ? [user[:email]] : []
+
+    email_addresses = domain_email_addresses + primary_email_address
+    email_addresses.empty? ? '-' : email_addresses.join('<br>')
+  end
+
   def pagination_links(pagy)
     pagy_nav(pagy) if pagy.pages > 1
   end
