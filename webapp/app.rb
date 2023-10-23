@@ -39,10 +39,16 @@ helpers do
 
   def email_addresses(user)
     domain_email_addresses = user[:domain_emails] || []
-    primary_email_address  = user[:email] ? [user[:email]] : []
+    primary_email_address  = user[:email]
 
-    email_addresses = domain_email_addresses + primary_email_address
-    email_addresses.empty? ? '-' : email_addresses.join('<br>')
+    domain_emails_html = domain_email_addresses.map do |email|
+      '<img src="/svg/company.svg" alt="Verified domain"> ' + email
+    end
+
+    primary_email_html = primary_email_address ? ['<img src="/svg/world.svg" alt="Public"> ' + primary_email] : []
+
+    all_emails_html = domain_emails_html + primary_email_html
+    all_emails_html.empty? ? '-' : all_emails_html.join('<br>')
   end
 
   def pagination_links(pagy)
