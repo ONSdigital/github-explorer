@@ -42,7 +42,6 @@ helpers do
     primary_email_address  = user[:email] ? [user[:email]] : []
 
     email_addresses = domain_email_addresses + primary_email_address
-    puts email_addresses.length
     email_addresses.empty? ? '-' : email_addresses.join('<br>')
   end
 
