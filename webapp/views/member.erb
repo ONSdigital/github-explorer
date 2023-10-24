@@ -48,20 +48,16 @@
 
     <% unless member.enterprise.members.nodes.first.user.organization_verified_domain_emails.nil? || member.enterprise.members.nodes.first.user.organization_verified_domain_emails.empty? %>
     <% member.enterprise.members.nodes.first.user.organization_verified_domain_emails.each do |email| %>
-      <p><img src="/svg/company.svg" alt="Verified domain"> <%=h email %></p>
+      <p><img src="/svg/company.svg" alt="Verified domain email"> <%=h email %></p>
     <% end %>
-    <% end %>
-
-    <% unless member.enterprise.members.nodes.first.user.email.nil? || member.enterprise.members.nodes.first.user.email.empty? %>
-      <p><img src="/svg/world.svg" alt="Public"> <%=h member.enterprise.members.nodes.first.user.email %></p>
-    <% end %>
-
-    <% unless member.enterprise.members.nodes.first.user.location.nil? || member.enterprise.members.nodes.first.user.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%=h member.enterprise.members.nodes.first.user.location %></p>
     <% end %>
 
     <% unless member.enterprise.members.nodes.first.user.email.nil? || member.enterprise.members.nodes.first.user.email.empty? %>
       <p><img src="/svg/email.svg" alt="Email"> <a href="mailto:<%=h member.enterprise.members.nodes.first.user.email %>"><%=h member.enterprise.members.nodes.first.user.email %></a></p>
+    <% end %>
+
+    <% unless member.enterprise.members.nodes.first.user.location.nil? || member.enterprise.members.nodes.first.user.location.empty? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h member.enterprise.members.nodes.first.user.location %></p>
     <% end %>
 
     <% unless member.enterprise.members.nodes.first.user.twitter_username.nil? || member.enterprise.members.nodes.first.user.twitter_username.empty? %>
