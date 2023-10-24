@@ -106,6 +106,7 @@ class GitHub
                 location
                 login
                 name
+                organizationVerifiedDomainEmails(login: $login)
                 twitterUsername
                 updatedAt
                 url
