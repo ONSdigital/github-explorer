@@ -46,7 +46,7 @@
       <p><img src="/svg/company.svg" alt="Company"> <%=h member.enterprise.members.nodes.first.user.company %></p>
     <% end %>
 
-    <% unless member.enterprise.members.nodes.first.user.organization_verified_domain_emails.nil? || member.enterprise.members.nodes.first.user.organization_verified_domain_eails.empty? %>
+    <% unless member.enterprise.members.nodes.first.user.organization_verified_domain_emails.nil? || member.enterprise.members.nodes.first.user.organization_verified_domain_emails.empty? %>
     <% member.enterprise.members.nodes.first.user.organization_verified_domain_emails.each do |email| %>
       <p><img src="/svg/company.svg" alt="Verified domain"> <%=h email %></p>
     <% end %>
