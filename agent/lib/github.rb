@@ -540,10 +540,11 @@ class GitHub
       next if member.nil?
 
       user = User.new(member.login, member.name)
-      user.avatar_url = member.avatar_url
-      user.created_at = member.created_at
-      user.email      = member.email
-      user.updated_at = member.updated_at
+      user.avatar_url    = member.avatar_url
+      user.created_at    = member.created_at
+      user.domain_emails = member.domain_emails
+      user.email         = member.email
+      user.updated_at    = member.updated_at
       teamless_members << user unless members_with_a_team.key?(member.login)
     end
 
