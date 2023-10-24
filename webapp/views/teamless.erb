@@ -31,7 +31,7 @@
     <tr class="<%= i.even? ? 'even' : 'odd' %>">
       <td><img class="avatar-small" src="<%= member[:avatar_url] %>" alt="<%=h member[:login] %>"> <a href="/members/<%=h member[:login] %>"><%=h member[:login] %></a></td>
       <td><% if member[:name].nil? || member[:name].empty? %>-<% else %><a href="/members/<%=h member[:login] %>"><%=h member[:name] %><% end %></a></td>
-      <td><% if member[:email].nil? || member[:email].empty? %>-<% else %><%=h member[:email] %><% end %></td>
+      <td><%= email_addresses(member) %></td>
       <td><% if two_factor_disabled.include?(member[:login]) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td class="no-wrap" data-order="<%= member[:created_at] %>"><%=d member[:created_at] %></td>
       <td class="no-wrap" data-order="<%= member[:updated_at] %>"><%=d member[:updated_at] %></td>
