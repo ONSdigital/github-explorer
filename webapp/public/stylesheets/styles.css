@@ -46,6 +46,26 @@ nav li {
   margin-right: 6px;
 }
 
+nav a {
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+nav a:link, nav a:visited {
+  background-color: #fff;
+  color: #000;
+  text-decoration: none;
+}
+
+nav a:hover {
+  background-color: #000;
+  border: 1px solid #000;
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+}
+
 nav li#active, nav li#active-filter {
   background-color: #000;
   border: 1px solid #000;
