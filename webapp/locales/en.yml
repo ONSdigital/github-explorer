@@ -1,5 +1,15 @@
 en:
   pagy:
+    aria_label:
+      nav:
+        one: "Page"
+        other: "Pages"
+      prev: "Previous"
+      next: "Next"
+
+    prev: "Previous"
+    next: "Next"
+    gap: "&hellip;"
 
     item_name:
       one: "item"
