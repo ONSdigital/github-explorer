@@ -46,26 +46,6 @@ nav li {
   margin-right: 6px;
 }
 
-nav a {
-  border: 1px solid #000;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
-nav a:link, nav a:visited {
-  background-color: #fff;
-  color: #000;
-  text-decoration: none;
-}
-
-nav a:hover {
-  background-color: #000;
-  border: 1px solid #000;
-  border-radius: 6px;
-  color: #fff;
-  text-decoration: none;
-}
-
 nav li#active, nav li#active-filter {
   background-color: #000;
   border: 1px solid #000;
@@ -74,19 +54,19 @@ nav li#active, nav li#active-filter {
   padding: 6px 10px;
 }
 
-nav.pagy-nav, #data_paginate {
+nav.pagy, #data_paginate {
   margin: 25px 0;
   padding-left: 0;
   white-space: nowrap;
 }
 
-nav.pagy-nav .page, #data_paginate .paginate_button {
+nav.pagy a, #data_paginate .paginate_button {
   border-radius: 6px;
   display: inline;
   margin-right: 4px;
 }
 
-nav.pagy-nav .active, #data_paginate .paginate_button.current {
+nav.pagy .current[aria-disabled="true"], #data_paginate .paginate_button.current {
   background: none;
   background-color: #999;
   border: 1px solid #999;
@@ -95,29 +75,29 @@ nav.pagy-nav .active, #data_paginate .paginate_button.current {
   padding: 6px 10px;
 }
 
-nav.pagy-nav .disabled, #data_paginate .paginate_button.disabled {
+nav.pagy [aria-disabled="true"], #data_paginate .paginate_button.disabled {
   border: 1px solid #e2e4e8;
   border-radius: 6px;
   color: #e2e4e8 !important;
   padding: 6px 10px;
 }
 
-nav.pagy-nav .page .next, nav.pagy-nav .page .prev {
+nav.pagy .page .next, nav.pagy .page .prev {
   border: 1px solid #fff;
 }
 
-nav.pagy-nav a, #data_paginate a {
+nav.pagy a, #data_paginate a {
   border: 1px solid #e2e4e8;
   padding: 6px 10px;
 }
 
-nav.pagy-nav a:link, nav.pagy-nav a:visited, #data_paginate a:link, #data_paginate a:visited {
+nav.pagy a:link, nav.pagy a:visited, #data_paginate a:link, #data_paginate a:visited {
   background-color: #fff;
   color: #000;
   text-decoration: none;
 }
 
-nav.pagy-nav a:hover, #data_paginate a:hover.paginate_button {
+nav.pagy a:hover, #data_paginate a:hover.paginate_button {
   background: none;
   background-color: #fff;
   border: 1px solid #aaa;
