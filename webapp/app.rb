@@ -5,6 +5,7 @@ require 'sinatra'
 require 'sinatra/cookies'
 require 'ons-numbers'
 require 'pagy'
+require 'pagy/extras/array'
 
 require_relative 'lib/configuration'
 require_relative 'lib/firestore_client'
@@ -46,6 +47,8 @@ helpers do
   end
 
   def pluralise(count, singular_noun, plural_noun = nil)
+    return "0 #{plural_noun}" if count.nil?
+
     count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
   end
 
@@ -134,8 +137,7 @@ get '/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: @firestore.all_owners.count, page: (params[:page] || 1))
-  owners = @firestore.all_owners[pagy.offset, pagy.items]
+  pagy, owners = pagy_array(@firestore.all_owners)
   archived_repositories_count, template_repositories_count = @firestore.archived_template_repositories_count
   two_factor_disabled_count = @firestore.all_two_factor_disabled.count
   erb :index, locals: { title: "#{@selected_organisation} - GitHub Explorer",
@@ -204,12 +206,11 @@ get '/collaborators/:login' do |login|
   end
 
   count = collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
-  pagy  = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
-  contributions = @firestore.user_contributions(login).first
+  contributions = @firestore.user_contributions(login).first || {}
   repos = []
 
   unless collaborator.enterprise.owner_info.outside_collaborators.edges.empty?
-    repos = collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes[pagy.offset, pagy.items]
+    pagy, repos = pagy_array(collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes)
   end
 
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
@@ -258,10 +259,8 @@ get '/members/:login' do |login|
 
   # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
   login_symbol = login.to_sym
-  count = @firestore.all_members_teams[login_symbol].nil? ? 0 : @firestore.all_members_teams[login_symbol].count
-  pagy = Pagy.new(count:, items: USERS_ITEMS_COUNT, page: (params[:page] || 1))
   contributions = @firestore.user_contributions(login).first
-  teams = @firestore.all_members_teams[login_symbol].to_a[pagy.offset, pagy.items]
+  pagy, teams = pagy_array(@firestore.all_members_teams[login_symbol].to_a)
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          contributions:,
                          login:,
@@ -319,8 +318,7 @@ get '/repositories/:repository' do |repository_slug|
 
       unless repository.organization.repository.nil? || repository.organization.repository.is_archived
         repository_access = github.repository_access(repository_slug)
-        pagy = Pagy.new(count: repository_access.count, items: ACCESS_ITEMS_COUNT, page: (params[:page] || 1))
-        access = repository_access[pagy.offset, pagy.items]
+        pagy, access = pagy_array(repository_access)
       end
     end
   rescue GitHubError => e
@@ -392,8 +390,7 @@ get '/teams/:team' do |team|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy = Pagy.new(count: team.members.count, page: (params[:page] || 1))
-  members = team.members[pagy.offset, pagy.items]
+  pagy, members = pagy_array(team.members)
   erb :team, locals: { title: "#{team.name} Team - GitHub Explorer",
                        team:,
                        members:,
