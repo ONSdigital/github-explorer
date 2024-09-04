@@ -18,9 +18,6 @@ Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 CONFIG = Configuration.new(ENV)
 LOGGER = Logger.new($stderr)
 
-ACCESS_ITEMS_COUNT = 20
-USERS_ITEMS_COUNT  = 10
-
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
 helpers do
