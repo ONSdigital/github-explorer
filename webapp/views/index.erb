@@ -53,7 +53,7 @@
     <% end %>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d organisation.organization.created_at %></p>
+      <p><span>Created:</span><span class="date"><%=d organisation.organization.created_at %></span></p>
     </section>
      <section id="owners">
       <h3>Organisation Owners (<%= pagy.count %>)</h3>
@@ -90,7 +90,7 @@
       <p><img src="/svg/user.svg" alt="User"> <a href="/two-factor-security"><%=pluralise(two_factor_disabled_count, 'user') %> without two-factor security enabled</a></p>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d organisation.enterprise.created_at %></p>
+      <p><span>Created:</span><span class="date"><%=d organisation.enterprise.created_at %></span></p>
     </section>
     <section id="licensing">
       <h3>Licencing</h3>
