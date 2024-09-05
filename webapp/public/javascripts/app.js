@@ -7,7 +7,6 @@ $(document).ready(function() {
     dateElements.forEach(element => {
       const utcDateStr = element.textContent.trim();
       const localDateStr = parseAndConvertToLocalTime(utcDateStr + ':00');
-      console.log(`localDateStr = ${localDateStr}`);
   
       element.textContent = localDateStr;
     });
@@ -29,10 +28,7 @@ $(document).ready(function() {
     const dateObj = new Date(formattedUTCDate);
     const datePart = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     const timePart = dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-  
-    console.log(`datePart = ${datePart}`);
-    console.log(`timePart = ${timePart}`);
-    
+
     return `${datePart} ${timePart}`;
   }
 
