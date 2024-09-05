@@ -34,8 +34,8 @@
       <td data-order="<%= user[:issue_contributions] %>"><%=pluralise(user[:issue_contributions], 'issue') %></td>
       <td data-order="<%= user[:pull_request_contributions] %>"><%=pluralise(user[:pull_request_contributions], 'pull request') %></td>
       <td><% if user[:member] %>Member<% else %>Outside Collaborator<% end %></td>
-      <td class="no-wrap" data-order="<%= user[:created_at] %>"><%=d user[:created_at] %></td>
-      <td class="no-wrap" data-order="<%= user[:updated_at] %>"><%=d user[:updated_at] %></td>
+      <td class="date no-wrap" data-order="<%= user[:created_at] %>"><%=d user[:created_at] %></td>
+      <td class="date no-wrap" data-order="<%= user[:updated_at] %>"><%=d user[:updated_at] %></td>
     </tr>
   <% end %>
   </tbody>
