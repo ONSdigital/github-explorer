@@ -35,8 +35,8 @@
       <td><% if member[:name].nil? || member[:name].empty? %>-<% else %><a href="/members/<%=h member[:login] %>"><%=h member[:name] %><% end %></a></td>
       <td><%= email_addresses(member) %></td>
       <td><% if two_factor_disabled.include?(member[:login]) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
-      <td class="no-wrap" data-order="<%= member[:created_at] %>"><%=d member[:created_at] %></td>
-      <td class="no-wrap" data-order="<%= member[:updated_at] %>"><%=d member[:updated_at] %></td>
+      <td class="date no-wrap" data-order="<%= member[:created_at] %>"><%=d member[:created_at] %></td>
+      <td class="date no-wrap" data-order="<%= member[:updated_at] %>"><%=d member[:updated_at] %></td>
     </tr>
   <% end %>
   </tbody>
