@@ -51,8 +51,8 @@
       <td><% if repo[:branchProtectionRules][:totalCount].zero? %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td><%=n repo[:vulnerabilityAlerts][:totalCount] %></td>
       <td><% if repo[:collaborators].nil? %>0 members<% else %><a href="/repositories/<%=h repo[:name] %>"><%=pluralise(repo[:collaborators][:totalCount], 'member') %></a><% end %></td>
-      <td class="no-wrap" data-order="<%= repo[:createdAt] %>"><%=d repo[:createdAt] %></td>
-      <td class="no-wrap" data-order="<%= repo[:pushedAt] %>"><%=d repo[:pushedAt] %></td>
+      <td class="date no-wrap" data-order="<%= repo[:createdAt] %>"><%=d repo[:createdAt] %></td>
+      <td class="date no-wrap" data-order="<%= repo[:pushedAt] %>"><%=d repo[:pushedAt] %></td>
     </tr>
   <% end %>
   </tbody>
