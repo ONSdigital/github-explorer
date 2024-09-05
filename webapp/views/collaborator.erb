@@ -68,8 +68,8 @@
       </ul>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.created_at %></p>
-      <p><span>Updated:</span><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.updated_at %></p>
+      <p><span>Created:</span><span class="date"><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.created_at %></span></p>
+      <p><span>Updated:</span><span class="date"><%=d collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.updated_at %></span></p>
       <p><% if collaborator.enterprise.owner_info.outside_collaborators.edges.first.node.contributions_collection.has_any_contributions %>This user has contributions within the last year. <img src="/svg/tick.svg" alt="Tick"><% else %>This user doesn’t have contributions within the last year. <img src="/svg/cross.svg" alt="Cross"><% end %></p>
       <p><% if two_factor_disabled %>This user doesn’t have two-factor security enabled. <img src="/svg/cross.svg" alt="Cross"><% else %>This user has two-factor security enabled. <img src="/svg/tick.svg" alt="Tick"><% end %></p>
     </section>
