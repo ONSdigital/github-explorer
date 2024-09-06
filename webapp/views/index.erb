@@ -13,47 +13,47 @@
 
 <section class="row">
   <section class="column left">
-    <h2><%=h organisation.organization.name %> GitHub Organisation</h2>
-    <p><img class="avatar-medium" src="<%=h organisation.organization.avatar_url %>" alt="<%=h organisation.organization.name %>"></p>
+    <h2><%=h organisation.name %> GitHub Organisation</h2>
+    <p><img class="avatar-medium" src="<%=h organisation.avatar_url %>" alt="<%=h organisation.name %>"></p>
 
     <section class="profile-detail">
-    <% unless organisation.organization.description.nil? || organisation.organization.description.empty? %>
-      <p><%=h organisation.organization.description %></p>
+    <% unless organisation.description.blank? %>
+      <p><%=h organisation.description %></p>
     <% end %>
 
-      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(organisation.organization.url) %>"><%= organisation.organization.url %></a></p>
+      <p><img src="/svg/github.svg" alt="GitHub"> <a href="<%= website_link(organisation.url) %>"><%= organisation.url %></a></p>
 
-    <% unless organisation.organization.location.nil? || organisation.organization.location.empty? %>
-      <p><img src="/svg/location.svg" alt="Location"> <%=h organisation.organization.location %></p>
+    <% unless organisation.blank? %>
+      <p><img src="/svg/location.svg" alt="Location"> <%=h organisation.location %></p>
     <% end %>
 
-    <% unless organisation.organization.website_url.nil? || organisation.organization.website_url.empty? %>
-      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.organization.website_url) %>"><%=h organisation.organization.website_url %></a></p>
+    <% unless organisation.website_url.blank? %>
+      <p><img src="/svg/website.svg" alt="Website"> <a href="<%= website_link(organisation.website_url) %>"><%=h organisation.website_url %></a></p>
     <% end %>
 
       <p>
         <img src="/svg/repository.svg" alt="Repository">
-        <%= repository_links(organisation.organization.repositories.total_count,
-                             organisation.organization.public_repositories.total_count,
-                             organisation.organization.private_repositories.total_count,
-                             archived_repositories_count,
-                             template_repositories_count) %>
+        <%= repository_links(organisation.total_repositories_count,
+                             organisation.public_repositories_count,
+                             organisation.private_repositories_count,
+                             organisation.archived_repositories_count,
+                             organisation.template_repositories_count) %>
       </p>
 
       <p>
         <img src="/svg/team.svg" alt="Team">
-        <%= team_links(organisation.organization.teams.total_count,
-                       organisation.organization.visible_teams.total_count,
-                       organisation.organization.secret_teams.total_count) %>
+        <%= team_links(organisation.total_teams_count,
+                       organisation.visible_teams_count,
+                       organisation.secret_teams_count) %>
       </p>
 
-    <% unless organisation.organization.saml_identity_provider.nil? %>
-      <p><img src="/svg/lock.svg" alt="SSO identity provider"> SSO SAML identity provider: <%=h URI.parse(organisation.organization.saml_identity_provider.sso_url).host %></p>
-      <p><img src="/svg/user.svg" alt="User"> <%=pluralise(organisation.organization.saml_identity_provider.external_identities.total_count, 'user') %> with SSO identities</p>
+    <% unless organisation.identity_provider? %>
+      <p><img src="/svg/lock.svg" alt="SSO identity provider"> SSO SAML identity provider: <%=h URI.parse(organisation.sso_url).host %></p>
+      <p><img src="/svg/user.svg" alt="User"> <%=pluralise(organisation.total_external_identities_count, 'user') %> with SSO identities</p>
     <% end %>
     </section>
     <section class="profile-dates">
-      <p><span>Created:</span><span class="date"><%=d organisation.organization.created_at %></span></p>
+      <p><span>Created:</span><span class="date"><%=d organisation.created_at %></span></p>
     </section>
      <section id="owners">
       <h3>Organisation Owners (<%= pagy.count %>)</h3>
