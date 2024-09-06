@@ -4,7 +4,6 @@
 class Organisation
   attr_accessor :archived_repositories_count,
                 :avatar_url,
-                :identity_provider?,
                 :location,
                 :owners,
                 :private_repositories_count,
@@ -23,10 +22,16 @@ class Organisation
               :name,
               :url
 
+  attr_writer :identity_provider
+
   def initialize(name, description, url, created_at)
     @name        = name
     @description = description
     @url         = url
     @created_at  = created_at
+  end
+
+  def identity_provider?
+    @identity_provider
   end
 end
