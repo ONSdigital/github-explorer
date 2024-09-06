@@ -7,6 +7,7 @@ require_relative 'user'
 require_relative 'team'
 
 # Class that encapsulates access to the GitHub GraphQL API.
+# rubocop:disable Metrics/ClassLength
 class GitHub
   ALL_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
@@ -634,6 +635,7 @@ class GitHub
                                            schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
+  # rubocop:disable Metrics/AbcSize
   def all_outside_collaborators
     after = nil
     next_page = true
@@ -653,7 +655,9 @@ class GitHub
 
     all_outside_collaborators
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize
   def all_teams
     after = nil
     next_page = true
@@ -670,6 +674,7 @@ class GitHub
 
     all_teams
   end
+  # rubocop:enable Metrics/AbcSize
 
   def member(user_login)
     member = @client.query(MEMBER_QUERY, { slug: @enterprise, login: @organisation, user_login: })
@@ -707,6 +712,7 @@ class GitHub
     repository
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def repository_access(repository)
     after = nil
     next_page = true
@@ -754,7 +760,9 @@ class GitHub
 
     repository_access.sort_by(&:login)
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/AbcSize
   def secret_teams
     after = nil
     next_page = true
@@ -771,7 +779,9 @@ class GitHub
 
     secret_teams
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def team(slug)
     after     = nil
     next_page = true
@@ -792,7 +802,7 @@ class GitHub
       team.updated_at  = t.data.organization.team.updated_at
       team.url         = t.data.organization.team.url
 
-      unless t.data.organization.team.ancestors.nodes.nil?
+      unless t.data.organization.team.ancestors.nodes.nil? # rubocop:disable Style/IfUnlessModifier
         team.ancestors = t.data.organization.team.ancestors.nodes
       end
 
@@ -808,14 +818,18 @@ class GitHub
     team.members.sort_by!(&:login)
     team
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def two_factor_disabled_users
     after = nil
     next_page = true
     two_factor_disabled_users = []
 
     while next_page
-      users = @client.query(TWO_FACTOR_DISABLED_USERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
+      users = @client.query(TWO_FACTOR_DISABLED_USERS_QUERY,
+                            { login: @organisation, slug: @enterprise, first: 100, after: })
+
       raise GitHubError, users.errors unless users.errors.empty?
 
       after = users.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
@@ -843,7 +857,9 @@ class GitHub
 
     two_factor_disabled_users
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/AbcSize
   def visible_teams
     after = nil
     next_page = true
@@ -860,4 +876,6 @@ class GitHub
 
     visible_teams
   end
+  # rubocop:enable Metrics/AbcSize
 end
+# rubocop:enable Metrics/ClassLength
