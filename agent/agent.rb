@@ -12,6 +12,7 @@ require_relative 'lib/github_error'
 class Agent
   CONFIG = Configuration.new(ENV)
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def initialize
     raise 'Missing GraphQL query command-line argument' if ARGV.empty?
 
@@ -37,5 +38,6 @@ class Agent
     end
   end
 end
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
 Agent.new
