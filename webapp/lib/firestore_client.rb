@@ -3,6 +3,7 @@
 require 'ons-firestore'
 
 # Class to manage access to Firestore.
+# rubocop:disable Metrics/ClassLength
 class FirestoreClient
   FIRESTORE_COLLECTION = 'github-explorer'
 
@@ -138,3 +139,4 @@ class FirestoreClient
     all_users_contributions.filter { |user| user[:login].eql?(login) }
   end
 end
+# rubocop:enable Metrics/ClassLength
