@@ -54,22 +54,23 @@ end
 
 get '/?' do
   begin
-    github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
-                        CONFIG.github_api_base_uri, CONFIG.github_token)
-
-    organisation = github.organisation.data
+    organisation = @github.organisation
   rescue GitHubError => e
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy, owners = pagy_array(@firestore.all_owners)
   archived_repositories_count, template_repositories_count = @firestore.archived_template_repositories_count
+  organisation.archived_repositories_count = archived_repositories_count
+  organisation.template_repositories_count = template_repositories_count
+
+  organisation.owners = @firestore.all_owners
+  pagy, owners = pagy_array(organisation.owners)
   two_factor_disabled_count = @firestore.all_two_factor_disabled.count
+
   erb :index, locals: { title: "#{@selected_organisation} - GitHub Explorer",
+                        enterprise:,
                         organisation:,
                         owners:,
-                        archived_repositories_count:,
-                        template_repositories_count:,
                         two_factor_disabled_count:,
                         pagy: }
 end
