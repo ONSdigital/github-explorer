@@ -41,8 +41,8 @@
       <td><% if user[:email].nil? || user[:email].empty? %>-<% else %><%=h user[:email] %><% end %></td>
       <td><% if two_factor_disabled.include?(user[:login]) %><img src="/svg/cross.svg" alt="Cross"><% else %><img src="/svg/tick.svg" alt="Tick"><% end %></td>
       <td><% if user[:member] %>Member<% else %>Outside Collaborator<% end %></td>
-      <td class="no-wrap" data-order="<%= user[:created_at] %>"><%=d user[:created_at] %></td>
-      <td class="no-wrap" data-order="<%= user[:updated_at] %>"><%=d user[:updated_at] %></td>
+      <td class="date no-wrap" data-order="<%= user[:created_at] %>"><%=d user[:created_at] %></td>
+      <td class="date no-wrap" data-order="<%= user[:updated_at] %>"><%=d user[:updated_at] %></td>
     </tr>
   <% end %>
   </tbody>
