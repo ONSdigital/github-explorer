@@ -3,6 +3,9 @@
 require 'graphlient'
 
 require_relative '../github_error'
+
+require_relative '../models/enterprise'
+require_relative '../models/organisation'
 require_relative '../models/user'
 require_relative '../models/team'
 
