@@ -6,9 +6,12 @@ class Configuration
               :github_api_base_uri,
               :github_enterprise,
               :github_organisations,
-              :github_token
+              :github_token,
+              :github_variant
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+  GITHUB_VARIANTS = %w[github github-enterprise-server].freeze
+
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity,  Metrics/MethodLength, Layout/LineLength
   def initialize(env)
     @content_security_policy_image_sources  = env['CONTENT_SECURITY_POLICY_IMAGE_SOURCES']
     @content_security_policy_script_sources = env['CONTENT_SECURITY_POLICY_SCRIPT_SOURCES']
@@ -18,6 +21,7 @@ class Configuration
     @github_enterprise                      = env['GITHUB_ENTERPRISE_NAME']
     @github_organisations                   = env['GITHUB_ORGANISATIONS']
     @github_token                           = env['GITHUB_TOKEN']
+    @github_variant                         = env['GITHUB_VARIANT']
 
     raise 'Missing CONTENT_SECURITY_POLICY_IMAGE_SOURCES environment variable' unless @content_security_policy_image_sources
     raise 'Missing CONTENT_SECURITY_POLICY_SCRIPT_SOURCES environment variable' unless @content_security_policy_script_sources
@@ -27,8 +31,10 @@ class Configuration
     raise 'Missing GITHUB_ENTERPRISE_NAME environment variable' unless @github_enterprise
     raise 'Missing GITHUB_ORGANISATIONS environment variable' unless @github_organisations
     raise 'Missing GITHUB_TOKEN environment variable' unless @github_token
+    raise 'Missing GITHUB_VARIANT environment variable' unless @github_variant
+    raise 'Invalid GITHUB_VARIANT environment variable' unless GITHUB_VARIANTS.include?(@github_variant)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity,  Metrics/MethodLength, Layout/LineLength
 
   def content_security_policy_image_sources
     @content_security_policy_image_sources.split(',').join(' ')
