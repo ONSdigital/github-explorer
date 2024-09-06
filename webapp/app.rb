@@ -20,106 +20,6 @@ LOGGER = Logger.new($stderr)
 
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
-helpers do # rubocop:disable Metrics/BlockLength
-  include Pagy::Frontend
-
-  def d(text)
-    Time.parse(text).utc.strftime('%d %b %Y %H:%M')
-  end
-
-  def h(text)
-    Rack::Utils.escape_html(text)
-  end
-
-  def n(number)
-    Numbers.grouped(number)
-  end
-
-  def email_addresses(user)
-    domain_email_addresses = user[:domain_emails] || []
-    primary_email_address  = user[:email] ? [user[:email]] : []
-
-    email_addresses = domain_email_addresses + primary_email_address
-    email_addresses.length == 1 ? '-' : email_addresses.join('<br>')
-  end
-
-  def pagination_links(pagy)
-    pagy_nav(pagy) if pagy.pages > 1
-  end
-
-  def percentage(number, total)
-    Numbers.percentage(number, total)
-  end
-
-  def pluralise(count, singular_noun, plural_noun = nil)
-    return "0 #{plural_noun}" if count.nil?
-
-    # rubocop:disable Style/NestedTernaryOperator, Layout/LineLength
-    count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
-    # rubocop:enable Style/NestedTernaryOperator, Layout/LineLength
-  end
-
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-  def repository_links(total, public, private, archived, template)
-    html = []
-    html << '<a href="/repositories">' if total.positive?
-    html << pluralise(total, 'repository', 'repositories')
-    html << '</a>' if total.positive?
-
-    if total.positive?
-      html << ' ('
-      html << '<a href="/repositories/public">' if public.positive?
-      html << "#{n(public)} public"
-      html << '</a>, ' if public.positive?
-      html << ', ' if public.zero?
-      html << '<a href="/repositories/private">' if private.positive?
-      html << "#{n(private)} private"
-      html << '</a>, ' if private.positive?
-      html << ', ' if private.zero?
-      html << '<a href="/repositories/archived">' if archived.positive?
-      html << "#{n(archived)} archived"
-      html << '</a>, ' if archived.positive?
-      html << ', ' if archived.zero?
-      html << '<a href="/repositories/template">' if template.positive?
-      html << "#{n(template)} template"
-      html << '</a>' if template.positive?
-      html << ')'
-    end
-
-    html.join
-  end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def team_links(total, visible, secret)
-    html = []
-    html << '<a href="/teams">' if total.positive?
-    html << pluralise(total, 'team')
-    html << '</a>' if total.positive?
-
-    if total.positive?
-      html << ' ('
-      html << '<a href="/teams/visible">' if visible.positive?
-      html << "#{n(visible)} visible"
-      html << '</a>, ' if visible.positive?
-      html << ', ' if visible.zero?
-      html << '<a href="/teams/secret">' if secret.positive?
-      html << "#{n(secret)} secret"
-      html << '</a>' if secret.positive?
-      html << ')'
-    end
-
-    html.join
-  end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-  def website_link(url)
-    link = url
-    link = "http://#{url}" unless url.start_with?('http')
-    link
-  end
-end
-
 before do
   image_sources  = CONFIG.content_security_policy_image_sources
   script_sources = CONFIG.content_security_policy_script_sources
@@ -441,4 +341,104 @@ end
 
 not_found do
   erb :not_found, locals: { title: '404 Not Found - GitHub Explorer' }
+end
+
+helpers do # rubocop:disable Metrics/BlockLength
+  include Pagy::Frontend
+
+  def d(text)
+    Time.parse(text).utc.strftime('%d %b %Y %H:%M')
+  end
+
+  def h(text)
+    Rack::Utils.escape_html(text)
+  end
+
+  def n(number)
+    Numbers.grouped(number)
+  end
+
+  def email_addresses(user)
+    domain_email_addresses = user[:domain_emails] || []
+    primary_email_address  = user[:email] ? [user[:email]] : []
+
+    email_addresses = domain_email_addresses + primary_email_address
+    email_addresses.length == 1 ? '-' : email_addresses.join('<br>')
+  end
+
+  def pagination_links(pagy)
+    pagy_nav(pagy) if pagy.pages > 1
+  end
+
+  def percentage(number, total)
+    Numbers.percentage(number, total)
+  end
+
+  def pluralise(count, singular_noun, plural_noun = nil)
+    return "0 #{plural_noun}" if count.nil?
+
+    # rubocop:disable Style/NestedTernaryOperator, Layout/LineLength
+    count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
+    # rubocop:enable Style/NestedTernaryOperator, Layout/LineLength
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  def repository_links(total, public, private, archived, template)
+    html = []
+    html << '<a href="/repositories">' if total.positive?
+    html << pluralise(total, 'repository', 'repositories')
+    html << '</a>' if total.positive?
+
+    if total.positive?
+      html << ' ('
+      html << '<a href="/repositories/public">' if public.positive?
+      html << "#{n(public)} public"
+      html << '</a>, ' if public.positive?
+      html << ', ' if public.zero?
+      html << '<a href="/repositories/private">' if private.positive?
+      html << "#{n(private)} private"
+      html << '</a>, ' if private.positive?
+      html << ', ' if private.zero?
+      html << '<a href="/repositories/archived">' if archived.positive?
+      html << "#{n(archived)} archived"
+      html << '</a>, ' if archived.positive?
+      html << ', ' if archived.zero?
+      html << '<a href="/repositories/template">' if template.positive?
+      html << "#{n(template)} template"
+      html << '</a>' if template.positive?
+      html << ')'
+    end
+
+    html.join
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def team_links(total, visible, secret)
+    html = []
+    html << '<a href="/teams">' if total.positive?
+    html << pluralise(total, 'team')
+    html << '</a>' if total.positive?
+
+    if total.positive?
+      html << ' ('
+      html << '<a href="/teams/visible">' if visible.positive?
+      html << "#{n(visible)} visible"
+      html << '</a>, ' if visible.positive?
+      html << ', ' if visible.zero?
+      html << '<a href="/teams/secret">' if secret.positive?
+      html << "#{n(secret)} secret"
+      html << '</a>' if secret.positive?
+      html << ')'
+    end
+
+    html.join
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def website_link(url)
+    link = url
+    link = "http://#{url}" unless url.start_with?('http')
+    link
+  end
 end
