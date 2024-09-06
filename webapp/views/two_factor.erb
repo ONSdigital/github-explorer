@@ -30,8 +30,8 @@
       <td><% if user.name.nil? || user.name.empty? %>-<% else %><% if user.member %><a href="/members/<%=h user.login %>"><% else %><a href="/collaborators/<%=h user.login %>"><% end %><%=h user.name %><% end %></a></td>
       <td><% if user.email.nil? || user.email.empty? %>-<% else %><%=h user.email %><% end %></td>
       <td><% if user.member %>Member<% else %>Outside Collaborator<% end %></td>
-      <td class="no-wrap" data-order="<%= user.created_at %>"><%=d user.created_at %></td>
-      <td class="no-wrap" data-order="<%= user.updated_at %>"><%=d user.updated_at %></td>
+      <td class="date no-wrap" data-order="<%= user.created_at %>"><%=d user.created_at %></td>
+      <td class="date no-wrap" data-order="<%= user.updated_at %>"><%=d user.updated_at %></td>
     </tr>
   <% end %>
   </tbody>
