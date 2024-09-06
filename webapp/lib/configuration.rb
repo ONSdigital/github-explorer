@@ -8,6 +8,7 @@ class Configuration
               :github_organisations,
               :github_token
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
   def initialize(env)
     @content_security_policy_image_sources  = env['CONTENT_SECURITY_POLICY_IMAGE_SOURCES']
     @content_security_policy_script_sources = env['CONTENT_SECURITY_POLICY_SCRIPT_SOURCES']
@@ -27,6 +28,7 @@ class Configuration
     raise 'Missing GITHUB_ORGANISATIONS environment variable' unless @github_organisations
     raise 'Missing GITHUB_TOKEN environment variable' unless @github_token
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Layout/LineLength
 
   def content_security_policy_image_sources
     @content_security_policy_image_sources.split(',').join(' ')
