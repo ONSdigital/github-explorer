@@ -2,6 +2,7 @@
 
 require 'graphlient'
 
+require_relative 'graphql_queries'
 require_relative '../github_error'
 
 require_relative '../models/enterprise'
@@ -153,80 +154,6 @@ class GraphQLClient
                 nameId
               }
             }
-          }
-        }
-      }
-    }
-  GRAPHQL
-
-  ORGANISATION_QUERY = <<-GRAPHQL
-    query($login: String!, $slug: String!) {
-      rateLimit {
-        limit
-        remaining
-        resetAt
-      }
-      enterprise(slug: $slug) {
-        avatarUrl
-        createdAt
-        description
-        location
-        name
-        url
-        websiteUrl
-        billingInfo {
-          totalAvailableLicenses
-          totalLicenses
-        }
-        members(first: 1) {
-          totalCount
-        }
-        ownerInfo {
-          admins(first: 10) {
-            nodes {
-              login
-              name
-            }
-          }
-          outsideCollaborators(first: 1) {
-            totalCount
-          }
-          pendingMemberInvitations(first: 1) {
-            totalCount
-          }
-        }
-      }
-      organization(login: $login) {
-        avatarUrl
-        createdAt
-        description
-        location
-        name
-        updatedAt
-        url
-        websiteUrl
-        repositories(first: 1) {
-          totalCount
-        }
-        publicRepositories: repositories(first: 1, privacy: PUBLIC) {
-          totalCount
-        }
-        privateRepositories: repositories(first: 1, privacy: PRIVATE) {
-          totalCount
-        }
-        teams(first: 1) {
-          totalCount
-        }
-        secretTeams: teams(first: 1, privacy: SECRET) {
-          totalCount
-        }
-        visibleTeams: teams(first: 1, privacy: VISIBLE) {
-          totalCount
-        }
-        samlIdentityProvider {
-          ssoUrl
-          externalIdentities(first: 1) {
-            totalCount
           }
         }
       }
@@ -686,12 +613,38 @@ class GraphQLClient
     member
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
   def organisation
-    organisation = @client.query(ORGANISATION_QUERY, { login: @organisation, slug: @enterprise })
-    raise GitHubError, organisation.errors unless organisation.errors.empty?
+    query_result = @client.query(GraphQLQueries::ENTERPRISE_AND_ORGANISATION_QUERY,
+                                 { login: @organisation, slug: @enterprise })
+
+    raise GitHubError, query_result.errors unless query_result.errors.empty?
+
+    organisation = Organisation.new(query_result.organization.name, query_result.organization.name.description,
+                                    query_result.organization.url, query_result.organization.created_at)
+
+    organisation.archived_repositories_count     = 0
+    organisation.avatar_url                      = query_result.organization.avatar_url
+    organisation.identity_provider               = query_result.organization.saml_identity_provider ? true : false
+    organisation.location                        = query_result.organization.location
+    organisation.owners                          = []
+    organisation.private_repositories_count      = query_result.organization.private_repositories.total_count
+    organisation.public_repositories_count       = query_result.organization.public_repositories.total_count
+    organisation.secret_teams_count              = query_result.organization.secret_teams.total_count
+    organisation.template_repositories_count     = 0
+    organisation.total_repositories_count        = query_result.organization.repositories.total_count
+    organisation.total_teams_count               = query_result.organization.teams.total_count
+    organisation.visible_teams_count             = query_result.organization.visible_teams.total_count
+    organisation.website_url                     = query_result.organization.website_url
+
+    unless organisation.identity_provider?
+      organisation.sso_url                         = query_result.organization.saml_identity_provider.sso_url
+      organisation.total_external_identities_count = query_result.organization.saml_identity_provider.external_identities.total_count
+    end
 
     organisation
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
 
   def outside_collaborator(login)
     outside_collaborator = @client.query(OUTSIDE_COLLABORATOR_QUERY, { slug: @enterprise, login: })
