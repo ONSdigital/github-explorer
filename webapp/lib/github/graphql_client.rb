@@ -3,8 +3,8 @@
 require 'graphlient'
 
 require_relative '../github_error'
-require_relative 'user'
-require_relative 'team'
+require_relative '../models/user'
+require_relative '../models/team'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 # rubocop:disable Metrics/ClassLength
