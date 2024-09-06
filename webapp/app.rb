@@ -9,7 +9,6 @@ require 'pagy/extras/array'
 
 require_relative 'lib/configuration'
 require_relative 'lib/firestore_client'
-require_relative 'lib/github'
 require_relative 'lib/github_error'
 
 include Pagy::Backend # rubocop:disable Style/MixinUsage
@@ -19,6 +18,12 @@ CONFIG = Configuration.new(ENV)
 LOGGER = Logger.new($stderr)
 
 set :logging, false # Stop Sinatra logging routes to STDERR.
+
+if CONFIG.github?
+  require_relative 'lib/github/graphql_client'
+elsif CONFIG.github_enterprise_server?
+  # require_relative 'lib/github_enterprise_server/graphql_client'
+end
 
 before do
   image_sources  = CONFIG.content_security_policy_image_sources
@@ -40,6 +45,11 @@ before do
   @organisations = CONFIG.github_organisations.split(',')
   @selected_organisation = cookies['github-explorer-organisation'] || @organisations.first
   @firestore = FirestoreClient.new(CONFIG.firestore_project, @selected_organisation)
+
+  if CONFIG.github?
+    @github = GitHub.new(CONFIG.github_enterprise, @selected_organisation,
+                         CONFIG.github_api_base_uri, CONFIG.github_token)
+  end
 end
 
 get '/?' do
