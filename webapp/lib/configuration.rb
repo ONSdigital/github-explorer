@@ -47,4 +47,12 @@ class Configuration
   def content_security_policy_style_sources
     @content_security_policy_style_sources.split(',').join(' ')
   end
+
+  def github?
+    @github_variant = 'github'
+  end
+
+  def github_enterprise_server?
+    @github_variant = 'github-enterprise-server'
+  end
 end
