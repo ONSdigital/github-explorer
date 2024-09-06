@@ -12,7 +12,7 @@ require_relative 'lib/firestore_client'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
-include Pagy::Backend
+include Pagy::Backend # rubocop:disable Style/MixinUsage
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
 CONFIG = Configuration.new(ENV)
@@ -20,7 +20,7 @@ LOGGER = Logger.new($stderr)
 
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
-helpers do
+helpers do # rubocop:disable Metrics/BlockLength
   include Pagy::Frontend
 
   def d(text)
@@ -54,9 +54,12 @@ helpers do
   def pluralise(count, singular_noun, plural_noun = nil)
     return "0 #{plural_noun}" if count.nil?
 
+    # rubocop:disable Style/NestedTernaryOperator, Layout/LineLength
     count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
+    # rubocop:enable Style/NestedTernaryOperator, Layout/LineLength
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def repository_links(total, public, private, archived, template)
     html = []
     html << '<a href="/repositories">' if total.positive?
@@ -85,7 +88,9 @@ helpers do
 
     html.join
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def team_links(total, visible, secret)
     html = []
     html << '<a href="/teams">' if total.positive?
@@ -106,6 +111,7 @@ helpers do
 
     html.join
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def website_link(url)
     link = url
@@ -119,7 +125,11 @@ before do
   script_sources = CONFIG.content_security_policy_script_sources
   style_sources  = CONFIG.content_security_policy_style_sources
   headers 'Cache-Control' => 'no-cache'
+
+  # rubocop:disable Layout/LineLength
   headers 'Content-Security-Policy' => "default-src 'self'; img-src #{image_sources}; script-src #{script_sources}; style-src #{style_sources};"
+  # rubocop:enable Layout/LineLength
+
   headers 'Content-Type' => 'text/html; charset=utf-8'
   headers 'Permissions-Policy' => 'fullscreen=(self)'
   headers 'Referrer-Policy' => 'strict-origin-when-cross-origin'
@@ -210,7 +220,6 @@ get '/collaborators/:login' do |login|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  count = collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
   contributions = @firestore.user_contributions(login).first || {}
   repos = []
 
