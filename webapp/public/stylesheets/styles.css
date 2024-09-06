@@ -445,6 +445,10 @@ h2 .note:first-of-type {
   width: 5em;
 }
 
+.profile-dates span.date {
+  display: inline;
+}
+
 .repositories {
   border-bottom: 1px solid #e2e4e8;
 }
