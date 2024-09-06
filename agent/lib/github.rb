@@ -8,6 +8,7 @@ require_relative 'team'
 require_relative 'user'
 
 # Class that encapsulates access to the GitHub GraphQL API.
+# rubocop:disable Metrics/ClassLength
 class GitHub
   INACTIVE_MONTHS = 6
   PAUSE           = 0.5
@@ -276,6 +277,7 @@ class GitHub
                                            schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def all_inactive_users
     after = nil
     next_page = true
@@ -293,7 +295,7 @@ class GitHub
       inactive_members.data.enterprise.members.nodes.each do |member|
         next if member.user.nil?
 
-        unless member.user.contributions_collection.has_any_contributions
+        unless member.user.contributions_collection.has_any_contributions # rubocop:disable Style/Next
           user = User.new(member.user.login, member.user.name)
           user.avatar_url    = member.user.avatar_url
           user.created_at    = member.user.created_at
@@ -322,7 +324,7 @@ class GitHub
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
         next if collaborator.nil?
 
-        unless collaborator.contributions_collection.has_any_contributions
+        unless collaborator.contributions_collection.has_any_contributions # rubocop:disable Style/Next
           user = User.new(collaborator.login, collaborator.name)
           user.avatar_url = collaborator.avatar_url
           user.created_at = collaborator.created_at
@@ -338,7 +340,9 @@ class GitHub
 
     all_inactive_users.sort_by(&:login)
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def all_members
     after = nil
     next_page = true
@@ -361,8 +365,7 @@ class GitHub
         user.email         = member.user.email
         user.updated_at    = member.user.updated_at
 
-        organisations = []
-        member.user.organizations.nodes.each { |node| organisations << node.resource_path[1..].downcase }
+        organisations = member.user.organizations.nodes.map { |node| node.resource_path[1..].downcase }
         user.organisations = organisations
 
         all_members << user
@@ -371,7 +374,9 @@ class GitHub
 
     all_members
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def all_members_teams
     after = nil
     next_page = true
@@ -404,7 +409,9 @@ class GitHub
 
     all_members_teams
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/AbcSize
   def all_owners
     after = nil
     next_page = true
@@ -427,7 +434,9 @@ class GitHub
 
     all_owners.sort_by(&:login)
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize
   def all_repositories
     after = nil
     next_page = true
@@ -445,7 +454,9 @@ class GitHub
 
     all_repositories
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize
   def all_two_factor_disabled
     after = nil
     next_page = true
@@ -467,7 +478,9 @@ class GitHub
 
     all_two_factor_disabled.sort
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def all_users_contributions
     after = nil
     next_page = true
@@ -531,7 +544,9 @@ class GitHub
 
     all_users_contributions.sort_by(&:login)
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/AbcSize
   def teamless_members
     teamless_members = []
     members_with_a_team = all_members_teams
@@ -550,9 +565,11 @@ class GitHub
 
     teamless_members
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 
+  # rubocop:disable Metrics/AbcSize
   def logins_for_team(slug)
     after = nil
     next_page = true
@@ -573,4 +590,6 @@ class GitHub
 
     logins_for_team
   end
+  # rubocop:enable Metrics/AbcSize
 end
+# rubocop:enable Metrics/ClassLength
