@@ -2,13 +2,13 @@
 
 require 'graphlient'
 
-require_relative 'github_error'
+require_relative '../github_error'
 require_relative 'user'
 require_relative 'team'
 
 # Class that encapsulates access to the GitHub GraphQL API.
 # rubocop:disable Metrics/ClassLength
-class GitHub
+class GraphQLClient
   ALL_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
     query ($slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
@@ -632,7 +632,7 @@ class GitHub
     @client       = Graphlient::Client.new("#{base_uri}/graphql",
                                            headers: { 'Authorization' => "Bearer #{token}" },
                                            http_options: { read_timeout: 20 },
-                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))
+                                           schema_path: 'schema.json')
   end
 
   # rubocop:disable Metrics/AbcSize
