@@ -9,7 +9,7 @@ require_relative '../models/organisation'
 require_relative '../models/user'
 require_relative '../models/team'
 
-# Class that encapsulates access to the GitHub GraphQL API.
+# Class that encapsulates access to the GitHub GraphQL API and returns populated model objects ready for display.
 # rubocop:disable Metrics/ClassLength
 class GraphQLClient
   ALL_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
