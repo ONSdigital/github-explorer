@@ -632,7 +632,7 @@ class GraphQLClient
     @client       = Graphlient::Client.new("#{base_uri}/graphql",
                                            headers: { 'Authorization' => "Bearer #{token}" },
                                            http_options: { read_timeout: 20 },
-                                           schema_path: 'schema.json')
+                                           schema_path: File.join(__dir__, 'graphql', 'schema.json'))
   end
 
   # rubocop:disable Metrics/AbcSize
