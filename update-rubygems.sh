@@ -19,7 +19,7 @@ git commit -m "Updated dependencies"
 git push
 
 echo "Regenerating webapp-parent-image/Gemfile.lock..."
-cd ./webapp-parent-image
+cd ../webapp-parent-image
 rm Gemfile.lock
 bundle install
 
@@ -30,7 +30,7 @@ git push
 echo "Waiting 5 minutes for Cloud Build pipeline to build agent-parent-image and webapp-parent-image..."
 sleep 300
 
-cd ./agent
+cd ../agent
 rm Gemfile.lock
 bundle install
 
@@ -39,7 +39,7 @@ git add Gemfile.lock
 git commit -m "Updated dependencies"
 git push
 
-cd ./webapp
+cd ../webapp
 rm Gemfile.lock
 bundle install
 
