@@ -5,14 +5,13 @@ require 'sinatra'
 require 'sinatra/cookies'
 require 'ons-numbers'
 require 'pagy'
-require 'pagy/extras/array'
 
 require_relative 'lib/configuration'
 require_relative 'lib/firestore_client'
 require_relative 'lib/github'
 require_relative 'lib/github_error'
 
-include Pagy::Backend
+include Pagy::Method
 Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
 
 CONFIG = Configuration.new(ENV)
@@ -21,8 +20,6 @@ LOGGER = Logger.new($stderr)
 set :logging, false # Stop Sinatra logging routes to STDERR.
 
 helpers do
-  include Pagy::Frontend
-
   def d(text)
     Time.parse(text).utc.strftime('%d %b %Y %H:%M')
   end
@@ -134,7 +131,7 @@ get '/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy, owners = pagy_array(@firestore.all_owners)
+  pagy, owners = pagy(:offset, @firestore.all_owners)
   archived_repositories_count, template_repositories_count = @firestore.archived_template_repositories_count
   two_factor_disabled_count = @firestore.all_two_factor_disabled.count
   erb :index, locals: { title: "#{@selected_organisation} - GitHub Explorer",
@@ -207,7 +204,7 @@ get '/collaborators/:login' do |login|
   repos = []
 
   unless collaborator.enterprise.owner_info.outside_collaborators.edges.empty?
-    pagy, repos = pagy_array(collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes)
+    pagy, repos = pagy(:offset, collaborator.enterprise.owner_info.outside_collaborators.edges.first.repositories.nodes)
   end
 
   erb :collaborator, locals: { title: "#{login} Outside Collaborator - GitHub Explorer",
@@ -257,7 +254,7 @@ get '/members/:login' do |login|
   # The login string is converted to a symbol when returned from Firestore. Without this conversion the lookup fails.
   login_symbol = login.to_sym
   contributions = @firestore.user_contributions(login).first
-  pagy, teams = pagy_array(@firestore.all_members_teams[login_symbol].to_a)
+  pagy, teams = pagy(:offset, @firestore.all_members_teams[login_symbol].to_a)
   erb :member, locals: { title: "#{login} Member - GitHub Explorer",
                          contributions:,
                          login:,
@@ -315,7 +312,7 @@ get '/repositories/:repository' do |repository_slug|
 
       unless repository.organization.repository.nil? || repository.organization.repository.is_archived
         repository_access = github.repository_access(repository_slug)
-        pagy, access = pagy_array(repository_access)
+        pagy, access = pagy(:offset, repository_access)
       end
     end
   rescue GitHubError => e
@@ -387,7 +384,7 @@ get '/teams/:team' do |team|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  pagy, members = pagy_array(team.members)
+  pagy, members = pagy(:offset, team.members)
   erb :team, locals: { title: "#{team.name} Team - GitHub Explorer",
                        team:,
                        members:,
