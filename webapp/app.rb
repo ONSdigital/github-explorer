@@ -12,7 +12,7 @@ require_relative 'lib/github'
 require_relative 'lib/github_error'
 
 include Pagy::Method
-Pagy::I18n.load(locale: 'en', filepath: 'locales/en.yml')
+Pagy::I18n.pathnames.prepend(Pathname.new('locales'))
 
 CONFIG = Configuration.new(ENV)
 LOGGER = Logger.new($stderr)
