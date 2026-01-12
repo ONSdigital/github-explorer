@@ -199,7 +199,7 @@ get '/collaborators/:login' do |login|
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  count = collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
+  collaborator.enterprise.owner_info.outside_collaborators.edges&.first&.repositories&.nodes&.count || 0
   contributions = @firestore.user_contributions(login).first || {}
   repos = []
 
