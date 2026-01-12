@@ -29,10 +29,23 @@ class Agent
         firestore.save_document("github-explorer-#{organisation}", query, query_result)
       end
     rescue GitHubError => e
-      logger.error(%(A GitHub GraphQL API error occurred: #{e.type} #{e.message}\n#{e.backtrace.join("\n")}))
+      error_details = []
+      error_details << "Type: #{e.type}" if e.type
+      error_details << "Status Code: #{e.status_code}" if e.status_code
+      error_details << "Message: #{e.message}" if e.message
+      error_details << "Response Body: #{e.response_body}" if e.response_body
+      error_details << "Full Details: #{e.full_details.inspect}" if e.full_details.any?
+
+      logger.error(%(A GitHub GraphQL API error occurred:\n#{error_details.join("\n")}\n#{e.backtrace.join("\n")}))
       exit(1)
     rescue StandardError => e
-      logger.error(%(An error occurred: #{e.message}\n#{e.backtrace.join("\n")}))
+      error_message = e.message
+      if e.respond_to?(:response)
+        response = e.response
+        error_message += "\nResponse Status: #{response.status}" if response.respond_to?(:status)
+        error_message += "\nResponse Body: #{response.body}" if response.respond_to?(:body)
+      end
+      logger.error(%(An error occurred: #{error_message}\n#{e.backtrace.join("\n")}))
       exit(1)
     end
   end

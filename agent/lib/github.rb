@@ -283,9 +283,8 @@ class GitHub
     all_inactive_users = []
 
     while next_page
-      inactive_members = @client.query(ALL_INACTIVE_MEMBERS_QUERY,
+      inactive_members = execute_query(ALL_INACTIVE_MEMBERS_QUERY,
                                        { login: @organisation, slug: @enterprise, from:, first: 10, after: })
-      raise GitHubError, inactive_members.errors unless inactive_members.errors.empty?
 
       after = inactive_members.data.enterprise.members.page_info.end_cursor
       next_page = inactive_members.data.enterprise.members.page_info.has_next_page
@@ -293,16 +292,16 @@ class GitHub
       inactive_members.data.enterprise.members.nodes.each do |member|
         next if member.user.nil?
 
-        unless member.user.contributions_collection.has_any_contributions
-          user = User.new(member.user.login, member.user.name)
-          user.avatar_url    = member.user.avatar_url
-          user.created_at    = member.user.created_at
-          user.domain_emails = member.user.organization_verified_domain_emails
-          user.email         = member.user.email
-          user.updated_at    = member.user.updated_at
-          user.member        = true
-          all_inactive_users << user
-        end
+        next if member.user.contributions_collection.has_any_contributions
+
+        user = User.new(member.user.login, member.user.name)
+        user.avatar_url    = member.user.avatar_url
+        user.created_at    = member.user.created_at
+        user.domain_emails = member.user.organization_verified_domain_emails
+        user.email         = member.user.email
+        user.updated_at    = member.user.updated_at
+        user.member        = true
+        all_inactive_users << user
       end
 
       sleep PAUSE
@@ -312,9 +311,8 @@ class GitHub
     next_page = true
 
     while next_page
-      inactive_collaborators = @client.query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
+      inactive_collaborators = execute_query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
                                              { slug: @enterprise, from:, first: 10, after: })
-      raise GitHubError, inactive_collaborators.errors unless inactive_collaborators.errors.empty?
 
       after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
@@ -322,15 +320,15 @@ class GitHub
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
         next if collaborator.nil?
 
-        unless collaborator.contributions_collection.has_any_contributions
-          user = User.new(collaborator.login, collaborator.name)
-          user.avatar_url = collaborator.avatar_url
-          user.created_at = collaborator.created_at
-          user.email      = collaborator.email
-          user.updated_at = collaborator.updated_at
-          user.member     = false
-          all_inactive_users << user
-        end
+        next if collaborator.contributions_collection.has_any_contributions
+
+        user = User.new(collaborator.login, collaborator.name)
+        user.avatar_url = collaborator.avatar_url
+        user.created_at = collaborator.created_at
+        user.email      = collaborator.email
+        user.updated_at = collaborator.updated_at
+        user.member     = false
+        all_inactive_users << user
       end
 
       sleep PAUSE
@@ -345,8 +343,7 @@ class GitHub
     all_members = []
 
     while next_page
-      members = @client.query(ALL_MEMBERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
-      raise GitHubError, members.errors unless members.errors.empty?
+      members = execute_query(ALL_MEMBERS_QUERY, { login: @organisation, slug: @enterprise, first: 100, after: })
 
       after = members.data.enterprise.members.page_info.end_cursor
       next_page = members.data.enterprise.members.page_info.has_next_page
@@ -361,8 +358,7 @@ class GitHub
         user.email         = member.user.email
         user.updated_at    = member.user.updated_at
 
-        organisations = []
-        member.user.organizations.nodes.each { |node| organisations << node.resource_path[1..].downcase }
+        organisations = member.user.organizations.nodes.map { |node| node.resource_path[1..].downcase }
         user.organisations = organisations
 
         all_members << user
@@ -379,8 +375,7 @@ class GitHub
     all_teams = []
 
     while next_page
-      teams = @client.query(ALL_TEAM_NAMES_QUERY, { login: @organisation, first: 100, after: })
-      raise GitHubError, teams.errors unless teams.errors.empty?
+      teams = execute_query(ALL_TEAM_NAMES_QUERY, { login: @organisation, first: 100, after: })
 
       after = teams.data.organization.teams.page_info.end_cursor
       next_page = teams.data.organization.teams.page_info.has_next_page
@@ -411,8 +406,7 @@ class GitHub
     all_owners = []
 
     while next_page
-      members = @client.query(ALL_MEMBERS_WITH_ROLES_QUERY, { login: @organisation, first: 100, after: })
-      raise GitHubError, members.errors unless members.errors.empty?
+      members = execute_query(ALL_MEMBERS_WITH_ROLES_QUERY, { login: @organisation, first: 100, after: })
 
       after = members.data.organization.members_with_role.page_info.end_cursor
       next_page = members.data.organization.members_with_role.page_info.has_next_page
@@ -434,8 +428,7 @@ class GitHub
     all_repositories = []
 
     while next_page
-      repositories = @client.query(ALL_REPOSITORIES_QUERY, { login: @organisation, first: 100, after: })
-      raise GitHubError, repositories.errors unless repositories.errors.empty?
+      repositories = execute_query(ALL_REPOSITORIES_QUERY, { login: @organisation, first: 100, after: })
 
       after = repositories.data.organization.repositories.page_info.end_cursor
       next_page = repositories.data.organization.repositories.page_info.has_next_page
@@ -452,8 +445,7 @@ class GitHub
     all_two_factor_disabled = []
 
     while next_page
-      logins = @client.query(TWO_FACTOR_DISABLED_QUERY, { slug: @enterprise, first: 100, after: })
-      raise GitHubError, logins.errors unless logins.errors.empty?
+      logins = execute_query(TWO_FACTOR_DISABLED_QUERY, { slug: @enterprise, first: 100, after: })
 
       after = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.end_cursor
       next_page = logins.data.enterprise.owner_info.affiliated_users_with_two_factor_disabled.page_info.has_next_page
@@ -474,8 +466,7 @@ class GitHub
     all_users_contributions = []
 
     while next_page
-      members_contributions = @client.query(ALL_MEMBERS_CONTRIBUTIONS_QUERY, { slug: @enterprise, first: 10, after: })
-      raise GitHubError, members_contributions.errors unless members_contributions.errors.empty?
+      members_contributions = execute_query(ALL_MEMBERS_CONTRIBUTIONS_QUERY, { slug: @enterprise, first: 10, after: })
 
       after = members_contributions.data.enterprise.members.page_info.end_cursor
       next_page = members_contributions.data.enterprise.members.page_info.has_next_page
@@ -503,9 +494,8 @@ class GitHub
     next_page = true
 
     while next_page
-      collaborators_contributions = @client.query(ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY,
+      collaborators_contributions = execute_query(ALL_OUTSIDE_COLLABORATORS_CONTRIBUTIONS_QUERY,
                                                   { slug: @enterprise, first: 10, after: })
-      raise GitHubError, collaborators_contributions.errors unless collaborators_contributions.errors.empty?
 
       after = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
       next_page = collaborators_contributions.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
@@ -530,6 +520,43 @@ class GitHub
     end
 
     all_users_contributions.sort_by(&:login)
+  end
+
+  def execute_query(query, variables = {})
+    result = @client.query(query, variables)
+    raise GitHubError, result.errors unless result.errors.empty?
+
+    result
+  rescue StandardError => e
+    # Extract response body from HTTP/GraphQL errors
+    response_body = nil
+    status_code = nil
+
+    # Handle Graphlient::Errors::GraphQLError and similar exceptions
+    if e.respond_to?(:response)
+      response = e.response
+      response_body = response.body if response.respond_to?(:body)
+      response_body = response_body.to_s if response_body
+      status_code = response.status if response.respond_to?(:status)
+      status_code = response.code if response.respond_to?(:code) && status_code.nil?
+    elsif e.respond_to?(:response_body)
+      response_body = e.response_body.to_s
+    end
+
+    # Try to extract status code from exception
+    if status_code.nil?
+      status_code = e.status_code if e.respond_to?(:status_code)
+      status_code = e.code if e.respond_to?(:code)
+    end
+
+    # Try to extract from message if it contains JSON or error details
+    response_body = e.message if response_body.nil? && e.message&.match?(/\{.*\}/)
+
+    # If we have HTTP error details, raise GitHubError with them
+    raise GitHubError.new(nil, response_body: response_body, status_code: status_code) if status_code || response_body
+
+    # Re-raise original error if we can't extract details
+    raise
   end
 
   def teamless_members
@@ -559,8 +586,7 @@ class GitHub
     logins_for_team = []
 
     while next_page
-      team_members = @client.query(TEAM_MEMBERS_QUERY, { login: @organisation, slug:, first: 100, after: })
-      raise GitHubError, team_members.errors unless team_members.errors.empty?
+      team_members = execute_query(TEAM_MEMBERS_QUERY, { login: @organisation, slug:, first: 100, after: })
 
       after = team_members.data.organization.team.members.page_info.end_cursor
       next_page = team_members.data.organization.team.members.page_info.has_next_page
