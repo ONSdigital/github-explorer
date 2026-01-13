@@ -5,7 +5,14 @@ class GitHubError < StandardError
   attr_reader :response_body, :status_code
 
   def initialize(errors, response_body: nil, status_code: nil)
-    super
+    message = response_body
+
+    if !message && errors&.details
+      data = errors.details['data']
+      message = data&.first&.dig('message')
+    end
+
+    super(message)
     @errors = errors
     @response_body = response_body
     @status_code = status_code
