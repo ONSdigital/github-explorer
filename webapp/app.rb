@@ -12,6 +12,7 @@ require_relative 'lib/github'
 require_relative 'lib/github_error'
 
 include Pagy::Method
+include Pagy::Frontend
 Pagy::I18n.pathnames.prepend(Pathname.new('locales'))
 
 CONFIG = Configuration.new(ENV)
@@ -41,7 +42,7 @@ helpers do
   end
 
   def pagination_links(pagy)
-    pagy.pagy_plain_nav if pagy.pages > 1
+    pagy_plain_nav(pagy) if pagy.pages > 1
   end
 
   def percentage(number, total)
@@ -51,7 +52,11 @@ helpers do
   def pluralise(count, singular_noun, plural_noun = nil)
     return "0 #{plural_noun}" if count.nil?
 
-    count == 1 ? "1 #{singular_noun}" : plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
+    if count == 1
+      "1 #{singular_noun}"
+    else
+      plural_noun.nil? ? "#{n(count)} #{singular_noun}s" : "#{n(count)} #{plural_noun}"
+    end
   end
 
   def repository_links(total, public, private, archived, template)
