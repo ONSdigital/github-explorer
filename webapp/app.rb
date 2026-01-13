@@ -12,7 +12,6 @@ require_relative 'lib/github'
 require_relative 'lib/github_error'
 
 include Pagy::Method
-include Pagy::Frontend
 Pagy::I18n.pathnames.prepend(Pathname.new('locales'))
 
 CONFIG = Configuration.new(ENV)
