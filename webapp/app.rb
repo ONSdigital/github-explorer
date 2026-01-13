@@ -41,7 +41,7 @@ helpers do
   end
 
   def pagination_links(pagy)
-    pagy_plain_nav(pagy) if pagy.pages > 1
+    pagy.series_nav if pagy.pages > 1
   end
 
   def percentage(number, total)
