@@ -530,6 +530,7 @@ class GitHub
   rescue StandardError => e
     # Extract response body from HTTP/GraphQL errors
     response_body = nil
+    response_headers = nil
     status_code = nil
 
     # Handle Graphlient::Errors::GraphQLError and similar exceptions
@@ -539,6 +540,13 @@ class GitHub
       response_body = response_body.to_s if response_body
       status_code = response.status if response.respond_to?(:status)
       status_code = response.code if response.respond_to?(:code) && status_code.nil?
+
+      # Extract response headers
+      if response.respond_to?(:headers)
+        response_headers = response.headers
+      elsif response.respond_to?(:to_hash)
+        response_headers = response.to_hash
+      end
     elsif e.respond_to?(:response_body)
       response_body = e.response_body.to_s
     end
@@ -553,7 +561,10 @@ class GitHub
     response_body = e.message if response_body.nil? && e.message&.match?(/\{.*\}/)
 
     # If we have HTTP error details, raise GitHubError with them
-    raise GitHubError.new(nil, response_body: response_body, status_code: status_code) if status_code || response_body
+    if status_code || response_body
+      raise GitHubError.new(nil, response_body: response_body, response_headers: response_headers,
+                                 status_code: status_code)
+    end
 
     # Re-raise original error if we can't extract details
     raise

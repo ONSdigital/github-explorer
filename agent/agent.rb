@@ -34,6 +34,12 @@ class Agent
       error_details << "Status Code: #{e.status_code}" if e.status_code
       error_details << "Message: #{e.message}" if e.message
       error_details << "Response Body: #{e.response_body}" if e.response_body
+
+      if e.response_headers
+        headers = e.response_headers.is_a?(Hash) ? e.response_headers.inspect : e.response_headers.to_s
+        error_details << "Response Headers: #{headers}"
+      end
+
       error_details << "Full Details: #{e.full_details.inspect}" if e.full_details.any?
 
       logger.error(%(A GitHub GraphQL API error occurred:\n#{error_details.join("\n")}\n#{e.backtrace.join("\n")}))
@@ -44,6 +50,10 @@ class Agent
         response = e.response
         error_message += "\nResponse Status: #{response.status}" if response.respond_to?(:status)
         error_message += "\nResponse Body: #{response.body}" if response.respond_to?(:body)
+        if response.respond_to?(:headers)
+          headers_str = response.headers.is_a?(Hash) ? response.headers.inspect : response.headers.to_s
+          error_message += "\nResponse Headers: #{headers_str}"
+        end
       end
       logger.error(%(An error occurred: #{error_message}\n#{e.backtrace.join("\n")}))
       exit(1)
