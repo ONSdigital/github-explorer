@@ -428,7 +428,7 @@ class GitHub
     all_repositories = []
 
     while next_page
-      repositories = execute_query(ALL_REPOSITORIES_QUERY, { login: @organisation, first: 100, after: })
+      repositories = execute_query(ALL_REPOSITORIES_QUERY, { login: @organisation, first: 10, after: })
 
       after = repositories.data.organization.repositories.page_info.end_cursor
       next_page = repositories.data.organization.repositories.page_info.has_next_page
