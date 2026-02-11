@@ -12,7 +12,7 @@ class FirestoreClient
   end
 
   def all_inactive_users
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_inactive_users')
+    read_chunked_document('all_inactive_users')
   end
 
   def all_inactive_users_updated
@@ -20,7 +20,7 @@ class FirestoreClient
   end
 
   def all_members
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members')
+    read_chunked_document('all_members')
   end
 
   def all_members_updated
@@ -28,7 +28,7 @@ class FirestoreClient
   end
 
   def all_members_teams
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members_teams')
+    read_chunked_document('all_members_teams')
   end
 
   def all_members_teams_updated
@@ -37,7 +37,7 @@ class FirestoreClient
 
   def all_organisation_members
     organisation_members = []
-    members = @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_members')
+    members = read_chunked_document('all_members')
 
     members.each do |member|
       member[:organisations].each do |organisation|
@@ -52,7 +52,7 @@ class FirestoreClient
   end
 
   def all_owners
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_owners')
+    read_chunked_document('all_owners')
   end
 
   def all_owners_updated
@@ -60,7 +60,7 @@ class FirestoreClient
   end
 
   def all_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories')
+    read_chunked_document('all_repositories')
   end
 
   def all_repositories_updated
@@ -68,7 +68,7 @@ class FirestoreClient
   end
 
   def all_two_factor_disabled
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_two_factor_disabled')
+    read_chunked_document('all_two_factor_disabled')
   end
 
   def all_two_factor_disabled_updated
@@ -76,7 +76,7 @@ class FirestoreClient
   end
 
   def all_users_contributions
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_users_contributions')
+    read_chunked_document('all_users_contributions')
   end
 
   def all_users_contributions_updated
@@ -84,15 +84,14 @@ class FirestoreClient
   end
 
   def archived_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
-                             'all_repositories').filter { |repo| repo[:isArchived] }
+    read_chunked_document('all_repositories').filter { |repo| repo[:isArchived] }
   end
 
   def archived_template_repositories_count
     archived_count = 0
     template_count = 0
 
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').each do |repository|
+    read_chunked_document('all_repositories').each do |repository|
       archived_count += 1 if repository[:isArchived]
       template_count += 1 if repository[:isTemplate]
     end
@@ -106,18 +105,17 @@ class FirestoreClient
   end
 
   def private_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
-                             'all_repositories').filter { |repo| repo[:isPrivate] }
+    read_chunked_document('all_repositories').filter { |repo| repo[:isPrivate] }
   end
 
   def public_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_repositories').filter do |repo|
+    read_chunked_document('all_repositories').filter do |repo|
       !repo[:isArchived] && !repo[:isPrivate] && !repo[:isTemplate]
     end
   end
 
   def teamless_members
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", 'teamless_members')
+    read_chunked_document('teamless_members')
   end
 
   def teamless_members_updated
@@ -125,8 +123,7 @@ class FirestoreClient
   end
 
   def template_repositories
-    @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
-                             'all_repositories').filter { |repo| repo[:isTemplate] }
+    read_chunked_document('all_repositories').filter { |repo| repo[:isTemplate] }
   end
 
   def two_factor_disabled?(login)
@@ -136,5 +133,33 @@ class FirestoreClient
 
   def user_contributions(login)
     all_users_contributions.filter { |user| user[:login].eql?(login) }
+  end
+
+  private
+
+  def read_chunked_document(document_name)
+    @chunked_cache ||= {}
+    return @chunked_cache[document_name] if @chunked_cache.key?(document_name)
+
+    data = @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}", document_name)
+
+    @chunked_cache[document_name] = if data.is_a?(Hash) && (data.key?(:chunk_count) || data.key?('chunk_count'))
+                                      reassemble_chunks(document_name, data)
+                                    else
+                                      data
+                                    end
+  end
+
+  def reassemble_chunks(document_name, meta)
+    chunk_count = meta[:chunk_count] || meta['chunk_count']
+    all_data = []
+
+    chunk_count.times do |i|
+      chunk = @firestore.read_document("#{FIRESTORE_COLLECTION}-#{@organisation}",
+                                       "#{document_name}_chunk_#{i}")
+      all_data.concat(chunk)
+    end
+
+    all_data
   end
 end
