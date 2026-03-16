@@ -2,6 +2,8 @@
 
 require 'date'
 require 'graphlient'
+require 'json'
+require 'net/http'
 
 require_relative 'github_error'
 require_relative 'team'
@@ -270,10 +272,44 @@ class GitHub
   def initialize(enterprise, organisation, base_uri, token)
     @enterprise   = enterprise
     @organisation = organisation
+    @base_uri     = base_uri
+    @token        = token
     @client       = Graphlient::Client.new("#{base_uri}/graphql",
                                            headers: { 'Authorization' => "Bearer #{token}" },
                                            http_options: { read_timeout: 20 },
                                            schema_path: File.join(__dir__, 'graphql', 'schema.json'))
+  end
+
+  def all_copilot_users
+    page = 1
+    all_copilot_users = []
+
+    loop do
+      uri = URI("#{@base_uri}/orgs/#{@organisation}/copilot/billing/seats?per_page=100&page=#{page}")
+      request = Net::HTTP::Get.new(uri)
+      request['Accept'] = 'application/vnd.github+json'
+      request['Authorization'] = "Bearer #{@token}"
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        http.request(request)
+      end
+
+      raise GitHubError, "Copilot API error: #{response.code} #{response.body}" unless response.is_a?(Net::HTTPSuccess)
+
+      data = JSON.parse(response.body)
+      seats = data['seats'] || []
+
+      seats.each do |seat|
+        login = seat.dig('assignee', 'login')
+        all_copilot_users << login if login
+      end
+
+      break if all_copilot_users.size >= data['total_seats'].to_i
+
+      page += 1
+    end
+
+    all_copilot_users.sort
   end
 
   def all_inactive_users

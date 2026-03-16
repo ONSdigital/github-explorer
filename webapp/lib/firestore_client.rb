@@ -19,6 +19,14 @@ class FirestoreClient
     @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_inactive_users')
   end
 
+  def all_copilot_users
+    read_chunked_document('all_copilot_users')
+  end
+
+  def all_copilot_users_updated
+    @firestore.document_updated("#{FIRESTORE_COLLECTION}-#{@organisation}", 'all_copilot_users')
+  end
+
   def all_members
     read_chunked_document('all_members')
   end

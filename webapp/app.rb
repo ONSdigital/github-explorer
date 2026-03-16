@@ -195,10 +195,9 @@ get '/collaborators/?' do
     return erb :github_error, locals: { title: 'GitHub Explorer', message: e.message, type: e.type }
   end
 
-  two_factor_disabled = @firestore.all_two_factor_disabled
   erb :collaborators, locals: { title: 'Outside Collaborators - GitHub Explorer',
                                 collaborators: all_outside_collaborators,
-                                two_factor_disabled: }
+                                copilot_users: @firestore.all_copilot_users }
 end
 
 get '/collaborators/:login' do |login|
@@ -250,7 +249,7 @@ end
 get '/members/organisation' do
   erb :members, locals: { title: 'Organisation Members - GitHub Explorer',
                           members: @firestore.all_organisation_members,
-                          two_factor_disabled: @firestore.all_two_factor_disabled }
+                          copilot_users: @firestore.all_copilot_users }
 end
 
 get '/members/:login' do |login|
@@ -280,7 +279,7 @@ end
 get '/members/?' do
   erb :members, locals: { title: 'Members - GitHub Explorer',
                           members: @firestore.all_members,
-                          two_factor_disabled: @firestore.all_two_factor_disabled }
+                          copilot_users: @firestore.all_copilot_users }
 end
 
 get '/repositories/?' do
