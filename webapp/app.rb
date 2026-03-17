@@ -161,6 +161,7 @@ get '/about' do
 
   branch = ENV.fetch('COMMIT_BRANCH', 'unknown')
   branch = 'main' if branch.empty?
+  all_copilot_users_updated       = @firestore.all_copilot_users_updated
   all_inactive_users_updated      = @firestore.all_inactive_users_updated
   all_members_teams_updated       = @firestore.all_members_teams_updated
   all_members_updated             = @firestore.all_members_updated
@@ -175,6 +176,7 @@ get '/about' do
                         branch:,
                         commit: ENV.fetch('COMMIT_SHA', 'unknown'),
                         repo_name: ENV.fetch('REPO_NAME'),
+                        all_copilot_users_updated:,
                         all_inactive_users_updated:,
                         all_members_teams_updated:,
                         all_members_updated:,
