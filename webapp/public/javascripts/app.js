@@ -69,16 +69,6 @@ $(document).ready(function() {
     buttons: [
       "csv", "excel", "pdf"
     ],
-
-    // Prevent sorting the Two Factor Security column.
-    columns: [
-      null,
-      null,
-      null,
-      { orderable: false },
-      null,
-      null
-    ],
     stateSave: true,
     "dom": "fBrtp"
   });
@@ -86,17 +76,6 @@ $(document).ready(function() {
   $("#data.collaborators").DataTable({
     buttons: [
       "csv", "excel", "pdf"
-    ],
-
-    // Prevent sorting the Two Factor Security column.
-    columns: [
-      null,
-      null,
-      null,
-      { orderable: false },
-      null,
-      null,
-      null
     ],
     stateSave: true,
     "dom": "fBrtp"
