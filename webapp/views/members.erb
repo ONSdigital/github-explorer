@@ -34,7 +34,7 @@
       <td><img class="avatar-small" src="<%= member[:avatar_url] %>" alt="<%=h member[:login] %>"> <a href="/members/<%=h member[:login] %>"><%=h member[:login] %></a></td>
       <td><% if member[:name].nil? || member[:name].empty? %>-<% else %><a href="/members/<%=h member[:login] %>"><%=h member[:name] %><% end %></a></td>
       <td><%= email_addresses(member) %></td>
-      <td><% if copilot_users.include?(member[:login]) %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+      <td><% if copilot_users.include?(member[:login]) %><img src="/svg/tick.svg" alt="Tick"><span class="visually-hidden">Y</span><% else %><img src="/svg/cross.svg" alt="Cross"><span class="visually-hidden">N</span><% end %></td>
       <td class="date no-wrap" data-order="<%= member[:created_at] %>"><%=d member[:created_at] %></td>
       <td class="date no-wrap" data-order="<%= member[:updated_at] %>"><%=d member[:updated_at] %></td>
     </tr>

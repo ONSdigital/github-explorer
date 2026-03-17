@@ -29,7 +29,7 @@
       <td><img class="avatar-small" src="<%= collaborator.node.avatar_url %>" alt="<%=h collaborator.node.login %>"> <a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.login %></a></td>
       <td><% if collaborator.node.name.nil? || collaborator.node.name.empty? %>-<% else %><a href="/collaborators/<%=h collaborator.node.login %>"><%=h collaborator.node.name %><% end %></a></td>
       <td><% if collaborator.node.email.nil? || collaborator.node.email.empty? %>-<% else %><%=h collaborator.node.email %><% end %></td>
-      <td><% if copilot_users.include?(collaborator.node.login) %><img src="/svg/tick.svg" alt="Tick"><% else %><img src="/svg/cross.svg" alt="Cross"><% end %></td>
+      <td><% if copilot_users.include?(collaborator.node.login) %><img src="/svg/tick.svg" alt="Tick"><span class="visually-hidden">Y</span><% else %><img src="/svg/cross.svg" alt="Cross"><span class="visually-hidden">N</span><% end %></td>
       <td><%=pluralise(collaborator.repositories.total_count, 'repository', 'repositories') %></td>
       <td class="date no-wrap" data-order="<%= collaborator.node.created_at %>"><%=d collaborator.node.created_at %></td>
       <td class="date no-wrap" data-order="<%= collaborator.node.updated_at %><"><%=d collaborator.node.updated_at %></td>
