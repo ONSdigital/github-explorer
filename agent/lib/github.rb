@@ -17,7 +17,7 @@ class GitHub
   ALL_INACTIVE_MEMBERS_QUERY = <<-GRAPHQL
     query ($login: String!, $slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
-        members(first: $first, after: $after) {
+        members(first: $first, after: $after, organizationLogins: [$login]) {
           pageInfo {
             endCursor
             hasNextPage
@@ -34,6 +34,7 @@ class GitHub
                 updatedAt
                 contributionsCollection(from: $from) {
                   hasAnyContributions
+                  hasAnyRestrictedContributions
                 }
               }
             }
@@ -44,10 +45,10 @@ class GitHub
   GRAPHQL
 
   ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY = <<-GRAPHQL
-    query ($slug: String!, $first: Int!, $from: DateTime!, $after: String) {
+    query ($login: String!, $slug: String!, $first: Int!, $from: DateTime!, $after: String) {
       enterprise(slug: $slug) {
         ownerInfo {
-          outsideCollaborators(first: $first, after: $after) {
+          outsideCollaborators(first: $first, after: $after, organizationLogins: [$login]) {
             pageInfo {
               endCursor
               hasNextPage
@@ -61,6 +62,7 @@ class GitHub
               updatedAt
               contributionsCollection(from: $from) {
                 hasAnyContributions
+                hasAnyRestrictedContributions
               }
             }
           }
@@ -328,7 +330,8 @@ class GitHub
       inactive_members.data.enterprise.members.nodes.each do |member|
         next if member.user.nil?
 
-        next if member.user.contributions_collection.has_any_contributions
+        contributions = member.user.contributions_collection
+        next if contributions.has_any_contributions || contributions.has_any_restricted_contributions
 
         user = User.new(member.user.login, member.user.name)
         user.avatar_url    = member.user.avatar_url
@@ -348,7 +351,7 @@ class GitHub
 
     while next_page
       inactive_collaborators = execute_query(ALL_INACTIVE_OUTSIDE_COLLABORATORS_QUERY,
-                                             { slug: @enterprise, from:, first: 10, after: })
+                                             { login: @organisation, slug: @enterprise, from:, first: 10, after: })
 
       after = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.end_cursor
       next_page = inactive_collaborators.data.enterprise.owner_info.outside_collaborators.page_info.has_next_page
@@ -356,7 +359,8 @@ class GitHub
       inactive_collaborators.data.enterprise.owner_info.outside_collaborators.nodes.each do |collaborator|
         next if collaborator.nil?
 
-        next if collaborator.contributions_collection.has_any_contributions
+        contributions = collaborator.contributions_collection
+        next if contributions.has_any_contributions || contributions.has_any_restricted_contributions
 
         user = User.new(collaborator.login, collaborator.name)
         user.avatar_url = collaborator.avatar_url
