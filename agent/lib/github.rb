@@ -125,7 +125,7 @@ class GitHub
   ALL_MEMBERS_QUERY = <<-GRAPHQL
     query($login: String!, $slug: String!, $first: Int!, $after: String) {
       enterprise(slug: $slug) {
-        members(first: $first, after: $after) {
+        members(first: $first, after: $after, organizationLogins: [$login]) {
           pageInfo {
             endCursor
             hasNextPage
@@ -140,11 +140,6 @@ class GitHub
                 name
                 organizationVerifiedDomainEmails(login: $login)
                 updatedAt
-                organizations(first: 10) {
-                  nodes {
-                    resourcePath
-                  }
-                }
               }
             }
           }
@@ -397,9 +392,6 @@ class GitHub
         user.domain_emails = member.user.organization_verified_domain_emails
         user.email         = member.user.email
         user.updated_at    = member.user.updated_at
-
-        organisations = member.user.organizations.nodes.map { |node| node.resource_path[1..].downcase }
-        user.organisations = organisations
 
         all_members << user
       end

@@ -44,19 +44,7 @@ class FirestoreClient
   end
 
   def all_organisation_members
-    organisation_members = []
-    members = read_chunked_document('all_members')
-
-    members.each do |member|
-      member[:organisations].each do |organisation|
-        if organisation.eql?(@organisation)
-          organisation_members << member
-          break
-        end
-      end
-    end
-
-    organisation_members
+    read_chunked_document('all_members')
   end
 
   def all_owners
